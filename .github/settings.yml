@@ -1,0 +1,7 @@
+---
+repository:
+  description: Template for Python
+  topics: vscode, codespaces, devcontainer, python, pip, pipenv
+  delete_branch_on_merge: true
+  has_wiki: false
+#   private: false
