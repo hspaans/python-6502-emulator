@@ -1,16 +1,16 @@
-"""
-Emulation of the MOT-6502 Processor
-"""
-
+"""Emulation of the MOT-6502 Processor."""
 import m6502
 
 
 class Processor:
-    """
-    MOT-6502 Processor
-    """
+    """MOT-6502 Processor."""
 
     def __init__(self, memory: m6502.memory) -> None:
+        """Initialize the processor.
+
+        :param memory: The memory to use
+        :return: None
+        """
         self.memory = memory
         self.reg_a = 0  # Accumlator A
         self.reg_y = 0  # Incex Register Y
@@ -29,9 +29,12 @@ class Processor:
         self.flag_n = True  # Status flag - Negative Flag
 
     def reset(self) -> None:
-        """Reset processor to initial state and reset memory"""
-        self.program_counter = 0xFFFC
-        self.stack_pointer = 0x0100
+        """Reset processor to initial state.
+
+        :return: None
+        """
+        self.program_counter = 0xFCE2  # Hardcoded start vector post-reset
+        self.stack_pointer   = 0x01FD  # Hardcoded stack pointer post-reset
+        self.flag_i = True
         self.flag_d = False
-        for address in range(self.memory.size):
-            self.memory[address] = 0
+        self.flag_b = True
