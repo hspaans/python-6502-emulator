@@ -4,7 +4,7 @@ name: Python CI
 on:
   pull_request:
   schedule:
-    - cron: "4 32 17 * *"
+    - cron: '23 12 * * 1'
 
 jobs:
   super-linter:
