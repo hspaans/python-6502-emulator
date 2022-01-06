@@ -11,7 +11,7 @@ class Memory:
         :return: None
         """
         if 0x0200 < (size - 1) > 0xFFFF:
-            raise ValueError("Memory size is not valid: " + hex(size))
+            raise ValueError("Memory size is not valid")
         self.size = size
         self.memory = [0] * self.size
         print(len(self.memory))

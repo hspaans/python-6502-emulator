@@ -35,6 +35,7 @@ class Processor:
         """
         self.program_counter = 0xFCE2  # Hardcoded start vector post-reset
         self.stack_pointer   = 0x01FD  # Hardcoded stack pointer post-reset
+        self.cycles          = 0
         self.flag_i = True
         self.flag_d = False
         self.flag_b = True
