@@ -164,10 +164,10 @@ def test_cpu_read_write_word() -> None:
 
 
 def test_cpu_fetch_byte() -> None:
-    """Verify CPU can read a byte from memory.
+    """Verify CPU can fetch a byte from memory.
 
-    The cost of the read operation is 1 cycle, and the state of the CPU is
-    not changed.
+    The cost of the fetch operation is 1 cycle, and increases the program
+    counter by 1. The state of the CPU is not changed further.
 
     :return: None
     """
@@ -188,10 +188,10 @@ def test_cpu_fetch_byte() -> None:
 
 
 def test_cpu_fetch_word() -> None:
-    """Verify CPU can read a byte from memory.
+    """Verify CPU can fetch a word from memory.
 
-    The cost of the read operation is 1 cycle, and the state of the CPU is
-    not changed.
+    The cost of the fetch operation is 2 cycle, and increases the program
+    counter by 2. The state of the CPU is not changed further.
 
     :return: None
     """
