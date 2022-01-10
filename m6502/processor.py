@@ -1,4 +1,6 @@
 """Emulation of the MOT-6502 Processor."""
+import sys
+
 import m6502
 
 
@@ -77,9 +79,11 @@ class Processor:
         :param address: The address to read from
         :return: int
         """
-        lobyte = self.read_byte(address)
-        hibyte = self.read_byte(address + 1)
-        return lobyte | (hibyte << 8)
+        if sys.byteorder == "little":
+            data = self.read_byte(address) | (self.read_byte(address + 1) << 8)
+        else:
+            data = (self.read_byte(address) << 8) | self.read_byte(address + 1)
+        return data
 
     def write_byte(self, address: int, value: int) -> None:
         """Write a byte to memory.
@@ -98,5 +102,9 @@ class Processor:
         :param value: The value to write
         :return: None
         """
-        self.write_byte(address, value & 0xFF)
-        self.write_byte(address + 1, (value >> 8) & 0xFF)
+        if sys.byteorder == "little":
+            self.write_byte(address, value & 0xFF)
+            self.write_byte(address + 1, (value >> 8) & 0xFF)
+        else:
+            self.write_byte(address, (value >> 8) & 0xFF)
+            self.write_byte(address + 1, value & 0xFF)
