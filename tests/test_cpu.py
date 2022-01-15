@@ -13,12 +13,14 @@ def test_cpu_reset() -> None:
     assert (
         cpu.program_counter,
         cpu.stack_pointer,
+        cpu.cycles,
         cpu.flag_b,
         cpu.flag_d,
         cpu.flag_i
     ) == (
         0xFCE2,
         0x01FD,
+        0,
         True,
         False,
         True
