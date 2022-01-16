@@ -17,7 +17,7 @@ def test_cpu_reset() -> None:
         cpu.flag_b,
         cpu.flag_d,
         cpu.flag_i,
-    ) == (0xFCE2, 0x01FD, True, False, True)
+    ) == (0xFCE2, 0x01FD, 0, True, False, True)
 
 
 def test_cpu_read_byte() -> None:
