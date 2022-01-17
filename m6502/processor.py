@@ -8,7 +8,8 @@ class Processor:
     """MOT-6502 Processor."""
 
     def __init__(self, memory: m6502.memory) -> None:
-        """Initialize the processor.
+        """
+        Initialize the processor.
 
         :param memory: The memory to use
         :return: None
@@ -31,7 +32,8 @@ class Processor:
         self.flag_n = True  # Status flag - Negative Flag
 
     def reset(self) -> None:
-        """Reset processor to initial state.
+        """
+        Reset processor to initial state.
 
         :return: None
         """
@@ -44,7 +46,8 @@ class Processor:
         self.flag_b = True
 
     def fetch_byte(self) -> int:
-        """Fetch a byte from memory.
+        """
+        Fetch a byte from memory.
 
         :param address: The address to read from
         :return: int
@@ -54,7 +57,8 @@ class Processor:
         return data
 
     def fetch_word(self) -> int:
-        """Fetch a word from memory.
+        """
+        Fetch a word from memory.
 
         :param address: The address to read from
         :return: int
@@ -64,7 +68,8 @@ class Processor:
         return data
 
     def read_byte(self, address: int) -> int:
-        """Read a byte from memory.
+        """
+        Read a byte from memory.
 
         :param address: The address to read from
         :return: int
@@ -74,7 +79,8 @@ class Processor:
         return data
 
     def read_word(self, address: int) -> int:
-        """Read a word from memory.
+        """
+        Read a word from memory.
 
         :param address: The address to read from
         :return: int
@@ -86,7 +92,8 @@ class Processor:
         return data
 
     def write_byte(self, address: int, value: int) -> None:
-        """Write a byte to memory.
+        """
+        Write a byte to memory.
 
         :param address: The address to write to
         :param value: The value to write
@@ -96,7 +103,8 @@ class Processor:
         self.cycles += 1
 
     def write_word(self, address: int, value: int) -> None:
-        """Split a word to two bytes and write to memory.
+        """
+        Split a word to two bytes and write to memory.
 
         :param address: The address to write to
         :param value: The value to write

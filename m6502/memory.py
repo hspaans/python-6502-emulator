@@ -5,7 +5,8 @@ class Memory:
     """Memory bank for MOT-6502 systems."""
 
     def __init__(self, size: int = 65536) -> None:
-        """Initialize the memory.
+        """
+        Initialize the memory.
 
         :param size: The size of the memory
         :return: None
@@ -17,7 +18,8 @@ class Memory:
         print(len(self.memory))
 
     def __getitem__(self, address: int) -> int:
-        """Get the value at the specified address.
+        """
+        Get the value at the specified address.
 
         :param address: The address to read from
         :return: The value at the specified address
@@ -27,7 +29,8 @@ class Memory:
         return self.memory[address]
 
     def __setitem__(self, address: int, value: int) -> int:
-        """Set the value at the specified address.
+        """
+        Set the value at the specified address.
 
         :param address: The address to write to
         :param value: The value to write to the address
