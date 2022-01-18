@@ -176,3 +176,8 @@ class Processor:
         :return: None
         """
         self.cycles += 1
+
+    def ins_clc_imp(self):
+        """CLC - Clear Carry Flag."""
+        self.flag_c = False
+        self.cycles += 1
