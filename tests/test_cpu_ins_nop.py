@@ -40,4 +40,8 @@ def test_cpu_ins_nop() -> None:
     cpu.reset()
     memory[0xFCE2] = 0xEA
     cpu.execute(2)
-    assert (cpu.program_counter, cpu.stack_pointer, cpu.cycles) == (0xFCE3, 0x01FD, 2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+    ) == (0xFCE3, 0x01FD, 2)
