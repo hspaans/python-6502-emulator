@@ -38,7 +38,7 @@ def test_cpu_ins_clc_imp() -> None:
     """
     CLC - Clear Carry Flag.
 
-    return: None.
+    return: None
     """
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)

@@ -34,7 +34,11 @@ import m6502
 
 
 def test_cpu_ins_nop() -> None:
-    """Do nothing for 1 computer cycle."""
+    """
+    Do nothing for 1 computer cycle.
+
+    return: None
+    """
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
