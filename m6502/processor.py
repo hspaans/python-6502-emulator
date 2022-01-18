@@ -194,3 +194,12 @@ class Processor:
         """
         self.flag_d = False
         self.cycles += 1
+
+    def ins_cli_imp(self) -> None:
+        """
+        CLI - Clear Interrupt Disable.
+
+        :return: None
+        """
+        self.flag_i = False
+        self.cycles += 1
