@@ -1,5 +1,5 @@
 """
-CLD - Clear Decimal Mode
+CLD - Clear Decimal Mode.
 
 D = 0
 
