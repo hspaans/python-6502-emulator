@@ -177,7 +177,20 @@ class Processor:
         """
         self.cycles += 1
 
-    def ins_clc_imp(self):
-        """CLC - Clear Carry Flag."""
+    def ins_clc_imp(self) -> None:
+        """
+        CLC - Clear Carry Flag.
+
+        :return: None
+        """
         self.flag_c = False
+        self.cycles += 1
+
+    def ins_cld_imp(self) -> None:
+        """
+        CLD - Clear Decimal Mode.
+
+        :return: None
+        """
+        self.flag_d = False
         self.cycles += 1
