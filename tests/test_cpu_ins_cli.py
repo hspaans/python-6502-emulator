@@ -37,7 +37,7 @@ import m6502
 
 def test_cpu_ins_cld_imp() -> None:
     """
-    Clear Decimal Mode.
+    Clear Interrupt Disable.
 
     return: None
     """
@@ -53,4 +53,3 @@ def test_cpu_ins_cld_imp() -> None:
         cpu.cycles,
         cpu.flag_i,
     ) == (0xFCE3, 0x01FD, 2, False)
-

@@ -58,4 +58,3 @@ def test_cpu_ins_cld_imp() -> None:
         cpu.cycles,
         cpu.flag_d,
     ) == (0xFCE3, 0x01FD, 2, False)
-

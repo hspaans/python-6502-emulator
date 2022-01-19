@@ -34,7 +34,7 @@ import m6502
 
 def test_cpu_ins_cld_imp() -> None:
     """
-    Clear Decimal Mode.
+    Clear Overflow Flag.
 
     return: None
     """
