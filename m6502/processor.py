@@ -203,3 +203,12 @@ class Processor:
         """
         self.flag_i = False
         self.cycles += 1
+
+    def ins_clv_imp(self) -> None:
+        """
+        CLV - Clear Overflow Flag.
+
+        :return: None
+        """
+        self.flag_v = False
+        self.cycles += 1
