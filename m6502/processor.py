@@ -212,3 +212,30 @@ class Processor:
         """
         self.flag_v = False
         self.cycles += 1
+
+    def ins_sec_imp(self) -> None:
+        """
+        SEC - Set Carry Flag.
+
+        :return: None
+        """
+        self.flag_c = True
+        self.cycles += 1
+
+    def ins_sed_imp(self) -> None:
+        """
+        SED - Set Decimal Mode.
+
+        :return: None
+        """
+        self.flag_d = True
+        self.cycles += 1
+
+    def ins_sei_imp(self) -> None:
+        """
+        SEI - Set Interrupt Disable.
+
+        :return: None
+        """
+        self.flag_i = True
+        self.cycles += 1
