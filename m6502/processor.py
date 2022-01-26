@@ -165,7 +165,6 @@ class Processor:
         :return: None
         """
         while (self.cycles < cycles) or (cycles == 0):
-            print(self.cycles)
             opcode = self.fetch_byte()
             eval("self.ins_" + self.OPCODES[opcode] + "_" + self.ADDRESSING[opcode] + "()")  # noqa: PLW0123
 
