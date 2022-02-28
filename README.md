@@ -4,6 +4,8 @@
 
 Learning how processors work also gives the possibility to understand why certain applications are so slow and how to optimize them, but also how to start doing security research by writing a fuzzer to find vulnerabilities. Lets start with the basics and write a simple 6502 emulator before we start with the assembly language.
 
+The [Introduction](#introduction) chapter is mainly based on the **6502 Instruction Set Guide** by [Andrew John Jacobs aka BitWise](https://github.com/andrew-jacobs) and full credit goes to him. Sadly he passed away in 2021 and I copied his work as a reference as his website is no longer available.
+
 ## Introduction
 
 ### The 6502 basic processor?
@@ -20,13 +22,38 @@ Learning how processors work also gives the possibility to understand why certai
 
 #### Processor Status
 
+As instructions are executed a set of processor flags are set or clear to record the results of the operation. This flags and some additional control flags are held in a special status register. Each flag has a single bit within the register.
+
+Instructions exist to test the values of the various bits, to set or clear some of them and to push or pull the entire set to or from the stack.
+
 * Carry Flag
+
+  The carry flag is set if the last operation caused an overflow from bit 7 of the result or an underflow from bit 0. This condition is set during arithmetic, comparison and during logical shifts. It can be explicitly set using the ['Set Carry Flag' (SEC)](#set-carry-flag) instruction and cleared with ['Clear Carry Flag' (CLC)](#clear-carry-flag).
+
 * Zero Flag
+
+  The zero flag is set of the result of the last operation as was zero.
+
 * Interrupt Disable
+
+  The interrupt disable flag is set if the program has executed a ['Set Interrupt Disable' (SEI)](#sei---set-interrupt-disable) instruction. While this flag is set the processor will not respond to interrupts from devices until it is cleared by a ['Clear Interrupt Disable' (CLI)](#cli---clear-interrupt-disable) instruction.
+
 * Decimal Mode
+
+  While the decimal mode flag is set the processor will obey the rules of Binary Coded Decimal (BCD) arithmetic during addition and subtraction. The flag can be explicitly set using ['Set Decimal Mode' (SED)](#sed---set-decimal-mode) and cleared with ['Clear Decimal Mode' (CLD)](#cld---clear-decimal-mode).
+  > Note that only two instructions are affected by the D flag: ['Add with Carry' (ADC)](#adc---add-with-carry) and ['Subtract with Carry' (SBC)](#sbc---subtract-with-carry).
+
 * Break Command
+
+  The break command bit is set when a [BRK](#brk) instruction has been executed and an interrupt has been generated to process it.
+
 * Overflow Flag
+
+  The overflow flag is set during arithmetic operations if the result has yielded an ivalid 2's complement result (e.g. adding to positive numbers an dending up with a negative result: 64 + 64 => -128) It is determined by looking at the carry between bits 6 and 7 and between bit 7 and the carry flag.
+
 * Negative Flag
+
+  The negative flag is set if the result of the last operation has bit 7 set to a one.
 
 ### The Instruction Set
 
@@ -52,7 +79,7 @@ Learning how processors work also gives the possibility to understand why certai
 
 ##### CLC - Clear Carry Flag
 
-Set the carry flag to zero. See also [SEC](#sec---set-carry-flag).
+Set the carry flag to zero.
 
 | Flag  | Description       | State        |
 | :---: | ----------------- | ------------ |
@@ -68,14 +95,11 @@ Set the carry flag to zero. See also [SEC](#sec---set-carry-flag).
 | --------------- | :----: | :---: | :----: |
 | Implied         |  0x18  |   1   |   2    |
 
+See also [SEC](#sec---set-carry-flag).
+
 ##### CLD - Clear Decimal Mode
 
 Sets the decimal mode flag to zero.
-
-The state of the decimal flag is uncertain when the CPU is powered up and it
-is not reset when an interrupt is generated. In both cases you should include
-an explicit CLD to ensure that the flag is cleared before performing addition
-or subtraction.
 
 | Flag  | Description       | State        |
 | :---: | ----------------- | ------------ |
@@ -90,6 +114,11 @@ or subtraction.
 | Addressing Mode | Opcode | Bytes | Cycles |
 | --------------- | :----: | :---: | :----: |
 | Implied         |  0xD8  |   1   |   2    |
+
+> The state of the decimal flag is uncertain when the CPU is powered up and it
+> is not reset when an interrupt is generated. In both cases you should include
+> an explicit CLD to ensure that the flag is cleared before performing addition
+> or subtraction.
 
 See also [SED](#sed---set-decimal-mode).
 
