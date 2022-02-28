@@ -28,7 +28,7 @@ jobs:
           if [ -f .markdown-lint.yml ]; then cp .markdown-lint.yml .github/linters ; fi
 
       - name: Run Super-Linter
-        uses: github/super-linter@v4
+        uses: github/super-linter/slim@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_GITHUB_ACTIONS: false
@@ -61,9 +61,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 flake8-pylint flake8-docstrings pytest
+          pip install flake8 flake8-bugbear flake8-docstrings flake8-pylint pytest pytest-custom-exit-code
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
+
+      - name: Lint with flake8
+        run: |
+          yamllint .
 
       - name: Lint with flake8
         run: |
@@ -74,7 +78,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest
+          pytest --suppress-no-test-exit-code
 
   analyze:
     needs:
@@ -95,16 +99,16 @@ jobs:
           - 'python'
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: ${{ matrix.language }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
