@@ -239,6 +239,40 @@ class Processor:
         self.flag_i = True
         self.cycles += 1
 
+    def ins_dex_imp(self) -> None:
+        """
+        DEC - Decrement X Register.
+
+        :return: None
+        """
+        self.reg_x -= 1
+        self.cycles += 1
+        if self.reg_x == 0:
+            self.flag_z = True
+        else:
+            self.flag_z = False
+        if self.reg_x & 0x80:
+            self.flag_n = True
+        else:
+            self.flag_n = False
+
+    def ins_dey_imp(self) -> None:
+        """
+        DEC - Decrement X Register.
+
+        :return: None
+        """
+        self.reg_y -= 1
+        self.cycles += 1
+        if self.reg_y == 0:
+            self.flag_z = True
+        else:
+            self.flag_z = False
+        if self.reg_y & 0x80:
+            self.flag_n = True
+        else:
+            self.flag_n = False
+
     def ins_inx_imp(self) -> None:
         """
         INX - Increment X Register.
