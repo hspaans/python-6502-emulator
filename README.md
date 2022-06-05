@@ -246,25 +246,25 @@ Processor Status after use:
 
 ### Addressing Modes
 
-#### Implicit
+#### Implicit Addressing Mode
 
-#### Accumulator
+#### Accumulator Addressing Mode
 
-#### Immediate
+#### Immediate Addressing Mode
 
-#### Zero Page
+#### Zero Page Addressing Mode
 
-#### Zero Page,X or Zero Page,Y
+#### Zero Page,X or Zero Page,Y Addressing Mode
 
-#### Relative
+#### Relative Addressing Mode
 
-#### Absolute
+#### Absolute Addressing Mode
 
-#### Absolute,X or Absolute,Y
+#### Absolute,X or Absolute,Y Addressing Mode
 
-#### Indirect
+#### Indirect Addressing Mode
 
-#### Indirect Indexed
+#### Indirect Indexed Addressing Mode
 
 ### The memory model
 
