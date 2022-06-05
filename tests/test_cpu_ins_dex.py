@@ -3,7 +3,7 @@ DEX - Decrement X Register.
 
 X,Z,N = X-1
 
-Subtracts one to the X register setting the zero and negative flags as appropriate.
+Subtracts one from the X register setting the zero and negative flags as appropriate.
 
 +------+-------------------+--------------------------+
 | Flag | Description       | State                    |

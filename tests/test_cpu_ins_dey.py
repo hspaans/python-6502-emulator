@@ -3,7 +3,7 @@ DEY - Decrement Y Register.
 
 Y,Z,N = Y-1
 
-Adds one to the Y register setting the zero and negative flags as appropriate.
+Subtracts one from the Y register setting the zero and negative flags as appropriate.
 
 +------+-------------------+--------------------------+
 | Flag | Description       | State                    |
