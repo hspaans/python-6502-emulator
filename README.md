@@ -240,7 +240,6 @@ Processor Status after use:
 |   V   | Overflow Flag     | Not affected |
 |   N   | Negative Flag     | Not affected |
 
-
 | Addressing Mode | Opcode | Bytes | Cycles |
 | --------------- | :----: | :---: | :----: |
 | Implied         |  0xEA  |   1   |   2    |
@@ -266,8 +265,6 @@ Processor Status after use:
 #### Indirect
 
 #### Indirect Indexed
-
-
 
 ### The memory model
 
