@@ -1,15 +1,12 @@
 ---
-name: Python CI
+name: CI
 
 on:
   pull_request:
     branches:
       - master
-  push:
-    branches:
-      - master
   schedule:
-    - cron: '23 12 * * 1'
+    - cron: '23 12 21 * *'
 
 jobs:
   lint:
