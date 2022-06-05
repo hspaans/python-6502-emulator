@@ -35,7 +35,7 @@ See also: INC, INY
 import m6502
 
 
-def test_cpu_ins_cld_inx_1() -> None:
+def test_cpu_ins_inx_imp_1() -> None:
     """
     Increment X Register from -2 to -1.
 
@@ -57,7 +57,7 @@ def test_cpu_ins_cld_inx_1() -> None:
     ) == (0xFCE3, 0x01FD, 2, False, True, -1)
 
 
-def test_cpu_ins_cld_inx_2() -> None:
+def test_cpu_ins_inx_imp_2() -> None:
     """
     Increment X Register from -1 to 0.
 
@@ -79,7 +79,7 @@ def test_cpu_ins_cld_inx_2() -> None:
     ) == (0xFCE3, 0x01FD, 2, True, False, 0)
 
 
-def test_cpu_ins_cld_inx_3() -> None:
+def test_cpu_ins_inx_imp_3() -> None:
     """
     Increment X Register from 0 to 1.
 
@@ -101,7 +101,7 @@ def test_cpu_ins_cld_inx_3() -> None:
     ) == (0xFCE3, 0x01FD, 2, False, False, 1)
 
 
-def test_cpu_ins_cld_inx_4() -> None:
+def test_cpu_ins_inx_imp_4() -> None:
     """
     Increment X Register from 1 to 2.
 

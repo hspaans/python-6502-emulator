@@ -10,7 +10,7 @@ Adds one to the Y register setting the zero and negative flags as appropriate.
 +======+===================+==========================+
 |  C   | Carry Flag        | Not affected             |
 +------+-------------------+--------------------------+
-|  Z   | Zero Flag         | Set if X is zero         |
+|  Z   | Zero Flag         | Set if Y is zero         |
 +------+-------------------+--------------------------+
 |  I   | Interrupt Disable | Not affected             |
 +------+-------------------+--------------------------+
@@ -35,7 +35,7 @@ See also: INC, INX
 import m6502
 
 
-def test_cpu_ins_cld_iny_1() -> None:
+def test_cpu_ins_iny_imp_1() -> None:
     """
     Increment Y Register from -2 to -1.
 
@@ -57,7 +57,7 @@ def test_cpu_ins_cld_iny_1() -> None:
     ) == (0xFCE3, 0x01FD, 2, False, True, -1)
 
 
-def test_cpu_ins_cld_iny_2() -> None:
+def test_cpu_ins_iny_imp_2() -> None:
     """
     Increment Y Register from -1 to 0.
 
@@ -79,7 +79,7 @@ def test_cpu_ins_cld_iny_2() -> None:
     ) == (0xFCE3, 0x01FD, 2, True, False, 0)
 
 
-def test_cpu_ins_cld_iny_3() -> None:
+def test_cpu_ins_iny_imp_3() -> None:
     """
     Increment Y Register from 0 to 1.
 
@@ -101,7 +101,7 @@ def test_cpu_ins_cld_iny_3() -> None:
     ) == (0xFCE3, 0x01FD, 2, False, False, 1)
 
 
-def test_cpu_ins_cld_iny_4() -> None:
+def test_cpu_ins_iny_imp_4() -> None:
     """
     Increment Y Register from 1 to 2.
 
