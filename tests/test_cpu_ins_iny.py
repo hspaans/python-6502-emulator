@@ -32,19 +32,27 @@ Adds one to the Y register setting the zero and negative flags as appropriate.
 See also: INC, INX
 
 """
+import pytest
 import m6502
 
 
-def test_cpu_ins_iny_imp_1() -> None:
+@pytest.mark.parametrize(
+    "value, expected, flag_z, flag_n", [
+        (-2, -1, False, True),
+        (-1, 0, True, False),
+        (0, 1, False, False),
+        (1, 2, False, False)
+    ])
+def test_cpu_ins_iny_imp(value, expected, flag_z, flag_n) -> None:
     """
-    Increment Y Register from -2 to -1.
+    Increment Y Register.
 
     return: None
     """
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_y = -2
+    cpu.reg_y = value
     memory[0xFCE2] = 0xC8
     cpu.execute(2)
     assert (
@@ -54,70 +62,4 @@ def test_cpu_ins_iny_imp_1() -> None:
         cpu.flag_z,
         cpu.flag_n,
         cpu.reg_y,
-    ) == (0xFCE3, 0x01FD, 2, False, True, -1)
-
-
-def test_cpu_ins_iny_imp_2() -> None:
-    """
-    Increment Y Register from -1 to 0.
-
-    return: None
-    """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
-    cpu.reset()
-    cpu.reg_y = -1
-    memory[0xFCE2] = 0xC8
-    cpu.execute(2)
-    assert (
-        cpu.program_counter,
-        cpu.stack_pointer,
-        cpu.cycles,
-        cpu.flag_z,
-        cpu.flag_n,
-        cpu.reg_y,
-    ) == (0xFCE3, 0x01FD, 2, True, False, 0)
-
-
-def test_cpu_ins_iny_imp_3() -> None:
-    """
-    Increment Y Register from 0 to 1.
-
-    return: None
-    """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
-    cpu.reset()
-    cpu.reg_y = 0
-    memory[0xFCE2] = 0xC8
-    cpu.execute(2)
-    assert (
-        cpu.program_counter,
-        cpu.stack_pointer,
-        cpu.cycles,
-        cpu.flag_z,
-        cpu.flag_n,
-        cpu.reg_y,
-    ) == (0xFCE3, 0x01FD, 2, False, False, 1)
-
-
-def test_cpu_ins_iny_imp_4() -> None:
-    """
-    Increment Y Register from 1 to 2.
-
-    return: None
-    """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
-    cpu.reset()
-    cpu.reg_y = 1
-    memory[0xFCE2] = 0xC8
-    cpu.execute(2)
-    assert (
-        cpu.program_counter,
-        cpu.stack_pointer,
-        cpu.cycles,
-        cpu.flag_z,
-        cpu.flag_n,
-        cpu.reg_y,
-    ) == (0xFCE3, 0x01FD, 2, False, False, 2)
+    ) == (0xFCE3, 0x01FD, 2, flag_z, flag_n, expected)
