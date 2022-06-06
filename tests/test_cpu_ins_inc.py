@@ -3,7 +3,8 @@ INC - Increment Memory.
 
 M,Z,N = M+1
 
-Adds one to the value held at a specified memory location setting the zero and negative flags as appropriate.
+Adds one to the value held at a specified memory location setting the zero and
+negative flags as appropriate.
 
 +------+-------------------+-------------------------------+
 | Flag | Description       | State                         |
