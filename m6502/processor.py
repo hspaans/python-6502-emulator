@@ -412,8 +412,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte()
-        self.reg_a = self.read_byte(address)
+        self.reg_a = self.read_byte(
+            self.fetch_byte()
+        )
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
@@ -423,8 +424,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.read_register_x()
-        self.reg_a = self.read_byte(address)
+        self.reg_a = self.read_byte(
+            self.fetch_byte() + self.read_register_x()
+        )
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
@@ -434,8 +436,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_word()
-        self.reg_a = self.read_byte(address)
+        self.reg_a = self.read_byte(
+            self.fetch_word()
+        )
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
@@ -455,8 +458,7 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte()
-        self.reg_x = self.read_byte(address)
+        self.reg_x = self.read_byte(self.fetch_byte())
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
@@ -466,8 +468,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.read_register_y()
-        self.reg_x = self.read_byte(address)
+        self.reg_x = self.read_byte(
+            self.fetch_byte() + self.read_register_y()
+        )
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
@@ -477,8 +480,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_word()
-        self.reg_x = self.read_byte(address)
+        self.reg_x = self.read_byte(
+            self.fetch_word()
+        )
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
@@ -498,8 +502,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte()
-        self.reg_y = self.read_byte(address)
+        self.reg_y = self.read_byte(
+            self.fetch_byte()
+        )
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
@@ -509,8 +514,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.read_register_x()
-        self.reg_y = self.read_byte(address)
+        self.reg_y = self.read_byte(
+            self.fetch_byte() + self.read_register_x()
+        )
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
@@ -520,8 +526,9 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_word()
-        self.reg_y = self.read_byte(address)
+        self.reg_y = self.read_byte(
+            self.fetch_word()
+        )
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
@@ -551,3 +558,102 @@ class Processor:
         """
         self.flag_i = True
         self.cycles += 1
+
+    def ins_sta_zp(self) -> None:
+        """
+        STA - Store Accumulator, Zero Page.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_byte(),
+            self.reg_a
+        )
+
+    def ins_sta_zpx(self) -> None:
+        """
+        STA - Store Accumulator, Zero Page, X.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_byte() + self.read_register_x(),
+            self.reg_a
+        )
+
+    def ins_sta_abs(self) -> None:
+        """
+        STA - Store Accumulator, Absolute.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_word(),
+            self.reg_a
+        )
+
+    def ins_stx_zp(self) -> None:
+        """
+        STA - Store X Register, Zero Page.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_byte(),
+            self.reg_x
+        )
+
+    def ins_stx_zpy(self) -> None:
+        """
+        STA - Store Y Register, Zero Page, X.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_byte() + self.read_register_y(),
+            self.reg_x
+        )
+
+    def ins_stx_abs(self) -> None:
+        """
+        STA - Store X Register, Absolute.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_word(),
+            self.reg_x
+        )
+
+    def ins_sty_zp(self) -> None:
+        """
+        STA - Store Y Register, Zero Page.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_byte(),
+            self.reg_y
+        )
+
+    def ins_sty_zpx(self) -> None:
+        """
+        STA - Store Y Register, Zero Page, X.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_byte() + self.read_register_x(),
+            self.reg_y
+        )
+
+    def ins_sty_abs(self) -> None:
+        """
+        STA - Store Y Register, Absolute.
+
+        :return: None
+        """
+        self.write_byte(
+            self.fetch_word(),
+            self.reg_y
+        )
