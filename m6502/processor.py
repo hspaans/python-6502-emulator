@@ -157,6 +157,27 @@ class Processor:
             self.write_byte(address, (value >> 8) & 0xFF)
             self.write_byte(address + 1, value & 0xFF)
 
+    def evaluate_flag_n(self, data: int) -> None:
+        """
+        Evaluate negative flag.
+
+        :param data: The data to evaluate
+        :return: None
+        """
+        self.flag_n = (data & 0x80) != 0
+
+    def evaluate_flag_z(self, data: int) -> None:
+        """
+        Evaluate the Zero Flag.
+
+        :param data: The data to evaluate
+        :return: None
+        """
+        if data == 0:
+            self.flag_z = True
+        else:
+            self.flag_z = False
+
     def execute(self, cycles: int = 0) -> None:
         """
         Execute code for X amount of cycles. Or until a breakpoint is reached.
@@ -211,6 +232,146 @@ class Processor:
         """
         self.flag_v = False
         self.cycles += 1
+
+    def ins_dec_zp(self) -> None:
+        """
+        DEC - Decrement Memory, Zero Page.
+
+        :return: None
+        """
+        address = self.fetch_byte()
+        self.write_byte(address, self.read_byte(address) - 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 1
+
+    def ins_dec_zpx(self) -> None:
+        """
+        DEC - Decrement Memory, Zero Page, X.
+
+        :return: None
+        """
+        address = self.fetch_byte() + self.reg_x
+        self.write_byte(address, self.read_byte(address) - 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 2
+
+    def ins_dec_abs(self) -> None:
+        """
+        DEC - Decrement Memory, Absolute.
+
+        :return: None
+        """
+        address = self.fetch_word()
+        self.write_byte(address, self.read_byte(address) - 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 1
+
+    def ins_dec_abx(self) -> None:
+        """
+        DEC - Decrement Memory, Absolute, X.
+
+        :return: None
+        """
+        address = self.fetch_word() + self.reg_x
+        self.write_byte(address, self.read_byte(address) - 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 2
+
+    def ins_dex_imp(self) -> None:
+        """
+        DEX - Decrement X Register.
+
+        :return: None
+        """
+        self.reg_x -= 1
+        self.cycles += 1
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_dey_imp(self) -> None:
+        """
+        DEY - Decrement Y Register.
+
+        :return: None
+        """
+        self.reg_y -= 1
+        self.cycles += 1
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_inc_zp(self) -> None:
+        """
+        INC - Increment Memory, Zero Page.
+
+        :return: None
+        """
+        address = self.fetch_byte()
+        self.write_byte(address, self.read_byte(address) + 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 1
+
+    def ins_inc_zpx(self) -> None:
+        """
+        INC - Increment Memory, Zero Page, X.
+
+        :return: None
+        """
+        address = self.fetch_byte() + self.reg_x
+        self.write_byte(address, self.read_byte(address) + 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 2
+
+    def ins_inc_abs(self) -> None:
+        """
+        INC - Increment Memory, Absolute.
+
+        :return: None
+        """
+        address = self.fetch_word()
+        self.write_byte(address, self.read_byte(address) + 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 1
+
+    def ins_inc_abx(self) -> None:
+        """
+        INC - Increment Memory, Absolute, X.
+
+        :return: None
+        """
+        address = self.fetch_word() + self.reg_x
+        self.write_byte(address, self.read_byte(address) + 1)
+        self.evaluate_flag_n(self.memory[address])
+        self.evaluate_flag_z(self.memory[address])
+        self.cycles += 2
+
+    def ins_inx_imp(self) -> None:
+        """
+        INX - Increment X Register.
+
+        :return: None
+        """
+        self.reg_x += 1
+        self.cycles += 1
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_iny_imp(self) -> None:
+        """
+        INY - Increment Y Register.
+
+        :return: None
+        """
+        self.reg_y += 1
+        self.cycles += 1
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
 
     def ins_sec_imp(self) -> None:
         """
