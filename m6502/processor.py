@@ -157,6 +157,33 @@ class Processor:
             self.write_byte(address, (value >> 8) & 0xFF)
             self.write_byte(address + 1, value & 0xFF)
 
+    def read_register_a(self) -> int:
+        """
+        Read the A register.
+
+        :return: int
+        """
+        self.cycles += 1
+        return self.reg_a
+
+    def read_register_x(self) -> int:
+        """
+        Read the X register.
+
+        :return: int
+        """
+        self.cycles += 1
+        return self.reg_x
+
+    def read_register_y(self) -> int:
+        """
+        Read the Y register.
+
+        :return: int
+        """
+        self.cycles += 1
+        return self.reg_y
+
     def evaluate_flag_n(self, data: int) -> None:
         """
         Evaluate negative flag.
@@ -251,11 +278,11 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.reg_x
+        address = self.fetch_byte() + self.read_register_x()
         self.write_byte(address, self.read_byte(address) - 1)
         self.evaluate_flag_n(self.memory[address])
         self.evaluate_flag_z(self.memory[address])
-        self.cycles += 2
+        self.cycles += 1
 
     def ins_dec_abs(self) -> None:
         """
@@ -275,11 +302,11 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_word() + self.reg_x
+        address = self.fetch_word() + self.read_register_x()
         self.write_byte(address, self.read_byte(address) - 1)
         self.evaluate_flag_n(self.memory[address])
         self.evaluate_flag_z(self.memory[address])
-        self.cycles += 2
+        self.cycles += 1
 
     def ins_dex_imp(self) -> None:
         """
@@ -287,8 +314,7 @@ class Processor:
 
         :return: None
         """
-        self.reg_x -= 1
-        self.cycles += 1
+        self.reg_x = self.read_register_x() - 1
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
@@ -298,8 +324,7 @@ class Processor:
 
         :return: None
         """
-        self.reg_y -= 1
-        self.cycles += 1
+        self.reg_y = self.read_register_y() - 1
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
@@ -321,11 +346,11 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.reg_x
+        address = self.fetch_byte() + self.read_register_x()
         self.write_byte(address, self.read_byte(address) + 1)
         self.evaluate_flag_n(self.memory[address])
         self.evaluate_flag_z(self.memory[address])
-        self.cycles += 2
+        self.cycles += 1
 
     def ins_inc_abs(self) -> None:
         """
@@ -345,11 +370,11 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_word() + self.reg_x
+        address = self.fetch_word() + self.read_register_x()
         self.write_byte(address, self.read_byte(address) + 1)
         self.evaluate_flag_n(self.memory[address])
         self.evaluate_flag_z(self.memory[address])
-        self.cycles += 2
+        self.cycles += 1
 
     def ins_inx_imp(self) -> None:
         """
@@ -357,8 +382,7 @@ class Processor:
 
         :return: None
         """
-        self.reg_x += 1
-        self.cycles += 1
+        self.reg_x = self.read_register_x() + 1
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
@@ -368,8 +392,136 @@ class Processor:
 
         :return: None
         """
-        self.reg_y += 1
-        self.cycles += 1
+        self.reg_y = self.read_register_y() + 1
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_lda_imm(self) -> None:
+        """
+        LDA - Load Accumulator, Immediate.
+
+        :return: None
+        """
+        self.reg_a = self.fetch_byte()
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_lda_zp(self) -> None:
+        """
+        LDA - Load Accumulator, Zero Page.
+
+        :return: None
+        """
+        address = self.fetch_byte()
+        self.reg_a = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_lda_zpx(self) -> None:
+        """
+        LDA - Load Accumulator, Zero Page, X.
+
+        :return: None
+        """
+        address = self.fetch_byte() + self.read_register_x()
+        self.reg_a = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_lda_abs(self) -> None:
+        """
+        LDA - Load Accumulator, Absolute.
+
+        :return: None
+        """
+        address = self.fetch_word()
+        self.reg_a = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_ldx_imm(self) -> None:
+        """
+        LDA - Load X Register, Immediate.
+
+        :return: None
+        """
+        self.reg_x = self.fetch_byte()
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_ldx_zp(self) -> None:
+        """
+        LDA - Load X Register, Zero Page.
+
+        :return: None
+        """
+        address = self.fetch_byte()
+        self.reg_x = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_ldx_zpy(self) -> None:
+        """
+        LDA - Load X Register, Zero Page, Y.
+
+        :return: None
+        """
+        address = self.fetch_byte() + self.read_register_y()
+        self.reg_x = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_ldx_abs(self) -> None:
+        """
+        LDA - Load X Register, Absolute.
+
+        :return: None
+        """
+        address = self.fetch_word()
+        self.reg_x = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_ldy_imm(self) -> None:
+        """
+        LDA - Load Y Register, Immediate.
+
+        :return: None
+        """
+        self.reg_y = self.fetch_byte()
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_ldy_zp(self) -> None:
+        """
+        LDA - Load Y Register, Zero Page.
+
+        :return: None
+        """
+        address = self.fetch_byte()
+        self.reg_y = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_ldy_zpx(self) -> None:
+        """
+        LDA - Load Y Register, Zero Page, X.
+
+        :return: None
+        """
+        address = self.fetch_byte() + self.read_register_x()
+        self.reg_y = self.read_byte(address)
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_ldy_abs(self) -> None:
+        """
+        LDA - Load Y Register, Absolute.
+
+        :return: None
+        """
+        address = self.fetch_word()
+        self.reg_y = self.read_byte(address)
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
