@@ -93,7 +93,7 @@ def test_cpu_ins_sta_zpx() -> None:
 
 def test_cpu_ins_sta_abs() -> None:
     """
-    Load Accumulator, Absolute.
+    Store Accumulator, Absolute.
 
     return: None
     """
