@@ -442,6 +442,34 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
+    def ins_lda_abx(self) -> None:
+        """
+        LDA - Load Accumulator, Absolute, X.
+
+        TODO: Using register X directly otherwise we use too many cycles.
+
+        :return: None
+        """
+        self.reg_a = self.read_byte(
+            self.fetch_word() + self.reg_x
+        )
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_lda_aby(self) -> None:
+        """
+        LDA - Load Accumulator, Absolute, Y.
+
+        TODO: Using register Y directly otherwise we use too many cycles.
+
+        :return: None
+        """
+        self.reg_a = self.read_byte(
+            self.fetch_word() + self.reg_y
+        )
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
     def ins_ldx_imm(self) -> None:
         """
         LDA - Load X Register, Immediate.
@@ -482,6 +510,20 @@ class Processor:
         """
         self.reg_x = self.read_byte(
             self.fetch_word()
+        )
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_ldx_aby(self) -> None:
+        """
+        LDA - Load X Register, Absolute, Y.
+
+        TODO: Using register Y directly otherwise we use too many cycles.
+
+        :return: None
+        """
+        self.reg_x = self.read_byte(
+            self.fetch_word() + self.reg_y
         )
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
@@ -528,6 +570,20 @@ class Processor:
         """
         self.reg_y = self.read_byte(
             self.fetch_word()
+        )
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_ldy_abx(self) -> None:
+        """
+        LDA - Load Y Register, Absolute, X.
+
+        TODO: Using register X directly otherwise we use too many cycles.
+
+        :return: None
+        """
+        self.reg_y = self.read_byte(
+            self.fetch_word() + self.reg_x
         )
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)

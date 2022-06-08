@@ -130,3 +130,27 @@ def test_cpu_ins_ldx_abs() -> None:
         cpu.cycles,
         cpu.reg_x,
     ) == (0xFCE5, 0x01FD, 4, 0xF0)
+
+
+def test_cpu_ins_ldx_aby() -> None:
+    """
+    Load X Register, Absolute, Y.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_x = 0
+    cpu.reg_y = 1
+    memory[0xFCE2] = 0xBE
+    memory[0xFCE3] = 0xFA
+    memory[0xFCE4] = 0xFA
+    memory[0xFAFA + cpu.reg_y] = 0xF0
+    cpu.execute(4)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_x,
+    ) == (0xFCE5, 0x01FD, 4, 0xF0)

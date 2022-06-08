@@ -136,3 +136,55 @@ def test_cpu_ins_lda_abs() -> None:
         cpu.cycles,
         cpu.reg_a,
     ) == (0xFCE5, 0x01FD, 4, 0xF0)
+
+
+def test_cpu_ins_lda_abx() -> None:
+    """
+    Load Accumulator, Absolute, X.
+
+    TODO: This test doesn't test the page crossing.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0
+    cpu.reg_x = 1
+    memory[0xFCE2] = 0xBD
+    memory[0xFCE3] = 0xFA
+    memory[0xFCE4] = 0xFA
+    memory[0xFAFA + cpu.reg_x] = 0xF0
+    cpu.execute(4)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE5, 0x01FD, 4, 0xF0)
+
+
+def test_cpu_ins_lda_aby() -> None:
+    """
+    Load Accumulator, Absolute, Y.
+
+    TODO: This test doesn't test the page crossing.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0
+    cpu.reg_y = 1
+    memory[0xFCE2] = 0xB9
+    memory[0xFCE3] = 0xFA
+    memory[0xFCE4] = 0xFA
+    memory[0xFAFA + cpu.reg_y] = 0xF0
+    cpu.execute(4)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE5, 0x01FD, 4, 0xF0)
