@@ -278,7 +278,7 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.read_register_x()
+        address = (self.fetch_byte() + self.read_register_x()) & 0xFF
         self.write_byte(address, self.read_byte(address) - 1)
         self.evaluate_flag_n(self.memory[address])
         self.evaluate_flag_z(self.memory[address])
@@ -346,7 +346,7 @@ class Processor:
 
         :return: None
         """
-        address = self.fetch_byte() + self.read_register_x()
+        address = (self.fetch_byte() + self.read_register_x()) & 0xFF
         self.write_byte(address, self.read_byte(address) + 1)
         self.evaluate_flag_n(self.memory[address])
         self.evaluate_flag_z(self.memory[address])
@@ -425,7 +425,7 @@ class Processor:
         :return: None
         """
         self.reg_a = self.read_byte(
-            self.fetch_byte() + self.read_register_x()
+            (self.fetch_byte() + self.read_register_x()) & 0xFF
         )
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
@@ -497,7 +497,7 @@ class Processor:
         :return: None
         """
         self.reg_x = self.read_byte(
-            self.fetch_byte() + self.read_register_y()
+            (self.fetch_byte() + self.read_register_y()) & 0xFF
         )
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
@@ -557,7 +557,7 @@ class Processor:
         :return: None
         """
         self.reg_y = self.read_byte(
-            self.fetch_byte() + self.read_register_x()
+            (self.fetch_byte() + self.read_register_x()) & 0xFF
         )
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
@@ -633,7 +633,7 @@ class Processor:
         :return: None
         """
         self.write_byte(
-            self.fetch_byte() + self.read_register_x(),
+            (self.fetch_byte() + self.read_register_x()) & 0xFF,
             self.reg_a
         )
 
@@ -666,7 +666,7 @@ class Processor:
         :return: None
         """
         self.write_byte(
-            self.fetch_byte() + self.read_register_y(),
+            (self.fetch_byte() + self.read_register_y()) & 0xFF,
             self.reg_x
         )
 
@@ -699,7 +699,7 @@ class Processor:
         :return: None
         """
         self.write_byte(
-            self.fetch_byte() + self.read_register_x(),
+            (self.fetch_byte() + self.read_register_x()) & 0xFF,
             self.reg_y
         )
 

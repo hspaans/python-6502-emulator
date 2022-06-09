@@ -35,6 +35,7 @@ Stores the contents of the X register into memory.
 
 See also: STA, STY
 """
+import pytest
 import m6502
 
 
@@ -60,9 +61,19 @@ def test_cpu_ins_stx_zp() -> None:
     ) == (0xFCE4, 0x01FD, 3, 0xF0)
 
 
-def test_cpu_ins_stx_zpy() -> None:
+@pytest.mark.parametrize(
+    "reg_y, memory_location", [
+        (0x0F, 0x8F),
+        (0xFF, 0x7F),
+    ])
+def test_cpu_ins_stx_zpy(reg_y: int, memory_location: int) -> None:
     """
     Store X Register, Zero Page, Y.
+
+    The Zero Page address may not exceed beyond 0xFF:
+
+    - 0x80 + 0x0F => 0x8F
+    - 0x80 + 0xFF => 0x7F (0x017F)
 
     return: None
     """
@@ -70,16 +81,16 @@ def test_cpu_ins_stx_zpy() -> None:
     cpu = m6502.Processor(memory)
     cpu.reset()
     cpu.reg_x = 0xF0
-    cpu.reg_y = 1
+    cpu.reg_y = reg_y
     memory[0xFCE2] = 0x96
-    memory[0xFCE3] = 0xFC
-    memory[0xFC + cpu.reg_y] = 0x00
+    memory[0xFCE3] = 0x80
+    memory[memory_location] = 0x00
     cpu.execute(4)
     assert (
         cpu.program_counter,
         cpu.stack_pointer,
         cpu.cycles,
-        memory[0xFC + cpu.reg_y],
+        memory[memory_location],
     ) == (0xFCE4, 0x01FD, 4, 0xF0)
 
 

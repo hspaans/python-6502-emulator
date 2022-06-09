@@ -46,6 +46,7 @@ flags as appropriate.
 
 See also: LDX, LDY
 """
+import pytest
 import m6502
 
 
@@ -58,7 +59,7 @@ def test_cpu_ins_lda_imm() -> None:
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_a = 0
+    cpu.reg_a = 0x00
     memory[0xFCE2] = 0xA9
     memory[0xFCE3] = 0xF0
     cpu.execute(2)
@@ -79,10 +80,10 @@ def test_cpu_ins_lda_zp() -> None:
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_a = 0
+    cpu.reg_a = 0x00
     memory[0xFCE2] = 0xA5
-    memory[0xFCE3] = 0xFC
-    memory[0xFC] = 0xF0
+    memory[0xFCE3] = 0x80
+    memory[0x80] = 0xF0
     cpu.execute(3)
     assert (
         cpu.program_counter,
@@ -92,20 +93,30 @@ def test_cpu_ins_lda_zp() -> None:
     ) == (0xFCE4, 0x01FD, 3, 0xF0)
 
 
-def test_cpu_ins_lda_zpx() -> None:
+@pytest.mark.parametrize(
+    "reg_x, memory_location", [
+        (0x0F, 0x8F),
+        (0xFF, 0x7F),
+    ])
+def test_cpu_ins_lda_zpx(reg_x: int, memory_location: int) -> None:
     """
     Load Accumulator, Zero Page, X.
+
+    The Zero Page address may not exceed beyond 0xFF:
+
+    - 0x80 + 0x0F => 0x8F
+    - 0x80 + 0xFF => 0x7F (0x017F)
 
     return: None
     """
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_a = 0
-    cpu.reg_x = 1
+    cpu.reg_a = 0x00
+    cpu.reg_x = reg_x
     memory[0xFCE2] = 0xB5
-    memory[0xFCE3] = 0xFC
-    memory[0xFC + cpu.reg_x] = 0xF0
+    memory[0xFCE3] = 0x80
+    memory[memory_location] = 0xF0
     cpu.execute(4)
     assert (
         cpu.program_counter,
@@ -124,7 +135,7 @@ def test_cpu_ins_lda_abs() -> None:
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_a = 0
+    cpu.reg_a = 0x00
     memory[0xFCE2] = 0xAD
     memory[0xFCE3] = 0xFA
     memory[0xFCE4] = 0xFA
@@ -149,7 +160,7 @@ def test_cpu_ins_lda_abx() -> None:
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_a = 0
+    cpu.reg_a = 0x00
     cpu.reg_x = 1
     memory[0xFCE2] = 0xBD
     memory[0xFCE3] = 0xFA
@@ -175,7 +186,7 @@ def test_cpu_ins_lda_aby() -> None:
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_a = 0
+    cpu.reg_a = 0x00
     cpu.reg_y = 1
     memory[0xFCE2] = 0xB9
     memory[0xFCE3] = 0xFA

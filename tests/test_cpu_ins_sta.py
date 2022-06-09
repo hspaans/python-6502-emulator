@@ -43,6 +43,7 @@ Stores the contents of the accumulator into memory.
 
 See also: STX, STY
 """
+import pytest
 import m6502
 
 
@@ -68,7 +69,12 @@ def test_cpu_ins_sta_zp() -> None:
     ) == (0xFCE4, 0x01FD, 3, 0xF0)
 
 
-def test_cpu_ins_sta_zpx() -> None:
+@pytest.mark.parametrize(
+    "reg_x, memory_location", [
+        (0x0F, 0x8F),
+        (0xFF, 0x7F),
+    ])
+def test_cpu_ins_sta_zpx(reg_x: int, memory_location: int) -> None:
     """
     Store Accumulator, Zero Page, X.
 
@@ -78,16 +84,16 @@ def test_cpu_ins_sta_zpx() -> None:
     cpu = m6502.Processor(memory)
     cpu.reset()
     cpu.reg_a = 0xF0
-    cpu.reg_x = 1
+    cpu.reg_x = reg_x
     memory[0xFCE2] = 0x95
-    memory[0xFCE3] = 0xFC
-    memory[0xFC + cpu.reg_x] = 0x00
+    memory[0xFCE3] = 0x80
+    memory[memory_location] = 0x00
     cpu.execute(4)
     assert (
         cpu.program_counter,
         cpu.stack_pointer,
         cpu.cycles,
-        memory[0xFC + cpu.reg_x],
+        memory[memory_location],
     ) == (0xFCE4, 0x01FD, 4, 0xF0)
 
 
