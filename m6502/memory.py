@@ -4,14 +4,18 @@
 class Memory:
     """Memory bank for MOT-6502 systems."""
 
-    def __init__(self, size: int = 65536) -> None:
+    def __init__(self, size: int = None) -> None:
         """
         Initialize the memory.
 
         :param size: The size of the memory
         :return: None
         """
-        if 0x0200 < (size - 1) > 0xFFFF:
+        if size is None:
+            size = 0xFFFF
+        if size < 0x0200:
+            raise ValueError("Memory size is not valid")
+        if size > 0xFFFF:
             raise ValueError("Memory size is not valid")
         self.size = size
         self.memory = [0] * self.size

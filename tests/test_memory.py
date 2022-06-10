@@ -3,6 +3,34 @@ import pytest
 import m6502
 
 
+@pytest.mark.parametrize("size", [0x0200, 0xFFFF])
+def test_init_memory_size(size: int) -> None:
+    """
+    Verify with invalid memory sizes.
+
+    TODO: Verify correct memory sizes
+
+    :param size: The size of the memory
+    :return: None
+    """
+    memory = m6502.Memory(size)  # noqa: E302 F841 PLW0612
+    assert len(memory.memory) == size
+
+
+@pytest.mark.parametrize("size", [0x01FF, 0x010000])
+def test_init_memory_valueerror(size: int) -> None:
+    """
+    Verify with invalid memory sizes.
+
+    TODO: Verify correct memory sizes
+
+    :param size: The size of the memory
+    :return: None
+    """
+    with pytest.raises(ValueError):
+        memory = m6502.Memory(size)  # noqa: E302 F841 PLW0612
+
+
 @pytest.mark.parametrize("i", range(0x0000, 0x0100))
 def test_write_zero_page(i: int) -> None:
     """
