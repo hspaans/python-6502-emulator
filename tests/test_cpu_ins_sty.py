@@ -99,7 +99,7 @@ def test_cpu_ins_sty_abs() -> None:
     cpu = m6502.Processor(memory)
     cpu.reset()
     cpu.reg_y = 0xF0
-    memory[0xFCE2] = 0x8E
+    memory[0xFCE2] = 0x8C
     memory[0xFCE3] = 0xFA
     memory[0xFCE4] = 0xFA
     memory[0xFAFA] = 0x00
