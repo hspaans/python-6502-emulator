@@ -161,7 +161,7 @@ def test_cpu_ins_lda_abx() -> None:
     cpu = m6502.Processor(memory)
     cpu.reset()
     cpu.reg_a = 0x00
-    cpu.reg_x = 1
+    cpu.reg_x = 0x01
     memory[0xFCE2] = 0xBD
     memory[0xFCE3] = 0xFA
     memory[0xFCE4] = 0xFA

@@ -145,7 +145,9 @@ def test_cpu_ins_ldy_abs() -> None:
 
 def test_cpu_ins_ldy_abx() -> None:
     """
-    Load Y Register, Absolute.
+    Load Y Register, Absolute, X.
+
+    TODO: This test doesn't test the page crossing.
 
     return: None
     """

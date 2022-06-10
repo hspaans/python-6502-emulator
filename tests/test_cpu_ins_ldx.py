@@ -147,6 +147,8 @@ def test_cpu_ins_ldx_aby() -> None:
     """
     Load X Register, Absolute, Y.
 
+    TODO: This test doesn't test the page crossing.
+
     return: None
     """
     memory = m6502.Memory()
