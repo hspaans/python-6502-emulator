@@ -50,7 +50,7 @@ import m6502
         (1, 0, True, False),
         (2, 1, False, False)
     ])
-def test_cpu_ins_dec_zp(value, expected, flag_z, flag_n) -> None:
+def test_cpu_ins_dec_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement Memory, Zero Page.
 
@@ -74,25 +74,34 @@ def test_cpu_ins_dec_zp(value, expected, flag_z, flag_n) -> None:
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
-        (-1, -2, False, True),
-        (0, -1, False, True),
-        (1, 0, True, False),
-        (2, 1, False, False)
+    "value, expected, flag_z, flag_n, reg_x, memory_location", [
+        (-1, -2, False, True,  0x0F, 0x8F),
+        (0, -1, False, True,  0x0F, 0x8F),
+        (1,  0, True,  False, 0x0F, 0x8F),
+        (2,  1, False, False, 0x0F, 0x8F),
+        (-1, -2, False, True,  0xFF, 0x7F),
+        (0, -1, False, True,  0xFF, 0x7F),
+        (1,  0, True,  False, 0xFF, 0x7F),
+        (2,  1, False, False, 0xFF, 0x7F)
     ])
-def test_cpu_ins_dec_zpx(value, expected, flag_z, flag_n) -> None:
+def test_cpu_ins_dec_zpx(value: int, expected: int, flag_z: bool, flag_n: bool, reg_x: int, memory_location: int) -> None:
     """
     Decrement Memory, Zero Page, X.
+
+    The Zero Page address may not exceed beyond 0xFF:
+
+    - 0x80 + 0x0F => 0x8F
+    - 0x80 + 0xFF => 0x7F (0x017F)
 
     return: None
     """
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.reg_x = 1
+    cpu.reg_x = reg_x
     memory[0xFCE2] = 0xD6
-    memory[0xFCE3] = 0xFC
-    memory[0xFC + cpu.reg_x] = value
+    memory[0xFCE3] = 0x80
+    memory[memory_location] = value
     cpu.execute(6)
     assert (
         cpu.program_counter,
@@ -100,7 +109,7 @@ def test_cpu_ins_dec_zpx(value, expected, flag_z, flag_n) -> None:
         cpu.cycles,
         cpu.flag_z,
         cpu.flag_n,
-        memory[0xFC + cpu.reg_x],
+        memory[memory_location],
     ) == (0xFCE4, 0x01FD, 6, flag_z, flag_n, expected)
 
 
@@ -111,7 +120,7 @@ def test_cpu_ins_dec_zpx(value, expected, flag_z, flag_n) -> None:
         (1, 0, True, False),
         (2, 1, False, False)
     ])
-def test_cpu_ins_dec_abs(value, expected, flag_z, flag_n) -> None:
+def test_cpu_ins_dec_abs(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement Memory, Absolute.
 
@@ -142,7 +151,7 @@ def test_cpu_ins_dec_abs(value, expected, flag_z, flag_n) -> None:
         (1, 0, True, False),
         (2, 1, False, False)
     ])
-def test_cpu_ins_dec_abx(value, expected, flag_z, flag_n) -> None:
+def test_cpu_ins_dec_abx(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement Memory, Absolute, X.
 
