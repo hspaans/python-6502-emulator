@@ -15,7 +15,6 @@ class Memory:
             raise ValueError("Memory size is not valid")
         self.size = size
         self.memory = [0] * self.size
-        print(len(self.memory))
 
     def __getitem__(self, address: int) -> int:
         """
