@@ -38,7 +38,7 @@ Stores the contents of the accumulator into memory.
 +-----------------+--------+-------+--------------------------+
 | (Indirect, X)   |  0x81  |   2   |   6                      |
 +-----------------+--------+-------+--------------------------+
-| (Indirect), Y   |  0x81  |   2   |   6                      |
+| (Indirect), Y   |  0x91  |   2   |   6                      |
 +-----------------+--------+-------+--------------------------+
 
 See also: STX, STY
@@ -118,3 +118,108 @@ def test_cpu_ins_sta_abs() -> None:
         cpu.cycles,
         cpu.reg_a,
     ) == (0xFCE5, 0x01FD, 4, 0xF0)
+
+
+def test_cpu_ins_sta_abx() -> None:
+    """
+    Store Accumulator, Absolute, X.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0xF0
+    cpu.reg_x = 0x01
+    memory[0xFCE2] = 0x9D
+    memory[0xFCE3] = 0xFA
+    memory[0xFCE4] = 0xFA
+    memory[0xFAFA + cpu.reg_x] = 0x00
+    cpu.execute(5)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE5, 0x01FD, 5, 0xF0)
+
+
+def test_cpu_ins_sta_aby() -> None:
+    """
+    Store Accumulator, Absolute, Y.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0xF0
+    cpu.reg_y = 0x01
+    memory[0xFCE2] = 0x99
+    memory[0xFCE3] = 0xFA
+    memory[0xFCE4] = 0xFA
+    memory[0xFAFA + cpu.reg_y] = 0x00
+    cpu.execute(5)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE5, 0x01FD, 5, 0xF0)
+
+
+@pytest.mark.parametrize(
+    "reg_x, mem_low, mem_high", [
+        (0x04, 0x0084, 0x0085),
+        (0xFF, 0x007F, 0x0080),
+    ])
+def test_cpu_ins_sta_inx(reg_x: int, mem_low: int, mem_high: int) -> None:
+    """
+    Store Accumulator, Indexed Indirect.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0xF0
+    cpu.reg_x = reg_x
+    memory[0xFCE2] = 0x81
+    memory[0xFCE3] = 0x80
+    memory[mem_low] = 0x74
+    memory[mem_high] = 0x20
+    memory[0x2074] = 0x00
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE4, 0x01FD, 6, 0xF0)
+
+
+def test_cpu_ins_sta_iny() -> None:
+    """
+    Load Accumulator, Indirect Indexed.
+
+    TODO: This test doesn't test the page crossing.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0xF0
+    cpu.reg_y = 0x10
+    memory[0xFCE2] = 0x91
+    memory[0xFCE3] = 0x86
+    memory[0x0086] = 0x28
+    memory[0x0087] = 0x40
+    memory[0x4038] = 0x00
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE4, 0x01FD, 6, 0xF0)

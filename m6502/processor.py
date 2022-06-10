@@ -677,6 +677,66 @@ class Processor:
             self.reg_a
         )
 
+    def ins_sta_abx(self) -> None:
+        """
+        STA - Store Accumulator, Absolute, X.
+
+        TODO: Using register X directly otherwise we use too many cycles.
+
+        :return: None
+        """
+        self.write_byte(
+            self.read_byte(
+                self.fetch_word() + self.reg_x
+            ),
+            self.reg_a
+        )
+
+    def ins_sta_aby(self) -> None:
+        """
+        STA - Store Accumulator, Absolute, Y.
+
+        TODO: Using register Y directly otherwise we use too many cycles.
+
+        :return: None
+        """
+        self.write_byte(
+            self.read_byte(
+                self.fetch_word() + self.reg_y
+            ),
+            self.reg_a
+        )
+
+    def ins_sta_inx(self) -> None:
+        """
+        STA - Store Accumulator, Indexed Indirect.
+
+        :return: None
+        """
+        self.write_byte(
+            self.read_byte(
+                self.read_word(
+                    ((self.fetch_byte() + self.reg_x) & 0xFF)
+                )
+            ),
+            self.reg_a
+        )
+
+    def ins_sta_iny(self) -> None:
+        """
+        LDA - Store Accumulator, Indirect Indexed.
+
+        :return: None
+        """
+        self.write_byte(
+            self.read_byte(
+                self.read_word(
+                    self.fetch_byte()
+                ) + self.reg_y
+            ),
+            self.reg_a
+        )
+
     def ins_stx_zp(self) -> None:
         """
         STA - Store X Register, Zero Page.
