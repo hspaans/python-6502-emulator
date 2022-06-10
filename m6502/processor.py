@@ -470,6 +470,35 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
+    def ins_lda_inx(self) -> None:
+        """
+        LDA - Load Accumulator, Indexed Indirect.
+
+        :return: None
+        """
+        self.reg_a = self.read_byte(
+            self.read_word(
+                ((self.fetch_byte() + self.reg_x) & 0xFF)
+            )
+        )
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+        self.cycles += 1
+
+    def ins_lda_iny(self) -> None:
+        """
+        LDA - Load Accumulator, Indirect Indexed.
+
+        :return: None
+        """
+        self.reg_a = self.read_byte(
+            self.read_word(
+                self.fetch_byte()
+            ) + self.reg_y
+        )
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
     def ins_ldx_imm(self) -> None:
         """
         LDA - Load X Register, Immediate.

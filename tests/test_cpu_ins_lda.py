@@ -199,3 +199,60 @@ def test_cpu_ins_lda_aby() -> None:
         cpu.cycles,
         cpu.reg_a,
     ) == (0xFCE5, 0x01FD, 4, 0xF0)
+
+
+@pytest.mark.parametrize(
+    "reg_x, mem_low, mem_high", [
+        (0x04, 0x0084, 0x0085),
+        (0xFF, 0x007F, 0x0080),
+    ])
+def test_cpu_ins_lda_inx(reg_x: int, mem_low: int, mem_high: int) -> None:
+    """
+    Load Accumulator, Indexed Indirect.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0x00
+    cpu.reg_x = reg_x
+    memory[0xFCE2] = 0xA1
+    memory[0xFCE3] = 0x80
+    memory[mem_low] = 0x74
+    memory[mem_high] = 0x20
+    memory[0x2074] = 0xF0
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE4, 0x01FD, 6, 0xF0)
+
+
+def test_cpu_ins_lda_iny() -> None:
+    """
+    Load Accumulator, Indirect Indexed.
+
+    TODO: This test doesn't test the page crossing.
+
+    return: None
+    """
+    memory = m6502.Memory()
+    cpu = m6502.Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0x00
+    cpu.reg_y = 0x10
+    memory[0xFCE2] = 0xB1
+    memory[0xFCE3] = 0x86
+    memory[0x0086] = 0x28
+    memory[0x0087] = 0x40
+    memory[0x4038] = 0xF0
+    cpu.execute(5)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE4, 0x01FD, 5, 0xF0)
