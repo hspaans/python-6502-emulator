@@ -802,3 +802,43 @@ class Processor:
             self.fetch_word(),
             self.reg_y
         )
+
+    def ins_tax_imp(self) -> None:
+        """
+        TAX - Transfer Accumulator to X.
+
+        :return: None
+        """
+        self.reg_x = self.read_register_a()
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
+    def ins_tay_imp(self) -> None:
+        """
+        TAY - Transfer Accumulator to Y.
+
+        :return: None
+        """
+        self.reg_y = self.read_register_a()
+        self.evaluate_flag_z(self.reg_y)
+        self.evaluate_flag_n(self.reg_y)
+
+    def ins_txa_imp(self) -> None:
+        """
+        TXA - Transfer Register X to Accumulator.
+
+        :return: None
+        """
+        self.reg_a = self.read_register_x()
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_tya_imp(self) -> None:
+        """
+        TYA - Transfer Register Y to Accumulator.
+
+        :return: None
+        """
+        self.reg_a = self.read_register_y()
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
