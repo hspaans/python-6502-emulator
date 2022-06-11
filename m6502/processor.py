@@ -842,3 +842,15 @@ class Processor:
         self.reg_a = self.read_register_y()
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
+
+    def ins_pha_imp(self) -> None:
+        """
+        PHA - Push Accumulator.
+
+        TODO: Add check to not cross page
+
+        :return: None
+        """
+        self.memory[self.stack_pointer] = self.read_register_a()
+        self.stack_pointer -= 1
+        self.cycles += 1
