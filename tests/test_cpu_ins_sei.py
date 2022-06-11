@@ -43,7 +43,7 @@ def test_cpu_ins_sei_imp() -> None:
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    cpu.flag_i = True
+    cpu.flag_i = False
     memory[0xFCE2] = 0x78
     cpu.execute(2)
     assert (
