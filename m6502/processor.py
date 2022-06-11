@@ -854,3 +854,17 @@ class Processor:
         self.memory[self.stack_pointer] = self.read_register_a()
         self.stack_pointer -= 1
         self.cycles += 1
+
+    def ins_pla_imp(self) -> None:
+        """
+        PLA - Pull Accumulator.
+
+        TODO: Add check to not cross page
+
+        :return: None
+        """
+        self.reg_a = self.memory[self.stack_pointer]
+        self.stack_pointer += 1
+        self.cycles += 1
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
