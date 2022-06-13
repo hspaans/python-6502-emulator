@@ -868,3 +868,27 @@ class Processor:
         self.cycles += 1
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
+
+    def ins_php_imp(self) -> None:
+        """
+        Push Accumulator, Implied.
+
+        TODO: Implement instruction and test
+        TODO: Add check to not cross page
+
+        return: None
+        """
+        self.stack_pointer += 1
+        self.cycles += 1
+
+    def ins_plp_imp(self) -> None:
+        """
+        Pull Processor Status.
+
+        TODO: Implement instruction and test
+        TODO: Add check to not cross page
+
+        :return: None
+        """
+        self.stack_pointer += 1
+        self.cycles += 1
