@@ -38,6 +38,7 @@ jobs:
           VALIDATE_PYTHON_MYPY: false
           VALIDATE_NATURAL_LANGUAGE: false
           VALIDATE_JSCPD: false
+          VALIDATE_MARKDOWN: false
 
   pytest:
     name: PyTest
@@ -83,10 +84,6 @@ jobs:
           pytest --suppress-no-test-exit-code
 
   dependency-review:
-    needs:
-      - lint
-      - pytest
-
     name: Dependency Review
     runs-on: ubuntu-latest
 
