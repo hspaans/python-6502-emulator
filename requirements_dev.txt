@@ -1,6 +1,0 @@
-pytest
-flake8
-flake8-bugbear
-flake8-docstrings
-flake8-pylint
-flake8-todo
