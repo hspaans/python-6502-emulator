@@ -71,7 +71,7 @@ jobs:
 
       - name: Lint with yamllint
         run: |
-          yamllint .
+          yamllint . --format github
 
       - name: Lint with flake8
         run: |
