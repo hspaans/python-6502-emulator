@@ -12,34 +12,6 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint Code Base
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Copy linter settings
-        run: |
-          mkdir .github/linters
-          if [ -f .dockerfilelintrc ];  then cp .dockerfilelintrc .github/linters ; fi
-          if [ -f .htmlhintrc ];        then cp .htmlhintrc .github/linters ; fi
-          if [ -f .markdown-lint.yml ]; then cp .markdown-lint.yml .github/linters ; fi
-
-      - name: Run Super-Linter
-        uses: github/super-linter/slim@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_GITHUB_ACTIONS: false
-          VALIDATE_PYTHON_BLACK: false
-          VALIDATE_PYTHON_FLAKE8: false
-          VALIDATE_PYTHON_ISORT: false
-          VALIDATE_PYTHON_MYPY: false
-          VALIDATE_NATURAL_LANGUAGE: false
-          VALIDATE_JSCPD: false
-          VALIDATE_MARKDOWN: false
-
   pytest:
     name: PyTest
     runs-on: ubuntu-latest
@@ -60,18 +32,15 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 flake8-bugbear flake8-docstrings flake8-pylint pytest pytest-custom-exit-code
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
+          pip install flake8 pytest pytest-custom-exit-code
 
       - name: Lint with yamllint
         run: |
-          yamllint .
+          yamllint . --format github
 
       - name: Lint with flake8
         run: |
@@ -100,7 +69,6 @@ jobs:
 
   analyze:
     needs:
-      - lint
       - pytest
       - dependency-review
 
