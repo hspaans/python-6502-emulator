@@ -5,7 +5,8 @@
 	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/flake8:1": {},
-		"ghcr.io/devcontainers-contrib/features/yamllint:1": {}
+		"ghcr.io/devcontainers-contrib/features/yamllint:1": {},
+		"ghcr.io/devcontainers-contrib/features/tox:1": {}
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
