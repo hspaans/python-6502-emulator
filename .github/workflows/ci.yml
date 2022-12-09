@@ -89,7 +89,7 @@ jobs:
 
   analyze:
     needs:
-      - test
+      - tox
       - lint
       - dependency-review
 
