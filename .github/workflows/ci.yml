@@ -2,18 +2,19 @@
 name: CI
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
-  schedule:
-    - cron: '23 12 21 * *'
 
 permissions:
   contents: read
 
 jobs:
   tox:
-    name: Test Python ${{ matrix.py }} - ${{ matrix.os }}
+    name: Test on Python ${{ matrix.py }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
