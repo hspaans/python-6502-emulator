@@ -193,7 +193,7 @@ class Processor:
         self.memory[self.stack_pointer] = data
         self.stack_pointer -= 1
         self.cycles += 1
-    
+
     def pop(self) -> int:
         """
         Pop data from stack.
@@ -909,14 +909,26 @@ class Processor:
 
     def ins_php_imp(self) -> None:
         """
-        Push Accumulator, Implied.
-
-        TODO: Implement instruction and test
-        TODO: Add check to not cross page
+        Push Processor Statys, Implied.
 
         return: None
         """
-        self.stack_pointer += 1
+        flags = 0x00
+        if self.flag_n:
+            flags = flags | (1 << 1)
+        if self.flag_v:
+            flags = flags | (1 << 2)
+        if self.flag_b:
+            flags = flags | (1 << 3)
+        if self.flag_d:
+            flags = flags | (1 << 4)
+        if self.flag_i:
+            flags = flags | (1 << 5)
+        if self.flag_z:
+            flags = flags | (1 << 6)
+        if self.flag_c:
+            flags = flags | (1 << 7)
+        self.push(flags)
         self.cycles += 1
 
     def ins_plp_imp(self) -> None:
@@ -928,5 +940,20 @@ class Processor:
 
         :return: None
         """
-        self.stack_pointer += 1
-        self.cycles += 1
+        flags = self.pop()
+        # print(flags)
+        if not flags & (1 << 1):
+            self.flag_n = False
+        if not flags & (1 << 2):
+            self.flag_v = False
+        if not flags & (1 << 3):
+            self.flag_b = False
+        if not flags & (1 << 4):
+            self.flag_d = False
+        if not flags & (1 << 5):
+            self.flag_i = False
+        if not flags & (1 << 6):
+            self.flag_z = False
+        if not flags & (1 << 7):
+            self.flag_c = False
+        self.cycles += 2

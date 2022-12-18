@@ -32,20 +32,32 @@ Processor Status after use:
 
 See also: PHP
 """
+import pytest
 import m6502
 
 
-def test_cpu_ins_plp_imp() -> None:
+@pytest.mark.parametrize(
+    "value, flag_n, flag_z", [
+        (0xAC, False, False),
+        (0xEC, False, True),
+        (0xAE, True, False),
+    ])
+def test_cpu_ins_plp_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     """
     Pull Processor Status.
-
-    TODO: Implement instruction and test
-    TODO: Add check to not cross page
 
     :return: None
     """
     memory = m6502.Memory()
     cpu = m6502.Processor(memory)
     cpu.reset()
-    memory[0xFCE2] = 0x28
-    assert True
+    cpu.memory[0xFCE2] = 0x28
+    cpu.memory[cpu.stack_pointer] = value
+    cpu.execute(4)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+    ) == (0xFCE3, 0x01FE, 4, flag_n, flag_z)

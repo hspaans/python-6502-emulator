@@ -31,15 +31,18 @@ Processor Status after use:
 
 See also: PLP
 """
+import pytest
 import m6502
 
-
-def test_cpu_ins_php_imp() -> None:
+@pytest.mark.parametrize(
+    "value, flag_n, flag_z", [
+        (0xAC, False, False),
+        (0xEC, False, True),
+        (0xAE, True, False),
+    ])
+def test_cpu_ins_php_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     """
-    Push Accumulator, Implied.
-
-    TODO: Implement instruction and test
-    TODO: Add check to not cross page
+    Push Processor Status, Implied.
 
     return: None
     """
@@ -47,4 +50,12 @@ def test_cpu_ins_php_imp() -> None:
     cpu = m6502.Processor(memory)
     cpu.reset()
     memory[0xFCE2] = 0x08
-    assert True
+    cpu.flag_z = flag_z
+    cpu.flag_n = flag_n
+    cpu.execute(3)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.memory[cpu.stack_pointer + 1],
+    ) == (0xFCE3, 0x01FC, 3, value)
