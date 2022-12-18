@@ -863,6 +863,14 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
+    def ins_txs_imp(self) -> None:
+        """
+        TXS - Transfer Register X to Stack Pointer.
+
+        :return: None
+        """
+        self.push(self.reg_x)
+
     def ins_tya_imp(self) -> None:
         """
         TYA - Transfer Register Y to Accumulator.
