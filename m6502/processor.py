@@ -184,6 +184,26 @@ class Processor:
         self.cycles += 1
         return self.reg_y
 
+    def push(self, data: int) -> None:
+        """
+        Push data to stack
+
+        :return: None
+        """
+        self.memory[self.stack_pointer] = data
+        self.stack_pointer -= 1
+        self.cycles += 1
+    
+    def pop(self) -> int:
+        """
+        Pop data from stack.
+
+        :return: int
+        """
+        self.stack_pointer += 1
+        self.cycles += 1
+        return self.memory[self.stack_pointer - 1]
+
     def evaluate_flag_n(self, data: int) -> None:
         """
         Evaluate negative flag.
@@ -822,6 +842,16 @@ class Processor:
         self.reg_y = self.read_register_a()
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
+
+    def ins_tsx_imp(self) -> None:
+        """
+        TSX - Transfer Stack Pointer to X.
+
+        :return: None
+        """
+        self.reg_x = self.pop()
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
 
     def ins_txa_imp(self) -> None:
         """
