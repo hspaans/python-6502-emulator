@@ -43,7 +43,7 @@ import m6502
         (0x00, False, True),
         (0xF0, True, False),
     ])
-def test_cpu_ins_txs_imm(value: int, flag_n: bool, flag_z: bool) -> None:
+def test_cpu_ins_tsx_imm(value: int, flag_n: bool, flag_z: bool) -> None:
     """
     Transfer Stack Pointer to X, Implied.
 
