@@ -184,6 +184,26 @@ class Processor:
         self.cycles += 1
         return self.reg_y
 
+    def push(self, data: int) -> None:
+        """
+        Push data to stack
+
+        :return: None
+        """
+        self.memory[self.stack_pointer] = data
+        self.stack_pointer -= 1
+        self.cycles += 1
+
+    def pop(self) -> int:
+        """
+        Pop data from stack.
+
+        :return: int
+        """
+        self.stack_pointer += 1
+        self.cycles += 1
+        return self.memory[self.stack_pointer - 1]
+
     def evaluate_flag_n(self, data: int) -> None:
         """
         Evaluate negative flag.
@@ -823,6 +843,16 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
+    def ins_tsx_imp(self) -> None:
+        """
+        TSX - Transfer Stack Pointer to X.
+
+        :return: None
+        """
+        self.reg_x = self.pop()
+        self.evaluate_flag_z(self.reg_x)
+        self.evaluate_flag_n(self.reg_x)
+
     def ins_txa_imp(self) -> None:
         """
         TXA - Transfer Register X to Accumulator.
@@ -833,6 +863,14 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
+    def ins_txs_imp(self) -> None:
+        """
+        TXS - Transfer Register X to Stack Pointer.
+
+        :return: None
+        """
+        self.push(self.reg_x)
+
     def ins_tya_imp(self) -> None:
         """
         TYA - Transfer Register Y to Accumulator.
@@ -842,3 +880,80 @@ class Processor:
         self.reg_a = self.read_register_y()
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
+
+    def ins_pha_imp(self) -> None:
+        """
+        PHA - Push Accumulator.
+
+        TODO: Add check to not cross page
+
+        :return: None
+        """
+        self.memory[self.stack_pointer] = self.read_register_a()
+        self.stack_pointer -= 1
+        self.cycles += 1
+
+    def ins_pla_imp(self) -> None:
+        """
+        PLA - Pull Accumulator.
+
+        TODO: Add check to not cross page
+
+        :return: None
+        """
+        self.reg_a = self.memory[self.stack_pointer]
+        self.stack_pointer += 1
+        self.cycles += 1
+        self.evaluate_flag_z(self.reg_a)
+        self.evaluate_flag_n(self.reg_a)
+
+    def ins_php_imp(self) -> None:
+        """
+        Push Processor Statys, Implied.
+
+        return: None
+        """
+        flags = 0x00
+        if self.flag_n:
+            flags = flags | (1 << 1)
+        if self.flag_v:
+            flags = flags | (1 << 2)
+        if self.flag_b:
+            flags = flags | (1 << 3)
+        if self.flag_d:
+            flags = flags | (1 << 4)
+        if self.flag_i:
+            flags = flags | (1 << 5)
+        if self.flag_z:
+            flags = flags | (1 << 6)
+        if self.flag_c:
+            flags = flags | (1 << 7)
+        self.push(flags)
+        self.cycles += 1
+
+    def ins_plp_imp(self) -> None:
+        """
+        Pull Processor Status.
+
+        TODO: Implement instruction and test
+        TODO: Add check to not cross page
+
+        :return: None
+        """
+        flags = self.pop()
+        # print(flags)
+        if not flags & (1 << 1):
+            self.flag_n = False
+        if not flags & (1 << 2):
+            self.flag_v = False
+        if not flags & (1 << 3):
+            self.flag_b = False
+        if not flags & (1 << 4):
+            self.flag_d = False
+        if not flags & (1 << 5):
+            self.flag_i = False
+        if not flags & (1 << 6):
+            self.flag_z = False
+        if not flags & (1 << 7):
+            self.flag_c = False
+        self.cycles += 2
