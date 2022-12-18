@@ -186,7 +186,7 @@ class Processor:
 
     def push(self, data: int) -> None:
         """
-        Push data to stack
+        Push data to stack.
 
         :return: None
         """
