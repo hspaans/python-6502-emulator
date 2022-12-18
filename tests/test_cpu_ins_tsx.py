@@ -45,7 +45,7 @@ import m6502
     ])
 def test_cpu_ins_txs_imm(value: int, flag_n: bool, flag_z: bool) -> None:
     """
-    Transfer Accumulator, Implied.
+    Transfer Stack Pointer to X, Implied.
 
     return: None
     """
