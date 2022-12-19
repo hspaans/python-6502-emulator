@@ -37,6 +37,7 @@ See also: TXS
 import pytest
 import m6502
 
+
 @pytest.mark.parametrize(
     "value, flag_n, flag_z", [
         (0x0F, False, False),

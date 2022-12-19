@@ -36,6 +36,7 @@ See also: TSX
 import pytest
 import m6502
 
+
 @pytest.mark.parametrize(
     "value", [
         (0x0F),
