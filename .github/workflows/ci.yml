@@ -71,25 +71,10 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-  dependency-review:
-    name: Dependency Review
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v3
-        with:
-          fail-on-severity: high
-          deny-licenses: AGPL-1.0-or-later
-
   analyze:
     needs:
       - tox
       - lint
-      - dependency-review
 
     name: Analyze
     runs-on: ubuntu-latest
