@@ -13,9 +13,9 @@ class Memory:
         """
         if size is None:
             size = 0xFFFF
-        if size < 0x0200:
+        elif size < 0x0200:
             raise ValueError("Memory size is not valid")
-        if size > 0xFFFF:
+        elif size > 0xFFFF:
             raise ValueError("Memory size is not valid")
         self.size = size
         self.memory = [0] * self.size
@@ -27,7 +27,7 @@ class Memory:
         :param address: The address to read from
         :return: The value at the specified address
         """
-        if 0x0000 < address > 0xFFFF:
+        if 0 > address or address > 0xFFFF:
             raise ValueError("Memory address is not valid")
         return self.memory[address]
 
@@ -39,7 +39,7 @@ class Memory:
         :param value: The value to write to the address
         :return: None
         """
-        if 0x0000 < address > 0xFFFF:
+        if 0 > address or address > 0xFFFF:
             raise ValueError("Memory address is not valid")
         if value.bit_length() > 8:
             raise ValueError("Value too large")
