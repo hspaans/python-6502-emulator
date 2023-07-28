@@ -234,7 +234,7 @@ class Processor:
         """
         while (self.cycles < cycles) or (cycles == 0):
             opcode = self.fetch_byte()
-            name = "ins_" + self.OPCODES[opcode] + "_" + self.ADDRESSING[opcode]
+            name = f"ins_{self.OPCODES[opcode]}_{self.ADDRESSING[opcode]}"
             method = getattr(self, name)
             method()
 
