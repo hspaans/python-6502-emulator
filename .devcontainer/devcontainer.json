@@ -1,7 +1,11 @@
 {
   "name": "Python 3",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "image": "mcr.microsoft.com/devcontainers/base:debian-12",
   "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": true,
+      "version": "3.12"
+    },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
@@ -24,7 +28,9 @@
         "EditorConfig.EditorConfig",
         "github.vscode-github-actions",
         "ms-python.autopep8",
-        "ms-python.flake8"
+        "ms-python.flake8",
+        "ms-python.vscode-pylance",
+        "ms-python.python"
       ],
       "[python]": {
         "editor.defaultFormatter": "ms-python.autopep8",
