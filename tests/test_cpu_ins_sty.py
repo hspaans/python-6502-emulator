@@ -36,6 +36,7 @@ Stores the contents of the Y register into memory.
 See also: STY, STX
 """
 import pytest
+
 import m6502
 
 
@@ -62,7 +63,7 @@ def test_cpu_ins_sty_zp() -> None:
 
 
 @pytest.mark.parametrize(
-    "reg_x, memory_location", [
+    ("reg_x", "memory_location"), [
         (0x0F, 0x8F),
         (0xFF, 0x7F),
     ])

@@ -44,6 +44,7 @@ Stores the contents of the accumulator into memory.
 See also: STX, STY
 """
 import pytest
+
 import m6502
 
 
@@ -70,7 +71,7 @@ def test_cpu_ins_sta_zp() -> None:
 
 
 @pytest.mark.parametrize(
-    "reg_x, memory_location", [
+    ("reg_x", "memory_location"), [
         (0x0F, 0x8F),
         (0xFF, 0x7F),
     ])
@@ -169,7 +170,7 @@ def test_cpu_ins_sta_aby() -> None:
 
 
 @pytest.mark.parametrize(
-    "reg_x, mem_low, mem_high", [
+    ("reg_x", "mem_low", "mem_high"), [
         (0x04, 0x0084, 0x0085),
         (0xFF, 0x007F, 0x0080),
     ])

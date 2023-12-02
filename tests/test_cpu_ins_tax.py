@@ -35,11 +35,12 @@ Processor Status after use:
 See also: TXA
 """
 import pytest
+
 import m6502
 
 
 @pytest.mark.parametrize(
-    "value, flag_n, flag_z", [
+    ("value", "flag_n", "flag_z"), [
         (0x0F, False, False),
         (0x00, False, True),
         (0xF0, True, False),

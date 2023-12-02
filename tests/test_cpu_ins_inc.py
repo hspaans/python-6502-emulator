@@ -40,11 +40,12 @@ See also: INX, INY
 
 """
 import pytest
+
 import m6502
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
+    ("value", "expected", "flag_z", "flag_n"), [
         (-2, -1, False, True),
         (-1, 0, True, False),
         (0, 1, False, False),
@@ -74,7 +75,7 @@ def test_cpu_ins_inc_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n, reg_x, memory_location", [
+    ("value", "expected", "flag_z", "flag_n", "reg_x", "memory_location"), [
         (-2, -1, False, True,  0x0F, 0x8F),
         (-1, 0, True, False,  0x0F, 0x8F),
         (0,  1, False,  False, 0x0F, 0x8F),
@@ -114,7 +115,7 @@ def test_cpu_ins_inc_zpx(value: int, expected: int, flag_z: bool, flag_n: bool, 
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
+    ("value", "expected", "flag_z", "flag_n"), [
         (-2, -1, False, True),
         (-1, 0, True, False),
         (0, 1, False, False),
@@ -145,7 +146,7 @@ def test_cpu_ins_inc_abs(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
+    ("value", "expected", "flag_z", "flag_n"), [
         (-2, -1, False, True),
         (-1, 0, True, False),
         (0, 1, False, False),

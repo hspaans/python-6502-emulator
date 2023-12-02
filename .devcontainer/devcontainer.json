@@ -8,7 +8,7 @@
     },
     "ghcr.io/devcontainers-contrib/features/flake8:2": {
       "version": "latest",
-      "plugins": "flake8-black flake8-bugbear flake8-docstrings flake8-isort flake8-print flake8-pylint flake8-builtins flake8-spellcheck flake8-pytest-style"
+      "plugins": "flake8-annotations flake8-annotations-complexity flake8-bugbear flake8-deprecated flake8-docstrings flake8-isort flake8-print flake8-pylint flake8-builtins flake8-pytest-style flake8-todo"
     },
     "ghcr.io/devcontainers-contrib/features/yamllint:2": {
       "version": "latest"
