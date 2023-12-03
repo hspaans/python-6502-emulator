@@ -1,19 +1,22 @@
 ---
-name: Wiki
+name: GitHub Wiki upload
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
+    paths: [wiki/**, .github/workflows/wiki.yml]
+
+concurrency:
+  group: wiki
+  cancel-in-progress: true
 
 permissions:
   contents: write
 
 jobs:
   wiki:
+    name: Publish to GitHub Wiki
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
