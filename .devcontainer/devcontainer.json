@@ -1,6 +1,5 @@
 {
-  "name": "Python 3",
-  "image": "mcr.microsoft.com/devcontainers/base:debian-12",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "installTools": true,
@@ -19,9 +18,11 @@
     },
     "ghcr.io/devcontainers-contrib/features/tox:2": {
       "version": "latest"
+    },
+    "ghcr.io/hspaans/devcontainer-features/pytest:1": {
+      "version": "latest"
     }
   },
-  "postCreateCommand": "pip3 install --user -r requirements.txt",
   "customizations": {
     "vscode": {
       "extensions": [
