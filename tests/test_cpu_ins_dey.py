@@ -26,7 +26,7 @@ Subtracts one from the Y register setting the zero and negative flags as appropr
 +-----------------+--------+-------+--------+
 | Addressing Mode | Opcode | Bytes | Cycles |
 +=================+========+=======+========+
-| Implied         |  0xC8  |   1   |   2    |
+| Implied         |  0x88  |   1   |   2    |
 +-----------------+--------+-------+--------+
 
 See also: DEC, DEX
