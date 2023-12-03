@@ -1,0 +1,30 @@
+---
+name: Wiki
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Sync Wiki
+        uses: joeizzard/action-wiki-sync@master
+        with:
+            username: hspaans
+            access_token: ${{ secrets.GITHUB_TOKEN }}
+            wiki_folder: wiki
+            commit_username: 'github-actions[bot]'
+            commit_email: 'github-actions[bot]@users.noreply.github.com'
+            commit_message: 'action: wiki sync'
