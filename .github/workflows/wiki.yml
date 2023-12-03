@@ -18,13 +18,21 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Sync Wiki
-        uses: joeizzard/action-wiki-sync@master
         with:
-            username: hspaans
-            access_token: ${{ secrets.GITHUB_TOKEN }}
-            wiki_folder: wiki
-            commit_username: 'github-actions[bot]'
-            commit_email: 'github-actions[bot]@users.noreply.github.com'
-            commit_message: 'action: wiki sync'
+          repository: ${{github.repository}}
+          path: ${{github.repository}}
+
+      - name: Checkout Wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{github.repository}}.wiki
+          path: ${{github.repository}}.wiki
+
+      - name: Push to wiki
+        run: |
+          cd ${{GITHUB_WORKSPACE}}/${{github.repository}}.wiki
+          cp -r ${{GITHUB_WORKSPACE}}/${{github.repository}}/wiki/* .
+          git config --local user.email github-actions[bot]@users.noreply.github.com
+          git config --local user.name github-actions[bot]
+          git add .
+          git diff-index --quiet HEAD || git commit -m "action: wiki sync" && git push
