@@ -33,11 +33,12 @@ Processor Status after use:
 See also: PHP
 """
 import pytest
+
 import m6502
 
 
 @pytest.mark.parametrize(
-    "value, flag_n, flag_z", [
+    ("value", "flag_n", "flag_z"), [
         (0xAC, False, False),
         (0xEC, False, True),
         (0xAE, True, False),

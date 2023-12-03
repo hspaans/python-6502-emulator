@@ -41,6 +41,7 @@ flags as appropriate.
 See also: LDA, LDY
 """
 import pytest
+
 import m6502
 
 
@@ -88,7 +89,7 @@ def test_cpu_ins_ldy_zp() -> None:
 
 
 @pytest.mark.parametrize(
-    "reg_x, memory_location", [
+    ("reg_x", "memory_location"), [
         (0x0F, 0x8F),
         (0xFF, 0x7F),
     ])

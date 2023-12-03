@@ -1,6 +1,0 @@
-{
-    "recommendations": [
-        "ms-python.autopep8",
-        "ms-python.flake8"
-    ]
-}

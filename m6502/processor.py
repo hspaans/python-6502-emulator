@@ -47,7 +47,7 @@ class Processor:
         "beq", "sbc", "nop", "isb", "nop", "sbc", "inc", "isb", "sed", "sbc", "nop", "isb", "nop", "sbc", "inc", "isb",  # F
     ]
 
-    def __init__(self, memory: m6502.memory) -> None:
+    def __init__(self: object, memory: m6502.memory) -> None:
         """
         Initialize the processor.
 
@@ -71,7 +71,7 @@ class Processor:
         self.flag_v = True  # Status flag - Overflow Flag
         self.flag_n = True  # Status flag - Negative Flag
 
-    def reset(self) -> None:
+    def reset(self: object) -> None:
         """
         Reset processor to initial state.
 
@@ -85,7 +85,7 @@ class Processor:
         self.flag_d = False
         self.flag_b = True
 
-    def fetch_byte(self) -> int:
+    def fetch_byte(self: object) -> int:
         """
         Fetch a byte from memory.
 
@@ -96,7 +96,7 @@ class Processor:
         self.program_counter += 1
         return data
 
-    def fetch_word(self) -> int:
+    def fetch_word(self: object) -> int:
         """
         Fetch a word from memory.
 
@@ -107,7 +107,7 @@ class Processor:
         self.program_counter += 2
         return data
 
-    def read_byte(self, address: int) -> int:
+    def read_byte(self: object, address: int) -> int:
         """
         Read a byte from memory.
 
@@ -118,7 +118,7 @@ class Processor:
         self.cycles += 1
         return data
 
-    def read_word(self, address: int) -> int:
+    def read_word(self: object, address: int) -> int:
         """
         Read a word from memory.
 
@@ -131,7 +131,7 @@ class Processor:
             data = (self.read_byte(address) << 8) | self.read_byte(address + 1)
         return data
 
-    def write_byte(self, address: int, value: int) -> None:
+    def write_byte(self: object, address: int, value: int) -> None:
         """
         Write a byte to memory.
 
@@ -142,7 +142,7 @@ class Processor:
         self.memory[address] = value
         self.cycles += 1
 
-    def write_word(self, address: int, value: int) -> None:
+    def write_word(self: object, address: int, value: int) -> None:
         """
         Split a word to two bytes and write to memory.
 
@@ -157,7 +157,7 @@ class Processor:
             self.write_byte(address, (value >> 8) & 0xFF)
             self.write_byte(address + 1, value & 0xFF)
 
-    def read_register_a(self) -> int:
+    def read_register_a(self: object) -> int:
         """
         Read the A register.
 
@@ -166,7 +166,7 @@ class Processor:
         self.cycles += 1
         return self.reg_a
 
-    def read_register_x(self) -> int:
+    def read_register_x(self: object) -> int:
         """
         Read the X register.
 
@@ -175,7 +175,7 @@ class Processor:
         self.cycles += 1
         return self.reg_x
 
-    def read_register_y(self) -> int:
+    def read_register_y(self: object) -> int:
         """
         Read the Y register.
 
@@ -184,7 +184,7 @@ class Processor:
         self.cycles += 1
         return self.reg_y
 
-    def push(self, data: int) -> None:
+    def push(self: object, data: int) -> None:
         """
         Push data to stack.
 
@@ -194,7 +194,7 @@ class Processor:
         self.stack_pointer -= 1
         self.cycles += 1
 
-    def pop(self) -> int:
+    def pop(self: object) -> int:
         """
         Pop data from stack.
 
@@ -204,7 +204,7 @@ class Processor:
         self.cycles += 1
         return self.memory[self.stack_pointer - 1]
 
-    def evaluate_flag_n(self, data: int) -> None:
+    def evaluate_flag_n(self: object, data: int) -> None:
         """
         Evaluate negative flag.
 
@@ -213,7 +213,7 @@ class Processor:
         """
         self.flag_n = (data & 0x80) != 0
 
-    def evaluate_flag_z(self, data: int) -> None:
+    def evaluate_flag_z(self: object, data: int) -> None:
         """
         Evaluate the Zero Flag.
 
@@ -225,7 +225,7 @@ class Processor:
         else:
             self.flag_z = False
 
-    def execute(self, cycles: int = 0) -> None:
+    def execute(self: object, cycles: int = 0) -> None:
         """
         Execute code for X amount of cycles. Or until a breakpoint is reached.
 
@@ -236,7 +236,7 @@ class Processor:
             opcode = self.fetch_byte()
             eval("self.ins_" + self.OPCODES[opcode] + "_" + self.ADDRESSING[opcode] + "()")  # noqa: PLW0123
 
-    def ins_nop_imp(self) -> None:
+    def ins_nop_imp(self: object) -> None:
         """
         NOP - No Operation.
 
@@ -244,7 +244,7 @@ class Processor:
         """
         self.cycles += 1
 
-    def ins_clc_imp(self) -> None:
+    def ins_clc_imp(self: object) -> None:
         """
         CLC - Clear Carry Flag.
 
@@ -253,7 +253,7 @@ class Processor:
         self.flag_c = False
         self.cycles += 1
 
-    def ins_cld_imp(self) -> None:
+    def ins_cld_imp(self: object) -> None:
         """
         CLD - Clear Decimal Mode.
 
@@ -262,7 +262,7 @@ class Processor:
         self.flag_d = False
         self.cycles += 1
 
-    def ins_cli_imp(self) -> None:
+    def ins_cli_imp(self: object) -> None:
         """
         CLI - Clear Interrupt Disable.
 
@@ -271,7 +271,7 @@ class Processor:
         self.flag_i = False
         self.cycles += 1
 
-    def ins_clv_imp(self) -> None:
+    def ins_clv_imp(self: object) -> None:
         """
         CLV - Clear Overflow Flag.
 
@@ -280,7 +280,7 @@ class Processor:
         self.flag_v = False
         self.cycles += 1
 
-    def ins_dec_zp(self) -> None:
+    def ins_dec_zp(self: object) -> None:
         """
         DEC - Decrement Memory, Zero Page.
 
@@ -292,7 +292,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_dec_zpx(self) -> None:
+    def ins_dec_zpx(self: object) -> None:
         """
         DEC - Decrement Memory, Zero Page, X.
 
@@ -304,7 +304,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_dec_abs(self) -> None:
+    def ins_dec_abs(self: object) -> None:
         """
         DEC - Decrement Memory, Absolute.
 
@@ -316,7 +316,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_dec_abx(self) -> None:
+    def ins_dec_abx(self: object) -> None:
         """
         DEC - Decrement Memory, Absolute, X.
 
@@ -328,7 +328,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_dex_imp(self) -> None:
+    def ins_dex_imp(self: object) -> None:
         """
         DEX - Decrement X Register.
 
@@ -338,7 +338,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_dey_imp(self) -> None:
+    def ins_dey_imp(self: object) -> None:
         """
         DEY - Decrement Y Register.
 
@@ -348,7 +348,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_inc_zp(self) -> None:
+    def ins_inc_zp(self: object) -> None:
         """
         INC - Increment Memory, Zero Page.
 
@@ -360,7 +360,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_inc_zpx(self) -> None:
+    def ins_inc_zpx(self: object) -> None:
         """
         INC - Increment Memory, Zero Page, X.
 
@@ -372,7 +372,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_inc_abs(self) -> None:
+    def ins_inc_abs(self: object) -> None:
         """
         INC - Increment Memory, Absolute.
 
@@ -384,7 +384,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_inc_abx(self) -> None:
+    def ins_inc_abx(self: object) -> None:
         """
         INC - Increment Memory, Absolute, X.
 
@@ -396,7 +396,7 @@ class Processor:
         self.evaluate_flag_z(self.memory[address])
         self.cycles += 1
 
-    def ins_inx_imp(self) -> None:
+    def ins_inx_imp(self: object) -> None:
         """
         INX - Increment X Register.
 
@@ -406,7 +406,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_iny_imp(self) -> None:
+    def ins_iny_imp(self: object) -> None:
         """
         INY - Increment Y Register.
 
@@ -416,7 +416,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_lda_imm(self) -> None:
+    def ins_lda_imm(self: object) -> None:
         """
         LDA - Load Accumulator, Immediate.
 
@@ -426,7 +426,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_lda_zp(self) -> None:
+    def ins_lda_zp(self: object) -> None:
         """
         LDA - Load Accumulator, Zero Page.
 
@@ -438,7 +438,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_lda_zpx(self) -> None:
+    def ins_lda_zpx(self: object) -> None:
         """
         LDA - Load Accumulator, Zero Page, X.
 
@@ -450,7 +450,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_lda_abs(self) -> None:
+    def ins_lda_abs(self: object) -> None:
         """
         LDA - Load Accumulator, Absolute.
 
@@ -462,7 +462,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_lda_abx(self) -> None:
+    def ins_lda_abx(self: object) -> None:
         """
         LDA - Load Accumulator, Absolute, X.
 
@@ -476,7 +476,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_lda_aby(self) -> None:
+    def ins_lda_aby(self: object) -> None:
         """
         LDA - Load Accumulator, Absolute, Y.
 
@@ -490,7 +490,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_lda_inx(self) -> None:
+    def ins_lda_inx(self: object) -> None:
         """
         LDA - Load Accumulator, Indexed Indirect.
 
@@ -505,7 +505,7 @@ class Processor:
         self.evaluate_flag_n(self.reg_a)
         self.cycles += 1
 
-    def ins_lda_iny(self) -> None:
+    def ins_lda_iny(self: object) -> None:
         """
         LDA - Load Accumulator, Indirect Indexed.
 
@@ -519,7 +519,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_ldx_imm(self) -> None:
+    def ins_ldx_imm(self: object) -> None:
         """
         LDA - Load X Register, Immediate.
 
@@ -529,7 +529,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_ldx_zp(self) -> None:
+    def ins_ldx_zp(self: object) -> None:
         """
         LDA - Load X Register, Zero Page.
 
@@ -539,7 +539,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_ldx_zpy(self) -> None:
+    def ins_ldx_zpy(self: object) -> None:
         """
         LDA - Load X Register, Zero Page, Y.
 
@@ -551,7 +551,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_ldx_abs(self) -> None:
+    def ins_ldx_abs(self: object) -> None:
         """
         LDA - Load X Register, Absolute.
 
@@ -563,7 +563,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_ldx_aby(self) -> None:
+    def ins_ldx_aby(self: object) -> None:
         """
         LDA - Load X Register, Absolute, Y.
 
@@ -577,7 +577,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_ldy_imm(self) -> None:
+    def ins_ldy_imm(self: object) -> None:
         """
         LDA - Load Y Register, Immediate.
 
@@ -587,7 +587,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_ldy_zp(self) -> None:
+    def ins_ldy_zp(self: object) -> None:
         """
         LDA - Load Y Register, Zero Page.
 
@@ -599,7 +599,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_ldy_zpx(self) -> None:
+    def ins_ldy_zpx(self: object) -> None:
         """
         LDA - Load Y Register, Zero Page, X.
 
@@ -611,7 +611,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_ldy_abs(self) -> None:
+    def ins_ldy_abs(self: object) -> None:
         """
         LDA - Load Y Register, Absolute.
 
@@ -623,7 +623,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_ldy_abx(self) -> None:
+    def ins_ldy_abx(self: object) -> None:
         """
         LDA - Load Y Register, Absolute, X.
 
@@ -637,7 +637,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_sec_imp(self) -> None:
+    def ins_sec_imp(self: object) -> None:
         """
         SEC - Set Carry Flag.
 
@@ -646,7 +646,7 @@ class Processor:
         self.flag_c = True
         self.cycles += 1
 
-    def ins_sed_imp(self) -> None:
+    def ins_sed_imp(self: object) -> None:
         """
         SED - Set Decimal Mode.
 
@@ -655,7 +655,7 @@ class Processor:
         self.flag_d = True
         self.cycles += 1
 
-    def ins_sei_imp(self) -> None:
+    def ins_sei_imp(self: object) -> None:
         """
         SEI - Set Interrupt Disable.
 
@@ -664,7 +664,7 @@ class Processor:
         self.flag_i = True
         self.cycles += 1
 
-    def ins_sta_zp(self) -> None:
+    def ins_sta_zp(self: object) -> None:
         """
         STA - Store Accumulator, Zero Page.
 
@@ -675,7 +675,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_sta_zpx(self) -> None:
+    def ins_sta_zpx(self: object) -> None:
         """
         STA - Store Accumulator, Zero Page, X.
 
@@ -686,7 +686,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_sta_abs(self) -> None:
+    def ins_sta_abs(self: object) -> None:
         """
         STA - Store Accumulator, Absolute.
 
@@ -697,7 +697,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_sta_abx(self) -> None:
+    def ins_sta_abx(self: object) -> None:
         """
         STA - Store Accumulator, Absolute, X.
 
@@ -712,7 +712,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_sta_aby(self) -> None:
+    def ins_sta_aby(self: object) -> None:
         """
         STA - Store Accumulator, Absolute, Y.
 
@@ -727,7 +727,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_sta_inx(self) -> None:
+    def ins_sta_inx(self: object) -> None:
         """
         STA - Store Accumulator, Indexed Indirect.
 
@@ -742,7 +742,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_sta_iny(self) -> None:
+    def ins_sta_iny(self: object) -> None:
         """
         LDA - Store Accumulator, Indirect Indexed.
 
@@ -757,7 +757,7 @@ class Processor:
             self.reg_a
         )
 
-    def ins_stx_zp(self) -> None:
+    def ins_stx_zp(self: object) -> None:
         """
         STA - Store X Register, Zero Page.
 
@@ -768,7 +768,7 @@ class Processor:
             self.reg_x
         )
 
-    def ins_stx_zpy(self) -> None:
+    def ins_stx_zpy(self: object) -> None:
         """
         STA - Store Y Register, Zero Page, X.
 
@@ -779,7 +779,7 @@ class Processor:
             self.reg_x
         )
 
-    def ins_stx_abs(self) -> None:
+    def ins_stx_abs(self: object) -> None:
         """
         STA - Store X Register, Absolute.
 
@@ -790,7 +790,7 @@ class Processor:
             self.reg_x
         )
 
-    def ins_sty_zp(self) -> None:
+    def ins_sty_zp(self: object) -> None:
         """
         STA - Store Y Register, Zero Page.
 
@@ -801,7 +801,7 @@ class Processor:
             self.reg_y
         )
 
-    def ins_sty_zpx(self) -> None:
+    def ins_sty_zpx(self: object) -> None:
         """
         STA - Store Y Register, Zero Page, X.
 
@@ -812,7 +812,7 @@ class Processor:
             self.reg_y
         )
 
-    def ins_sty_abs(self) -> None:
+    def ins_sty_abs(self: object) -> None:
         """
         STA - Store Y Register, Absolute.
 
@@ -823,7 +823,7 @@ class Processor:
             self.reg_y
         )
 
-    def ins_tax_imp(self) -> None:
+    def ins_tax_imp(self: object) -> None:
         """
         TAX - Transfer Accumulator to X.
 
@@ -833,7 +833,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_tay_imp(self) -> None:
+    def ins_tay_imp(self: object) -> None:
         """
         TAY - Transfer Accumulator to Y.
 
@@ -843,7 +843,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_y)
         self.evaluate_flag_n(self.reg_y)
 
-    def ins_tsx_imp(self) -> None:
+    def ins_tsx_imp(self: object) -> None:
         """
         TSX - Transfer Stack Pointer to X.
 
@@ -853,7 +853,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_x)
         self.evaluate_flag_n(self.reg_x)
 
-    def ins_txa_imp(self) -> None:
+    def ins_txa_imp(self: object) -> None:
         """
         TXA - Transfer Register X to Accumulator.
 
@@ -863,7 +863,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_txs_imp(self) -> None:
+    def ins_txs_imp(self: object) -> None:
         """
         TXS - Transfer Register X to Stack Pointer.
 
@@ -871,7 +871,7 @@ class Processor:
         """
         self.push(self.reg_x)
 
-    def ins_tya_imp(self) -> None:
+    def ins_tya_imp(self: object) -> None:
         """
         TYA - Transfer Register Y to Accumulator.
 
@@ -881,7 +881,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_pha_imp(self) -> None:
+    def ins_pha_imp(self: object) -> None:
         """
         PHA - Push Accumulator.
 
@@ -893,7 +893,7 @@ class Processor:
         self.stack_pointer -= 1
         self.cycles += 1
 
-    def ins_pla_imp(self) -> None:
+    def ins_pla_imp(self: object) -> None:
         """
         PLA - Pull Accumulator.
 
@@ -907,7 +907,7 @@ class Processor:
         self.evaluate_flag_z(self.reg_a)
         self.evaluate_flag_n(self.reg_a)
 
-    def ins_php_imp(self) -> None:
+    def ins_php_imp(self: object) -> None:
         """
         Push Processor Statys, Implied.
 
@@ -931,7 +931,7 @@ class Processor:
         self.push(flags)
         self.cycles += 1
 
-    def ins_plp_imp(self) -> None:
+    def ins_plp_imp(self: object) -> None:
         """
         Pull Processor Status.
 

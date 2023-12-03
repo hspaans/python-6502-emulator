@@ -1,42 +1,51 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "Python 3",
-	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
-	"features": {
-		"ghcr.io/devcontainers-contrib/features/flake8:1": {},
-		"ghcr.io/devcontainers-contrib/features/yamllint:1": {},
-		"ghcr.io/devcontainers-contrib/features/tox:1": {}
-	},
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "pip3 install --user -r requirements.txt",
-	
-	// Install PyTest module until the pytest feature exists
-	"postCreateCommand": "pip3 install --user pytest",
-
-	// Configure tool-specific properties.
-	"customizations": {
-		"vscode": {
-			"settings": {
-				"python.testing.pytestArgs": [
-					"tests"
-				],
-				"python.testing.unittestEnabled": false,
-				"python.testing.pytestEnabled": true,
-				"python.linting.pylintEnabled": false,
-				"python.linting.flake8Enabled": true,
-				"python.linting.enabled": true
-			}
-		}
-	}
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": true,
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-contrib/features/flake8:2": {
+      "version": "latest",
+      "plugins": "flake8-annotations flake8-annotations-complexity flake8-bugbear flake8-deprecated flake8-docstrings flake8-isort flake8-print flake8-pylint flake8-builtins flake8-pytest-style flake8-todo"
+    },
+    "ghcr.io/devcontainers-contrib/features/yamllint:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-contrib/features/tox:2": {
+      "version": "latest"
+    },
+    "ghcr.io/hspaans/devcontainer-features/pytest:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "github.vscode-github-actions",
+        "ms-python.autopep8",
+        "ms-python.flake8",
+        "ms-python.vscode-pylance",
+        "ms-python.python"
+      ],
+      "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8",
+        "editor.formatOnSave": true
+      },
+      "settings": {
+        "python.formatting.provider": "flake8",
+        "python.testing.pytestArgs": [
+          "tests"
+        ],
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestEnabled": true,
+        "python.analysis.inlayHints.pytestParameters": true
+      }
+    }
+  }
 }

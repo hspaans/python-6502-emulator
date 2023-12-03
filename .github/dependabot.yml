@@ -5,8 +5,18 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: saturday
+    groups:
+      GitHub-Actions:
+        patterns:
+          - "*"
 
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: weekly
+      day: saturday
+    groups:
+      Python:
+        patterns:
+          - "*"

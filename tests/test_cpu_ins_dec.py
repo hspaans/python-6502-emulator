@@ -40,11 +40,12 @@ See also: DEX, DEY
 
 """
 import pytest
+
 import m6502
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
+    ("value", "expected", "flag_z", "flag_n"), [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),
@@ -74,7 +75,7 @@ def test_cpu_ins_dec_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n, reg_x, memory_location", [
+    ("value", "expected", "flag_z", "flag_n", "reg_x", "memory_location"), [
         (-1, -2, False, True,  0x0F, 0x8F),
         (0, -1, False, True,  0x0F, 0x8F),
         (1,  0, True,  False, 0x0F, 0x8F),
@@ -114,7 +115,7 @@ def test_cpu_ins_dec_zpx(value: int, expected: int, flag_z: bool, flag_n: bool, 
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
+    ("value", "expected", "flag_z", "flag_n"), [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),
@@ -145,7 +146,7 @@ def test_cpu_ins_dec_abs(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
 
 @pytest.mark.parametrize(
-    "value, expected, flag_z, flag_n", [
+    ("value", "expected", "flag_z", "flag_n"), [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),

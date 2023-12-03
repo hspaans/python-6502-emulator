@@ -34,6 +34,7 @@ Processor Status after use:
 See also: TSX
 """
 import pytest
+
 import m6502
 
 
