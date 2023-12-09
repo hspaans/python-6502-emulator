@@ -34,7 +34,7 @@ See also: DEC, DEY
 """
 import pytest
 
-import m6502
+from m6502 import Memory, Processor
 
 
 @pytest.mark.parametrize(
@@ -50,8 +50,8 @@ def test_cpu_ins_dex_imp(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = value
     memory[0xFCE2] = 0xCA

@@ -42,7 +42,7 @@ See also: LDA, LDY
 """
 import pytest
 
-import m6502
+from m6502 import Memory, Processor
 
 
 def test_cpu_ins_ldx_imm() -> None:
@@ -51,8 +51,8 @@ def test_cpu_ins_ldx_imm() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = 0x00
     memory[0xFCE2] = 0xA2
@@ -72,8 +72,8 @@ def test_cpu_ins_ldx_zp() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = 0x00
     memory[0xFCE2] = 0xA6
@@ -104,8 +104,8 @@ def test_cpu_ins_ldx_zpy(reg_y: int, memory_location: int) -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = 0x00
     cpu.reg_y = reg_y
@@ -127,8 +127,8 @@ def test_cpu_ins_ldx_abs() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = 0x00
     memory[0xFCE2] = 0xAE
@@ -152,8 +152,8 @@ def test_cpu_ins_ldx_aby() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = 0x00
     cpu.reg_y = 1

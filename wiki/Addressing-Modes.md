@@ -1,6 +1,6 @@
 # Addressing Modes
 
-##  Implicit
+## Implicit
 
 ## Accumulator
 
@@ -25,4 +25,3 @@
 ## Indexed Indirect
 
 ## Indirect Indexed
-
