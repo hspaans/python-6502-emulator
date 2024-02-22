@@ -5,7 +5,6 @@
     "ghcr.io/devcontainers-contrib/features/flake8:2": {},
     "ghcr.io/devcontainers-contrib/features/yamllint:2": {},
     "ghcr.io/devcontainers-contrib/features/tox:2": {},
-    "ghcr.io/hspaans/devcontainer-features/pytest:1": {},
     "ghcr.io/hspaans/devcontainer-features/pyupgrade:1": {}
   },
   "customizations": {
@@ -32,5 +31,6 @@
         "python.analysis.inlayHints.pytestParameters": true
       }
     }
-  }
+  },
+  "postCreateCommand": "python -m pip install pytest"
 }
