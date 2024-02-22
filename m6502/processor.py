@@ -991,7 +991,7 @@ class Processor:
         """
         self.reg_a = self.read_byte(
             self.read_word(
-                ((self.fetch_byte() + self.reg_x) & 0xFF)
+                (self.fetch_byte() + self.reg_x) & 0xFF
             )
         )
         self.evaluate_flag_z(self.reg_a)
@@ -1229,7 +1229,7 @@ class Processor:
         self.write_byte(
             self.read_byte(
                 self.read_word(
-                    ((self.fetch_byte() + self.reg_x) & 0xFF)
+                    (self.fetch_byte() + self.reg_x) & 0xFF
                 )
             ),
             self.reg_a
