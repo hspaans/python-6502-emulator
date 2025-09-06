@@ -1,0 +1,101 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "python-6502-emulator"
+description = "python-6502-emulator"
+keywords = ["python-6502-emulator"]
+
+version = "0.1.0"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+readme = "README.md"
+authors = [
+    {name="Hans Spaans", email="hspaans@gmail.com"},
+]
+maintainers = [
+    {name="Hans Spaans", email="hspaans@gmail.com"},
+]
+
+requires-python = ">= 3.11,<3.14"
+
+dependencies = [
+]
+
+[dependency-groups]
+dev = [
+    "tox>=4.27.0,<5.0.0",
+    {include-group = "test"},
+    {include-group = "lint"},
+    {include-group = "docs"},
+]
+test = [
+    "pytest>=8.0.0,<9.0.0",
+    "pytest-cov",
+    "pytest-fixtures",
+    "pytest-github-actions-annotate-failures",
+    "pytest-randomly",
+    "pytest-sphinx",
+]
+lint = [
+    "flake8>=7,<8",
+    "flake8-bugbear",
+    "flake8-builtins",
+    "flake8-comprehensions",
+    "flake8-deprecated",
+    "flake8-docstrings",
+    "flake8-typing-imports",
+    "flake8-print",
+    "flake8-pylint",
+    "flake8-pytest-style",
+    "flake8-rst-docstrings",
+    "flake8-isort",
+    "pymarkdownlnt",
+    "yamllint",
+]
+docs = [
+    "Sphinx~=8.2",
+    "sphinx-autobuild",
+    "sphinx-toolbox",
+    "furo",
+]
+
+[project.urls]
+homepage = "https://github/hspaans/python-6502-emulator"
+documentation = "https://github/hspaans/python-6502-emulator"
+repository = "https://github/hspaans/python-6502-emulator"
+issues = "https://github/hspaans/python-6502-emulator/issues"
+changelog = "https://github/hspaans/python-6502-emulator/blob/main/CHANGELOG.md"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tools.check-manifest]
+ignore = [
+  ".devcontainer/*",
+  ".github/*"
+]
+
+[tool.pylint.design]
+max-attributes = 16
+
+[tool.pylint.messages_control]
+disable = [
+  "too-few-public-methods",
+]
+
+[tool.pymarkdown]
+plugins.md013.enabled = false
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/m6502"]
