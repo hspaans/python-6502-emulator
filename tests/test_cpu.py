@@ -1279,7 +1279,7 @@ def test_cpu_ins_ldy_imm(
     size: int, cycles: int, value: int, flag_z: bool, flag_n: bool
 ) -> None:
     """
-    LDT (0xA0) - Load Y Register, Immediate.
+    LDY (0xA0) - Load Y Register, Immediate.
 
     Load the value stored after the opcode directly into Y register
     and then evaluate Y register for flags Zero and Negative.
