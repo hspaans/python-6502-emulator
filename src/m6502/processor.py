@@ -1,4 +1,5 @@
 """Emulation of the MOT-6502 Processor."""
+
 import sys
 
 from . import Memory
@@ -49,6 +50,7 @@ class Processor:  # noqa: PLR904
     PC_INIT = 0xFCE2  # Hardcoded start vector post-reset
     SP_INIT = 0x01FD  # Hardcoded stack pointer post-reset
 
+    # fmt: off
     _ADDRESSING = [
         #  0  |  1   |  2   |  3   |  4   |  5   |  6   |  7   |  8   |  9   |  A   |  B   |  C   |  D   |  E   |  F   |
         "imp", "inx", "imp", "inx", "zp",  "zp",  "zp",  "zp",  "imp", "imm", "acc", "imm", "abs", "abs", "abs", "abs",  # 0
@@ -96,9 +98,9 @@ class Processor:  # noqa: PLR904
         :param memory: The memory to use
         """
         self.memory = memory
-        self.reg_a = 0  # Accumlator A
-        self.reg_y = 0  # Incex Register Y
-        self.reg_x = 0  # Incex Register X
+        self.reg_a = 0  # Accumulator A
+        self.reg_y = 0  # Index Register Y
+        self.reg_x = 0  # Index Register X
 
         self.program_counter = 0  # Program Counter PC
         self.stack_pointer   = 0  # Stack Pointer S
@@ -120,6 +122,7 @@ class Processor:  # noqa: PLR904
         self.flag_i          = True          # Set Interrupt Disable to True
         self.flag_d          = False         # Set Decimal Mode to False
         self.flag_b          = True          # Set Break Command to True
+    # fmt: on
 
     def _fetch_byte(self) -> int:
         """
@@ -298,7 +301,10 @@ class Processor:  # noqa: PLR904
         """
         while (self.cycles < cycles) or (cycles == 0):
             opcode = self._fetch_byte()
-            eval("self._ins_" + self._OPCODES[opcode] + "_" + self._ADDRESSING[opcode] + "()")  # noqa: PLW123
+            method_name = (
+                "_ins_" + self._OPCODES[opcode] + "_" + self._ADDRESSING[opcode]
+            )
+            getattr(self, method_name)()
 
     def _ins_nop_imp(self) -> None:
         """
@@ -510,9 +516,7 @@ class Processor:  # noqa: PLR904
 
         The instruction costs 2 bytes and 3 cycles to complete.
         """
-        self.reg_a = self._read_byte(
-            self._fetch_byte() & 0xFF
-        )
+        self.reg_a = self._read_byte(self._fetch_byte() & 0xFF)
         self._evaluate_flags_nz(self.reg_a)
 
     def _ins_lda_zpx(self) -> None:
@@ -565,9 +569,7 @@ class Processor:  # noqa: PLR904
 
         The instruction costs 3 bytes and 4 cycles to complete.
         """
-        self.reg_a = self._read_byte(
-            self._fetch_word()
-        )
+        self.reg_a = self._read_byte(self._fetch_word())
         self._evaluate_flags_nz(self.reg_a)
 
     def _ins_lda_abx(self) -> None:
@@ -656,9 +658,7 @@ class Processor:  # noqa: PLR904
         The instruction costs 2 bytes and 6 cycles to complete.
         """
         self.reg_a = self._read_byte(
-            self._read_word(
-                ((self._fetch_byte() + self.reg_x) & 0xFF)
-            )
+            self._read_word(((self._fetch_byte() + self.reg_x) & 0xFF))
         )
         self._evaluate_flags_nz(self.reg_a)
         self.cycles += 1  # TODO: Why is the extra cycle required?
@@ -732,9 +732,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self.reg_x = self._read_byte(
-            self._fetch_word()
-        )
+        self.reg_x = self._read_byte(self._fetch_word())
         self._evaluate_flags_nz(self.reg_x)
 
     def _ins_ldx_aby(self) -> None:
@@ -792,9 +790,7 @@ class Processor:  # noqa: PLR904
 
         The instruction costs 2 bytes and 3 cycles to complete.
         """
-        self.reg_y = self._read_byte(
-            self._fetch_byte()
-        )
+        self.reg_y = self._read_byte(self._fetch_byte())
         self._evaluate_flags_nz(self.reg_y)
 
     def _ins_ldy_zpx(self) -> None:
@@ -851,9 +847,7 @@ class Processor:  # noqa: PLR904
 
         The instruction costs 3 bytes and 4 cycles to complete.
         """
-        self.reg_y = self._read_byte(
-            self._fetch_word()
-        )
+        self.reg_y = self._read_byte(self._fetch_word())
         self._evaluate_flags_nz(self.reg_y)
 
     def _ins_ldy_abx(self) -> None:
@@ -931,10 +925,7 @@ class Processor:  # noqa: PLR904
 
         The instruction costs 2 bytes and 3 cycles to complete.
         """
-        self._write_byte(
-            self._fetch_byte(),
-            self.reg_a
-        )
+        self._write_byte(self._fetch_byte(), self.reg_a)
 
     def _ins_sta_zpx(self) -> None:
         """
@@ -942,10 +933,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            (self._fetch_byte() + self.reg_x) & 0xFF,
-            self.reg_a
-        )
+        self._write_byte((self._fetch_byte() + self.reg_x) & 0xFF, self.reg_a)
 
     def _ins_sta_abs(self) -> None:
         """
@@ -953,10 +941,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_word(),
-            self.reg_a
-        )
+        self._write_byte(self._fetch_word(), self.reg_a)
 
     def _ins_sta_abx(self) -> None:
         """
@@ -964,10 +949,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_word() + self._read_register_x(),
-            self.reg_a
-        )
+        self._write_byte(self._fetch_word() + self._read_register_x(), self.reg_a)
 
     def _ins_sta_aby(self) -> None:
         """
@@ -975,10 +957,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_word() + self._read_register_y(),
-            self.reg_a
-        )
+        self._write_byte(self._fetch_word() + self._read_register_y(), self.reg_a)
 
     def _ins_sta_inx(self) -> None:
         """
@@ -988,11 +967,9 @@ class Processor:  # noqa: PLR904
         """
         self._write_byte(
             self._read_byte(
-                self._read_word(
-                    ((self._fetch_byte() + self.reg_x) & 0xFF)
-                )
+                self._read_word(((self._fetch_byte() + self.reg_x) & 0xFF))
             ),
-            self.reg_a
+            self.reg_a,
         )
 
     def _ins_sta_iny(self) -> None:
@@ -1002,12 +979,8 @@ class Processor:  # noqa: PLR904
         :return: None
         """
         self._write_byte(
-            self._read_byte(
-                self._read_word(
-                    self._fetch_byte()
-                ) + self.reg_y
-            ),
-            self.reg_a
+            self._read_byte(self._read_word(self._fetch_byte()) + self.reg_y),
+            self.reg_a,
         )
 
     def _ins_stx_zp(self) -> None:
@@ -1016,10 +989,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_byte(),
-            self.reg_x
-        )
+        self._write_byte(self._fetch_byte(), self.reg_x)
 
     def _ins_stx_zpy(self) -> None:
         """
@@ -1028,8 +998,7 @@ class Processor:  # noqa: PLR904
         :return: None
         """
         self._write_byte(
-            (self._fetch_byte() + self._read_register_y()) & 0xFF,
-            self.reg_x
+            (self._fetch_byte() + self._read_register_y()) & 0xFF, self.reg_x
         )
 
     def _ins_stx_abs(self) -> None:
@@ -1038,10 +1007,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_word(),
-            self.reg_x
-        )
+        self._write_byte(self._fetch_word(), self.reg_x)
 
     def _ins_sty_zp(self) -> None:
         """
@@ -1049,10 +1015,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_byte(),
-            self.reg_y
-        )
+        self._write_byte(self._fetch_byte(), self.reg_y)
 
     def _ins_sty_zpx(self) -> None:
         """
@@ -1061,8 +1024,7 @@ class Processor:  # noqa: PLR904
         :return: None
         """
         self._write_byte(
-            (self._fetch_byte() + self._read_register_x()) & 0xFF,
-            self.reg_y
+            (self._fetch_byte() + self._read_register_x()) & 0xFF, self.reg_y
         )
 
     def _ins_sty_abs(self) -> None:
@@ -1071,10 +1033,7 @@ class Processor:  # noqa: PLR904
 
         :return: None
         """
-        self._write_byte(
-            self._fetch_word(),
-            self.reg_y
-        )
+        self._write_byte(self._fetch_word(), self.reg_y)
 
     def _ins_tax_imp(self) -> None:
         """
@@ -1156,7 +1115,7 @@ class Processor:  # noqa: PLR904
 
     def _ins_php_imp(self) -> None:
         """
-        Push Processor Statys, Implied.
+        Push Processor Status, Implied.
 
         return: None
         """

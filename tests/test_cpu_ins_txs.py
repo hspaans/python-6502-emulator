@@ -33,17 +33,20 @@ Processor Status after use:
 
 See also: TSX
 """
+
 import pytest
 
 import m6502
 
 
 @pytest.mark.parametrize(
-    "value", [
+    "value",
+    [
         (0x0F),
         (0x00),
         (0xF0),
-    ])
+    ],
+)
 def test_cpu_ins_txs_imm(value: int) -> None:
     """
     Transfer Register X to Stack Pointer, Implied.

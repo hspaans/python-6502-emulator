@@ -9,3 +9,4 @@ ignore =
     PLC302,
     PLR913,
     PLR917,
+    PLW511,

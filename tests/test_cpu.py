@@ -9,8 +9,8 @@ from m6502 import Memory, Processor
 
 # Opcodes for the 6502 processor.
 INS_LDA_IMM = 0xA9  # Load Accumulator, Immediate.
-INS_LDA_ZP  = 0XA5  # Load Accumulator, Zero Page.
-INS_LDA_ZPX = 0XB5  # Load Accumulator, Zero Page, X.
+INS_LDA_ZP = 0xA5  # Load Accumulator, Zero Page.
+INS_LDA_ZPX = 0xB5  # Load Accumulator, Zero Page, X.
 INS_LDA_ABS = 0xAD  # Load Accumulator, Absolute.
 INS_LDA_ABX = 0xBD  # Load Accumulator, Absolute, X.
 INS_LDA_ABY = 0xB9  # Load Accumulator, Absolute, Y.
@@ -18,18 +18,18 @@ INS_LDA_INX = 0xA1  # Load Accumulator, Indexed Indirect.
 INS_LDA_INY = 0xB1  # Load Accumulator, Indirect Indexed.
 
 INS_LDX_IMM = 0xA2  # Load X Register, Immediate.
-INS_LDX_ZP  = 0xA6  # Load X Register, Zero Page.
+INS_LDX_ZP = 0xA6  # Load X Register, Zero Page.
 INS_LDX_ZPY = 0xB6  # Load X Register, Zero Page, Y.
 INS_LDX_ABS = 0xAE  # Load X Register, Absolute.
 INS_LDX_ABY = 0xBE  # Load X Register, Absolute, Y.
 INS_LDY_IMM = 0xA0  # Load Y Register, Immediate.
 
-INS_LDY_ZP  = 0xA4  # Load Y Register, Zero Page.
+INS_LDY_ZP = 0xA4  # Load Y Register, Zero Page.
 INS_LDY_ZPX = 0xB4  # Load Y Register, Zero Page, X.
 INS_LDY_ABS = 0xAC  # Load Y Register, Absolute.
 INS_LDY_ABX = 0xBC  # Load Y Register, Absolute, X.
 
-INS_STA_ZP  = 0x85  # Store Accumlator, Zero Page.
+INS_STA_ZP = 0x85  # Store Accumlator, Zero Page.
 INS_STA_ZPX = 0x95  # Store Accumlator, Zero Page, X.
 INS_STA_ABS = 0x8D  # Store Accumlator, Absolute.
 INS_STA_ABX = 0x9D  # Store Accumlator, Absolute, X.
@@ -37,16 +37,16 @@ INS_STA_ABY = 0x99  # Store Accumlator, Absolute, Y.
 INS_STA_INX = 0x81  # Store Accumlator, Indexed Indirect.
 INS_STA_INY = 0x91  # Store Accumlator, Indirect Indexed.
 
-INS_STX_ZP  = 0x86  # Store X Register, Zero Page.
+INS_STX_ZP = 0x86  # Store X Register, Zero Page.
 INS_STX_ZPY = 0x96  # Store X Register, Zero Page, Y.
 INS_STX_ABS = 0x8E  # Store X Register, Absolute.
 
-INS_STY_ZP  = 0x84  # Store Y Register, Zero Page.
+INS_STY_ZP = 0x84  # Store Y Register, Zero Page.
 INS_STY_ZPX = 0x94  # Store Y Register, Zero Page, X.
 INS_STY_ABS = 0x8C  # Store Y Register, Absolute.
 
 # Values for the 6502 processor with different flags set.
-VALUE8_EMPTY     = 0x00
+VALUE8_EMPTY = 0x00
 VALUE8_0000_0000 = 0x00  # Z=T, N=F
 VALUE8_0000_1111 = 0x0F  # Z=F, N=F
 VALUE8_0101_1010 = 0x5A  # Z=F, N=F
@@ -301,15 +301,19 @@ def test_cpu_fetch_word() -> None:
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "flag_z", "flag_n"),
+    [
         (2, 2, VALUE8_0000_0000, True, False),
         (2, 2, VALUE8_0000_1111, False, False),
         (2, 2, VALUE8_0101_1010, False, False),
         (2, 2, VALUE8_1010_0101, False, True),
         (2, 2, VALUE8_1111_0000, False, True),
         (2, 2, VALUE8_1111_1111, False, True),
-    ])
-def test_cpu_ins_lda_imm(size: int, cycles: int, value: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_imm(
+    size: int, cycles: int, value: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDA (0xA9) - Load Accumulator, Immediate.
 
@@ -351,15 +355,19 @@ def test_cpu_ins_lda_imm(size: int, cycles: int, value: int, flag_z: bool, flag_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_zp", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "memory_zp", "flag_z", "flag_n"),
+    [
         (2, 3, VALUE8_0000_0000, 0x80, True, False),
         (2, 3, VALUE8_0000_1111, 0x80, False, False),
         (2, 3, VALUE8_0101_1010, 0x80, False, False),
         (2, 3, VALUE8_1010_0101, 0x80, False, True),
         (2, 3, VALUE8_1111_0000, 0x80, False, True),
         (2, 3, VALUE8_1111_1111, 0x80, False, True),
-    ])
-def test_cpu_ins_lda_zp(size: int, cycles: int, value: int, memory_zp: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_zp(
+    size: int, cycles: int, value: int, memory_zp: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDA (0xA5) - Load Accumulator, Zero Page.
 
@@ -401,40 +409,47 @@ def test_cpu_ins_lda_zp(size: int, cycles: int, value: int, memory_zp: int, flag
         cpu.reg_a,
         cpu.flag_z,
         cpu.flag_n,
-    ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value,  flag_z, flag_n)
+    ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_zp", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_x", "memory_zp", "flag_z", "flag_n"),
+    [
         (2, 5, VALUE8_0000_0000, 0x00, 0x80, True, False),
         (2, 5, VALUE8_0000_1111, 0x00, 0x80, False, False),
         (2, 5, VALUE8_0101_1010, 0x00, 0x80, False, False),
         (2, 5, VALUE8_1010_0101, 0x00, 0x80, False, True),
         (2, 5, VALUE8_1111_0000, 0x00, 0x80, False, True),
         (2, 5, VALUE8_1111_1111, 0x00, 0x80, False, True),
-
         (2, 5, VALUE8_0000_0000, 0x0F, 0x80, True, False),
         (2, 5, VALUE8_0000_1111, 0x0F, 0x80, False, False),
         (2, 5, VALUE8_0101_1010, 0x0F, 0x80, False, False),
         (2, 5, VALUE8_1010_0101, 0x0F, 0x80, False, True),
         (2, 5, VALUE8_1111_0000, 0x0F, 0x80, False, True),
         (2, 5, VALUE8_1111_1111, 0x0F, 0x80, False, True),
-
         (2, 5, VALUE8_0000_0000, 0xF0, 0x80, True, False),
         (2, 5, VALUE8_0000_1111, 0xF0, 0x80, False, False),
         (2, 5, VALUE8_0101_1010, 0xF0, 0x80, False, False),
         (2, 5, VALUE8_1010_0101, 0xF0, 0x80, False, True),
         (2, 5, VALUE8_1111_0000, 0xF0, 0x80, False, True),
         (2, 5, VALUE8_1111_1111, 0xF0, 0x80, False, True),
-
         (2, 5, VALUE8_0000_0000, 0xFF, 0x80, True, False),
         (2, 5, VALUE8_0000_1111, 0xFF, 0x80, False, False),
         (2, 5, VALUE8_0101_1010, 0xFF, 0x80, False, False),
         (2, 5, VALUE8_1010_0101, 0xFF, 0x80, False, True),
         (2, 5, VALUE8_1111_0000, 0xFF, 0x80, False, True),
         (2, 5, VALUE8_1111_1111, 0xFF, 0x80, False, True),
-    ])
-def test_cpu_ins_lda_zpx(size: int, cycles: int, value: int, reg_x: int, memory_zp: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_zpx(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_x: int,
+    memory_zp: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDA (0xB5) - Load Accumulator, Zero Page, X.
 
@@ -484,12 +499,13 @@ def test_cpu_ins_lda_zpx(size: int, cycles: int, value: int, reg_x: int, memory_
         cpu.cycles,
         cpu.reg_a,
         cpu.flag_z,
-        cpu.flag_n
+        cpu.flag_n,
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0xFAFA, True, False),
         (3, 4, VALUE8_0000_1111, 0xFAFA, False, False),
         (3, 4, VALUE8_0101_1010, 0xFAFA, False, False),
@@ -502,8 +518,11 @@ def test_cpu_ins_lda_zpx(size: int, cycles: int, value: int, reg_x: int, memory_
         (3, 4, VALUE8_1010_0101, 0xAFAF, False, True),
         (3, 4, VALUE8_1111_0000, 0xAFAF, False, True),
         (3, 4, VALUE8_1111_1111, 0xAFAF, False, True),
-    ])
-def test_cpu_ins_lda_abs(size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_abs(
+    size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDA (0xAD) - Load Accumulator, Absolute.
 
@@ -554,7 +573,8 @@ def test_cpu_ins_lda_abs(size: int, cycles: int, value: int, memory_location: in
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_x", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0x04, 0x8000, True, False),
         (3, 4, VALUE8_0000_1111, 0x04, 0x8000, False, False),
         (3, 4, VALUE8_0101_1010, 0x04, 0x8000, False, False),
@@ -567,8 +587,17 @@ def test_cpu_ins_lda_abs(size: int, cycles: int, value: int, memory_location: in
         (3, 5, VALUE8_1010_0101, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_0000, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_1111, 0x04, 0x80FE, False, True),
-    ])
-def test_cpu_ins_lda_abx(size: int, cycles: int, value: int, reg_x: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_abx(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_x: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDA (0xBD) - Load Accumulator, Absolute, X.
 
@@ -629,7 +658,8 @@ def test_cpu_ins_lda_abx(size: int, cycles: int, value: int, reg_x: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_y", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_y", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0x04, 0x8000, True, False),
         (3, 4, VALUE8_0000_1111, 0x04, 0x8000, False, False),
         (3, 4, VALUE8_1111_0000, 0x04, 0x8000, False, True),
@@ -638,8 +668,17 @@ def test_cpu_ins_lda_abx(size: int, cycles: int, value: int, reg_x: int, memory_
         (3, 5, VALUE8_0000_1111, 0x04, 0x80FE, False, False),
         (3, 5, VALUE8_1111_0000, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_1111, 0x04, 0x80FE, False, True),
-    ])
-def test_cpu_ins_lda_aby(size: int, cycles: int, value: int, reg_y: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_aby(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_y: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDA (0xB9) - Load Accumulator, Absolute, Y.
 
@@ -700,15 +739,35 @@ def test_cpu_ins_lda_aby(size: int, cycles: int, value: int, reg_y: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_zp", "memory_location", "flag_z", "flag_n"), [
+    (
+        "size",
+        "cycles",
+        "value",
+        "reg_x",
+        "memory_zp",
+        "memory_location",
+        "flag_z",
+        "flag_n",
+    ),
+    [
         (2, 6, VALUE8_0000_0000, 0x04, 0x02, 0x8000, True, False),
         (2, 6, VALUE8_0000_1111, 0x04, 0x02, 0x8000, False, False),
         (2, 6, VALUE8_0101_1010, 0x04, 0x02, 0x8000, False, False),
         (2, 6, VALUE8_1010_0101, 0x04, 0x02, 0x8000, False, True),
         (2, 6, VALUE8_1111_0000, 0x04, 0x02, 0x8000, False, True),
         (2, 6, VALUE8_1111_1111, 0x04, 0x02, 0x8000, False, True),
-    ])
-def test_cpu_ins_lda_inx(size: int, cycles: int, value: int, reg_x: int, memory_zp: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_inx(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_x: int,
+    memory_zp: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDA (0xA1) - Load Accumulator, Indexed Indirect.
 
@@ -777,7 +836,17 @@ def test_cpu_ins_lda_inx(size: int, cycles: int, value: int, reg_x: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_y", "memory_zp", "memory_location", "flag_z", "flag_n"), [
+    (
+        "size",
+        "cycles",
+        "value",
+        "reg_y",
+        "memory_zp",
+        "memory_location",
+        "flag_z",
+        "flag_n",
+    ),
+    [
         (2, 5, VALUE8_0000_0000, 0x04, 0x02, 0x8000, True, False),
         (2, 5, VALUE8_0000_1111, 0x04, 0x02, 0x8000, False, False),
         (2, 5, VALUE8_1111_0000, 0x04, 0x02, 0x8000, False, True),
@@ -786,8 +855,18 @@ def test_cpu_ins_lda_inx(size: int, cycles: int, value: int, reg_x: int, memory_
         (2, 6, VALUE8_0000_1111, 0x04, 0x02, 0x80FE, False, False),
         (2, 6, VALUE8_1111_0000, 0x04, 0x02, 0x80FE, False, True),
         (2, 6, VALUE8_1111_1111, 0x04, 0x02, 0x80FE, False, True),
-    ])
-def test_cpu_ins_lda_iny(size: int, cycles: int, value: int, reg_y: int, memory_zp: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_lda_iny(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_y: int,
+    memory_zp: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDA (0xB1) - Load Accumulator, Indirect Indexed.
 
@@ -854,15 +933,19 @@ def test_cpu_ins_lda_iny(size: int, cycles: int, value: int, reg_y: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "flag_z", "flag_n"),
+    [
         (2, 2, VALUE8_0000_0000, True, False),
         (2, 2, VALUE8_0000_1111, False, False),
         (2, 2, VALUE8_0101_1010, False, False),
         (2, 2, VALUE8_1010_0101, False, True),
         (2, 2, VALUE8_1111_0000, False, True),
         (2, 2, VALUE8_1111_1111, False, True),
-    ])
-def test_cpu_ins_ldx_imm(size: int, cycles: int, value: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldx_imm(
+    size: int, cycles: int, value: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDX (0xA2) - Load X Register, Immediate.
 
@@ -904,15 +987,19 @@ def test_cpu_ins_ldx_imm(size: int, cycles: int, value: int, flag_z: bool, flag_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"),
+    [
         (2, 3, VALUE8_0000_0000, 0x80, True, False),
         (2, 3, VALUE8_0000_1111, 0x80, False, False),
         (2, 3, VALUE8_0101_1010, 0x80, False, False),
         (2, 3, VALUE8_1010_0101, 0x80, False, True),
         (2, 3, VALUE8_1111_0000, 0x80, False, True),
         (2, 3, VALUE8_1111_1111, 0x80, False, True),
-    ])
-def test_cpu_ins_ldx_zp(size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldx_zp(
+    size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDX (0xA6) - Load X Register, Zero Page.
 
@@ -958,7 +1045,8 @@ def test_cpu_ins_ldx_zp(size: int, cycles: int, value: int, memory_location: int
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_y", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_y", "memory_location", "flag_z", "flag_n"),
+    [
         (2, 5, VALUE8_0000_0000, 0x00, 0x80, True, False),
         (2, 5, VALUE8_0000_1111, 0x00, 0x80, False, False),
         (2, 5, VALUE8_1111_0000, 0x00, 0x80, False, True),
@@ -975,8 +1063,17 @@ def test_cpu_ins_ldx_zp(size: int, cycles: int, value: int, memory_location: int
         (2, 5, VALUE8_0000_1111, 0xFF, 0x80, False, False),
         (2, 5, VALUE8_1111_0000, 0xFF, 0x80, False, True),
         (2, 5, VALUE8_1111_1111, 0xFF, 0x80, False, True),
-    ])
-def test_cpu_ins_ldx_zpy(size: int, cycles: int, value: int, reg_y: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldx_zpy(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_y: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDX (0xB6) - Load X Register, Zero Page, Y.
 
@@ -1023,12 +1120,13 @@ def test_cpu_ins_ldx_zpy(size: int, cycles: int, value: int, reg_y: int, memory_
         cpu.cycles,
         cpu.reg_x,
         cpu.flag_z,
-        cpu.flag_n
+        cpu.flag_n,
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0xFAFA, True, False),
         (3, 4, VALUE8_0000_1111, 0xFAFA, False, False),
         (3, 4, VALUE8_0101_1010, 0xFAFA, False, False),
@@ -1041,8 +1139,11 @@ def test_cpu_ins_ldx_zpy(size: int, cycles: int, value: int, reg_y: int, memory_
         (3, 4, VALUE8_1010_0101, 0xAFAF, False, True),
         (3, 4, VALUE8_1111_0000, 0xAFAF, False, True),
         (3, 4, VALUE8_1111_1111, 0xAFAF, False, True),
-    ])
-def test_cpu_ins_ldx_abs(size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldx_abs(
+    size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDX (0xAE) - Load X Register, Absolute.
 
@@ -1087,7 +1188,8 @@ def test_cpu_ins_ldx_abs(size: int, cycles: int, value: int, memory_location: in
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_y", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_y", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0x04, 0x8000, True, False),
         (3, 4, VALUE8_0000_1111, 0x04, 0x8000, False, False),
         (3, 4, VALUE8_0101_1010, 0x04, 0x8000, False, False),
@@ -1100,8 +1202,17 @@ def test_cpu_ins_ldx_abs(size: int, cycles: int, value: int, memory_location: in
         (3, 5, VALUE8_1010_0101, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_0000, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_1111, 0x04, 0x80FE, False, True),
-    ])
-def test_cpu_ins_ldx_aby(size: int, cycles: int, value: int, reg_y: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldx_aby(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_y: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDX (0xBE) - Load X Register, Absolute, Y.
 
@@ -1154,15 +1265,19 @@ def test_cpu_ins_ldx_aby(size: int, cycles: int, value: int, reg_y: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "flag_z", "flag_n"),
+    [
         (2, 2, VALUE8_0000_0000, True, False),
         (2, 2, VALUE8_0000_1111, False, False),
         (2, 2, VALUE8_0101_1010, False, False),
         (2, 2, VALUE8_1010_0101, False, True),
         (2, 2, VALUE8_1111_0000, False, True),
         (2, 2, VALUE8_1111_1111, False, True),
-    ])
-def test_cpu_ins_ldy_imm(size: int, cycles: int, value: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldy_imm(
+    size: int, cycles: int, value: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDT (0xA0) - Load Y Register, Immediate.
 
@@ -1204,13 +1319,17 @@ def test_cpu_ins_ldy_imm(size: int, cycles: int, value: int, flag_z: bool, flag_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"),
+    [
         (2, 3, VALUE8_0000_0000, 0x80, True, False),
         (2, 3, VALUE8_0000_1111, 0x80, False, False),
         (2, 3, VALUE8_1111_0000, 0x80, False, True),
         (2, 3, VALUE8_1111_1111, 0x80, False, True),
-    ])
-def test_cpu_ins_ldy_zp(size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldy_zp(
+    size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDA (0xA4) - Load Y Register, Zero Page.
 
@@ -1259,7 +1378,8 @@ def test_cpu_ins_ldy_zp(size: int, cycles: int, value: int, memory_location: int
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_x", "memory_location", "flag_z", "flag_n"),
+    [
         (2, 5, VALUE8_0000_0000, 0x00, 0x80, True, False),
         (2, 5, VALUE8_0000_1111, 0x00, 0x80, False, False),
         (2, 5, VALUE8_1111_0000, 0x00, 0x80, False, True),
@@ -1276,8 +1396,17 @@ def test_cpu_ins_ldy_zp(size: int, cycles: int, value: int, memory_location: int
         (2, 5, VALUE8_0000_1111, 0xFF, 0x80, False, False),
         (2, 5, VALUE8_1111_0000, 0xFF, 0x80, False, True),
         (2, 5, VALUE8_1111_1111, 0xFF, 0x80, False, True),
-    ])
-def test_cpu_ins_ldy_zpx(size: int, cycles: int, value: int, reg_x: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldy_zpx(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_x: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDY (0xB4) - Load Y Register, Zero Page, X.
 
@@ -1326,12 +1455,13 @@ def test_cpu_ins_ldy_zpx(size: int, cycles: int, value: int, reg_x: int, memory_
         cpu.cycles,
         cpu.reg_y,
         cpu.flag_z,
-        cpu.flag_n
+        cpu.flag_n,
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0xFAFA, True, False),
         (3, 4, VALUE8_0000_1111, 0xFAFA, False, False),
         (3, 4, VALUE8_0101_1010, 0xFAFA, False, False),
@@ -1344,8 +1474,11 @@ def test_cpu_ins_ldy_zpx(size: int, cycles: int, value: int, reg_x: int, memory_
         (3, 4, VALUE8_1010_0101, 0xAFAF, False, True),
         (3, 4, VALUE8_1111_0000, 0xAFAF, False, True),
         (3, 4, VALUE8_1111_1111, 0xAFAF, False, True),
-    ])
-def test_cpu_ins_ldy_abs(size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldy_abs(
+    size: int, cycles: int, value: int, memory_location: int, flag_z: bool, flag_n: bool
+) -> None:
     """
     LDY (0xAC) - Load Y Register, Absolute.
 
@@ -1391,7 +1524,8 @@ def test_cpu_ins_ldy_abs(size: int, cycles: int, value: int, memory_location: in
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_location", "flag_z", "flag_n"), [
+    ("size", "cycles", "value", "reg_x", "memory_location", "flag_z", "flag_n"),
+    [
         (3, 4, VALUE8_0000_0000, 0x04, 0x8000, True, False),
         (3, 4, VALUE8_0000_1111, 0x04, 0x8000, False, False),
         (3, 4, VALUE8_0101_1010, 0x04, 0x8000, False, False),
@@ -1404,8 +1538,17 @@ def test_cpu_ins_ldy_abs(size: int, cycles: int, value: int, memory_location: in
         (3, 5, VALUE8_1010_0101, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_0000, 0x04, 0x80FE, False, True),
         (3, 5, VALUE8_1111_1111, 0x04, 0x80FE, False, True),
-    ])
-def test_cpu_ins_ldy_abx(size: int, cycles: int, value: int, reg_x: int, memory_location: int, flag_z: bool, flag_n: bool) -> None:
+    ],
+)
+def test_cpu_ins_ldy_abx(
+    size: int,
+    cycles: int,
+    value: int,
+    reg_x: int,
+    memory_location: int,
+    flag_z: bool,
+    flag_n: bool,
+) -> None:
     """
     LDY (0xBC) - Load Y Register, Absolute, X.
 
@@ -1433,7 +1576,7 @@ def test_cpu_ins_ldy_abx(size: int, cycles: int, value: int, reg_x: int, memory_
     :param int size: Number of bytes consumed by the stack pointer
     :param int cycles: Number of CPU cycles used
     :param int value: Value used for the test
-    :param int reg_x: Value of the Y register
+    :param int reg_x: Value of the X register
     :param int memory_location: Memory location to load the value from
     :param bool flag_z: State of the Zero Flag
     :param bool flag_n: State of the Negative Flag
@@ -1458,15 +1601,19 @@ def test_cpu_ins_ldy_abx(size: int, cycles: int, value: int, reg_x: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location"), [
+    ("size", "cycles", "value", "memory_location"),
+    [
         (2, 3, VALUE8_0000_0000, 0x80),
         (2, 3, VALUE8_0000_1111, 0x80),
         (2, 3, VALUE8_0101_1010, 0x80),
         (2, 3, VALUE8_1010_0101, 0x80),
         (2, 3, VALUE8_1111_0000, 0x80),
         (2, 3, VALUE8_1111_1111, 0x80),
-    ])
-def test_cpu_ins_sta_zp(size: int, cycles: int, value: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_zp(
+    size: int, cycles: int, value: int, memory_location: int
+) -> None:
     """
     Store Accumulator, Zero Page.
 
@@ -1510,36 +1657,37 @@ def test_cpu_ins_sta_zp(size: int, cycles: int, value: int, memory_location: int
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_zp"), [
+    ("size", "cycles", "value", "reg_x", "memory_zp"),
+    [
         (2, 3, VALUE8_0000_0000, 0x00, 0x80),
         (2, 3, VALUE8_0000_1111, 0x00, 0x80),
         (2, 3, VALUE8_0101_1010, 0x00, 0x80),
         (2, 3, VALUE8_1010_0101, 0x00, 0x80),
         (2, 3, VALUE8_1111_0000, 0x00, 0x80),
         (2, 3, VALUE8_1111_1111, 0x00, 0x80),
-
         (2, 3, VALUE8_0000_0000, 0x0F, 0x80),
         (2, 3, VALUE8_0000_1111, 0x0F, 0x80),
         (2, 3, VALUE8_0101_1010, 0x0F, 0x80),
         (2, 3, VALUE8_1010_0101, 0x0F, 0x80),
         (2, 3, VALUE8_1111_0000, 0x0F, 0x80),
         (2, 3, VALUE8_1111_1111, 0x0F, 0x80),
-
         (2, 3, VALUE8_0000_0000, 0xF0, 0x80),
         (2, 3, VALUE8_0000_1111, 0xF0, 0x80),
         (2, 3, VALUE8_0101_1010, 0xF0, 0x80),
         (2, 3, VALUE8_1010_0101, 0xF0, 0x80),
         (2, 3, VALUE8_1111_0000, 0xF0, 0x80),
         (2, 3, VALUE8_1111_1111, 0xF0, 0x80),
-
         (2, 3, VALUE8_0000_0000, 0xFF, 0x80),
         (2, 3, VALUE8_0000_1111, 0xFF, 0x80),
         (2, 3, VALUE8_0101_1010, 0xFF, 0x80),
         (2, 3, VALUE8_1010_0101, 0xFF, 0x80),
         (2, 3, VALUE8_1111_0000, 0xFF, 0x80),
         (2, 3, VALUE8_1111_1111, 0xFF, 0x80),
-    ])
-def test_cpu_ins_sta_zpx(size: int, cycles: int, value: int, reg_x: int, memory_zp: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_zpx(
+    size: int, cycles: int, value: int, reg_x: int, memory_zp: int
+) -> None:
     """
     STA (0x95) - Store Accumulator, Zero Page, X.
 
@@ -1577,7 +1725,8 @@ def test_cpu_ins_sta_zpx(size: int, cycles: int, value: int, reg_x: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location"), [
+    ("size", "cycles", "value", "memory_location"),
+    [
         (3, 4, VALUE8_0000_0000, 0xFAFA),
         (3, 4, VALUE8_0000_1111, 0xFAFA),
         (3, 4, VALUE8_0101_1010, 0xFAFA),
@@ -1590,8 +1739,11 @@ def test_cpu_ins_sta_zpx(size: int, cycles: int, value: int, reg_x: int, memory_
         (3, 4, VALUE8_1010_0101, 0xAFAF),
         (3, 4, VALUE8_1111_0000, 0xAFAF),
         (3, 4, VALUE8_1111_1111, 0xAFAF),
-    ])
-def test_cpu_ins_sta_abs(size: int, cycles: int, value: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_abs(
+    size: int, cycles: int, value: int, memory_location: int
+) -> None:
     """
     STA (0x8D) - Store Accumulator, Absolute.
 
@@ -1632,7 +1784,8 @@ def test_cpu_ins_sta_abs(size: int, cycles: int, value: int, memory_location: in
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_location"), [
+    ("size", "cycles", "value", "reg_x", "memory_location"),
+    [
         (3, 5, VALUE8_0000_0000, 0x04, 0x8000),
         (3, 5, VALUE8_0000_1111, 0x04, 0x8000),
         (3, 5, VALUE8_0101_1010, 0x04, 0x8000),
@@ -1645,8 +1798,11 @@ def test_cpu_ins_sta_abs(size: int, cycles: int, value: int, memory_location: in
         (3, 5, VALUE8_1010_0101, 0x04, 0x80FE),
         (3, 5, VALUE8_1111_0000, 0x04, 0x80FE),
         (3, 5, VALUE8_1111_1111, 0x04, 0x80FE),
-    ])
-def test_cpu_ins_sta_abx(size: int, cycles: int, value: int, reg_x: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_abx(
+    size: int, cycles: int, value: int, reg_x: int, memory_location: int
+) -> None:
     """
     STA (0x9D) - Store Accumulator, Absolute, X.
 
@@ -1687,7 +1843,8 @@ def test_cpu_ins_sta_abx(size: int, cycles: int, value: int, reg_x: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_y", "memory_location"), [
+    ("size", "cycles", "value", "reg_y", "memory_location"),
+    [
         (3, 5, VALUE8_0000_0000, 0x04, 0x8000),
         (3, 5, VALUE8_0000_1111, 0x04, 0x8000),
         (3, 5, VALUE8_1111_0000, 0x04, 0x8000),
@@ -1696,8 +1853,11 @@ def test_cpu_ins_sta_abx(size: int, cycles: int, value: int, reg_x: int, memory_
         (3, 5, VALUE8_0000_1111, 0x04, 0x80FE),
         (3, 5, VALUE8_1111_0000, 0x04, 0x80FE),
         (3, 5, VALUE8_1111_1111, 0x04, 0x80FE),
-    ])
-def test_cpu_ins_sta_aby(size: int, cycles: int, value: int, reg_y: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_aby(
+    size: int, cycles: int, value: int, reg_y: int, memory_location: int
+) -> None:
     """
     STA (0x99) - Store Accumulator, Absolute, Y.
 
@@ -1744,15 +1904,19 @@ def test_cpu_ins_sta_aby(size: int, cycles: int, value: int, reg_y: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_x", "memory_zp", "memory_location"), [
+    ("size", "cycles", "value", "reg_x", "memory_zp", "memory_location"),
+    [
         (2, 6, VALUE8_0000_0000, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_0000_1111, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_0101_1010, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_1010_0101, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_1111_0000, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_1111_1111, 0x04, 0x02, 0x8000),
-    ])
-def test_cpu_ins_sta_inx(size: int, cycles: int, value: int, reg_x: int, memory_zp: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_inx(
+    size: int, cycles: int, value: int, reg_x: int, memory_zp: int, memory_location: int
+) -> None:
     """
     STA (0x81) - Store Accumulator, Indexed Indirect.
 
@@ -1782,15 +1946,19 @@ def test_cpu_ins_sta_inx(size: int, cycles: int, value: int, reg_x: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "reg_y", "memory_zp", "memory_location"), [
+    ("size", "cycles", "value", "reg_y", "memory_zp", "memory_location"),
+    [
         (2, 6, VALUE8_0000_0000, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_0000_1111, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_0101_1010, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_1010_0101, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_1111_0000, 0x04, 0x02, 0x8000),
         (2, 6, VALUE8_1111_1111, 0x04, 0x02, 0x8000),
-    ])
-def test_cpu_ins_sta_iny(size: int, cycles: int, value: int, reg_y: int, memory_zp: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sta_iny(
+    size: int, cycles: int, value: int, reg_y: int, memory_zp: int, memory_location: int
+) -> None:
     """
     STA (0x91) - Store Accumulator, Indirect Indexed.
 
@@ -1826,12 +1994,14 @@ def test_cpu_ins_sta_iny(size: int, cycles: int, value: int, reg_y: int, memory_
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_zp"), [
+    ("size", "cycles", "value", "memory_zp"),
+    [
         (2, 3, VALUE8_0000_0000, 0x80),
         (2, 3, VALUE8_0000_1111, 0x80),
         (2, 3, VALUE8_1111_0000, 0x80),
         (2, 3, VALUE8_1111_1111, 0x80),
-    ])
+    ],
+)
 def test_cpu_ins_stx_zp(size: int, cycles: int, value: int, memory_zp: int) -> None:
     """
     STX (0x86) - Store X Register, Zero Page.
@@ -1872,10 +2042,12 @@ def test_cpu_ins_stx_zp(size: int, cycles: int, value: int, memory_zp: int) -> N
 
 
 @pytest.mark.parametrize(
-    ("reg_y", "memory_location"), [
+    ("reg_y", "memory_location"),
+    [
         (0x0F, 0x8F),
         (0xFF, 0x7F),
-    ])
+    ],
+)
 def test_cpu_ins_stx_zpy(reg_y: int, memory_location: int) -> None:
     """
     STX (0x96) - Store X Register, Zero Page, Y.
@@ -1905,7 +2077,8 @@ def test_cpu_ins_stx_zpy(reg_y: int, memory_location: int) -> None:
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location"), [
+    ("size", "cycles", "value", "memory_location"),
+    [
         (3, 4, VALUE8_0000_0000, 0xFAFA),
         (3, 4, VALUE8_0000_1111, 0xFAFA),
         (3, 4, VALUE8_0101_1010, 0xFAFA),
@@ -1918,8 +2091,11 @@ def test_cpu_ins_stx_zpy(reg_y: int, memory_location: int) -> None:
         (3, 4, VALUE8_1010_0101, 0xAFAF),
         (3, 4, VALUE8_1111_0000, 0xAFAF),
         (3, 4, VALUE8_1111_1111, 0xAFAF),
-    ])
-def test_cpu_ins_stx_abs(size: int, cycles: int, value: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_stx_abs(
+    size: int, cycles: int, value: int, memory_location: int
+) -> None:
     """
     Store X Register, Absolute.
 
@@ -1942,13 +2118,17 @@ def test_cpu_ins_stx_abs(size: int, cycles: int, value: int, memory_location: in
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location"), [
+    ("size", "cycles", "value", "memory_location"),
+    [
         (2, 3, VALUE8_0000_0000, 0x80),
         (2, 3, VALUE8_0000_1111, 0x80),
         (2, 3, VALUE8_1111_0000, 0x80),
         (2, 3, VALUE8_1111_1111, 0x80),
-    ])
-def test_cpu_ins_sty_zp(size: int, cycles: int, value: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sty_zp(
+    size: int, cycles: int, value: int, memory_location: int
+) -> None:
     """Store Y Register, Zero Page."""
     memory = Memory()
     cpu = Processor(memory)
@@ -1967,10 +2147,12 @@ def test_cpu_ins_sty_zp(size: int, cycles: int, value: int, memory_location: int
 
 
 @pytest.mark.parametrize(
-    ("reg_x", "memory_location"), [
+    ("reg_x", "memory_location"),
+    [
         (0x0F, 0x8F),
         (0xFF, 0x7F),
-    ])
+    ],
+)
 def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
     """Store Y Register, Zero Page, X."""
     memory = Memory()
@@ -1991,7 +2173,8 @@ def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
 
 
 @pytest.mark.parametrize(
-    ("size", "cycles", "value", "memory_location"), [
+    ("size", "cycles", "value", "memory_location"),
+    [
         (3, 4, VALUE8_0000_0000, 0xFAFA),
         (3, 4, VALUE8_0000_1111, 0xFAFA),
         (3, 4, VALUE8_0101_1010, 0xFAFA),
@@ -2004,8 +2187,11 @@ def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
         (3, 4, VALUE8_1010_0101, 0xAFAF),
         (3, 4, VALUE8_1111_0000, 0xAFAF),
         (3, 4, VALUE8_1111_1111, 0xAFAF),
-    ])
-def test_cpu_ins_sty_abs(size: int, cycles: int, value: int, memory_location: int) -> None:
+    ],
+)
+def test_cpu_ins_sty_abs(
+    size: int, cycles: int, value: int, memory_location: int
+) -> None:
     """STY (0x8C) - Store Y Register, Absolute."""
     memory = Memory()
     cpu = Processor(memory)

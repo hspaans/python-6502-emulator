@@ -61,6 +61,7 @@ lint = [
     "flake8-rst-docstrings",
     "flake8-isort",
     "pymarkdownlnt",
+    "rstcheck",
     "yamllint",
 ]
 docs = [
@@ -149,7 +150,6 @@ dependency_groups = ["lint", "test"]
 commands = [
     ["python", "-m", "yamllint", ".", "--format", "github"],
     ["python", "-m", "flake8", "--doctests", "src/", "tests/"],
-    ["python", "-m", "pymarkdownlnt", "scan", "."],
-    ["python", "-m", "rstcheck", "-r", "docs/"],
+    ["pymarkdownlnt", "scan", "."],
     ["python", "-c", 'print(r"{env_python}")'],
 ]
