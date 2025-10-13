@@ -14,19 +14,15 @@ permissions:
 
 jobs:
   tox:
-    name: Test on Python ${{ matrix.py }} - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}-latest
+    name: Test on Python ${{ matrix.py }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - Ubuntu
         py:
+          - "3.13"
           - "3.12"
           - "3.11"
-          - "3.10"
-          - "3.9"
-          - "3.8"
     steps:
       - name: Setup python for test ${{ matrix.py }}
         uses: actions/setup-python@v6
@@ -37,7 +33,9 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install tox-gh
-        run: python -m pip install tox-gh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install tox-gh
 
       - name: Setup test suite
         run: tox r -vv --notest
