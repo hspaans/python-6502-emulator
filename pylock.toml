@@ -1,5 +1,5 @@
 lock-version = "1.0"
 created-by = "pip"
 packages = [
-    { name = "python-6502-emulator", directory = { path = "." } },
+    { name = "python-6502-emulator", directory = { path = ".", editable = true } },
 ]
