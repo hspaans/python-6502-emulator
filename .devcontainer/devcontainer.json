@@ -16,12 +16,13 @@
   "customizations": {
       "vscode": {
           "extensions": [
-              "EditorConfig.EditorConfig",
-              "github.vscode-github-actions",
-              "ms-python.vscode-pylance",
-              "ms-python.python",
-              "ms-python.autopep8",
-              "ms-python.flake8"
+            "EditorConfig.EditorConfig",
+            "github.vscode-github-actions",
+            "ms-python.vscode-pylance",
+            "ms-python.python",
+            "ms-python.autopep8",
+            "ms-python.flake8",
+            "ms-python.black-formatter"
           ],
           "[python]": {
               "editor.defaultFormatter": "ms-python.autopep8",
