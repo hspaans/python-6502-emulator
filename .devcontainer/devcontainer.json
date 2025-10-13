@@ -10,7 +10,7 @@
       "ghcr.io/hspaans/devcontainer-features/rstcheck:2": {},
       "ghcr.io/devcontainers-extra/features/flake8:2": {
         "version": "latest",
-        "plugins": "flake8-bugbear flake8-deprecated flake8-docstrings flake8-typing-imports flake8-isort flake8-print flake8-pylint flake8-builtins flake8-pytest-style"
+        "plugins": "flake8-black flake8-bugbear flake8-deprecated flake8-docstrings flake8-typing-imports flake8-isort flake8-print flake8-pylint flake8-builtins flake8-pytest-style"
       }
   },
   "customizations": {
@@ -36,6 +36,14 @@
               "python.testing.unittestEnabled": false,
               "python.testing.pytestEnabled": true,
               "python.analysis.inlayHints.pytestParameters": true
+          },
+          "mcp": {
+              "servers": {
+                  "github": {
+                      "type": "http",
+                      "url": "https://api.githubcopilot.com/mcp/"
+                  }
+              }
           }
       }
   },
