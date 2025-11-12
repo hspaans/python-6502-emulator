@@ -234,7 +234,9 @@ class Processor:
         """
         while (self.cycles < cycles) or (cycles == 0):
             opcode = self.fetch_byte()
-            eval("self.ins_" + self.OPCODES[opcode] + "_" + self.ADDRESSING[opcode] + "()")  # noqa: PLW0123
+            name = f"ins_{self.OPCODES[opcode]}_{self.ADDRESSING[opcode]}"
+            method = getattr(self, name)
+            method()
 
     def ins_nop_imp(self: object) -> None:
         """
