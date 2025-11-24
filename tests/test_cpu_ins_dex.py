@@ -32,18 +32,21 @@ Subtracts one from the X register setting the zero and negative flags as appropr
 See also: DEC, DEY
 
 """
+
 import pytest
 
 import m6502
 
 
 @pytest.mark.parametrize(
-    ("value", "expected", "flag_z", "flag_n"), [
+    ("value", "expected", "flag_z", "flag_n"),
+    [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),
-        (2, 1, False, False)
-    ])
+        (2, 1, False, False),
+    ],
+)
 def test_cpu_ins_dex_imp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement X Register.

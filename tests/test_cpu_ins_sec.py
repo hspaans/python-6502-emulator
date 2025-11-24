@@ -31,6 +31,7 @@ Set the carry flag to one.
 
 See also: CLC
 """
+
 import m6502
 
 

@@ -10,3 +10,12 @@ rules:
     level: error
   line-length: disable
   truthy: disable
+
+ignore:
+  - .tox/
+  - .venv/
+  - .eggs/
+  - .git/
+  - .mypy_cache/
+  - .pytest_cache/
+  - .coverage

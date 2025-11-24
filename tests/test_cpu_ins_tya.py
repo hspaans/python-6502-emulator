@@ -34,17 +34,20 @@ Processor Status after use:
 
 See also: TAY
 """
+
 import pytest
 
 import m6502
 
 
 @pytest.mark.parametrize(
-    ("value", "flag_n", "flag_z"), [
+    ("value", "flag_n", "flag_z"),
+    [
         (0x0F, False, False),
         (0x00, False, True),
         (0xF0, True, False),
-    ])
+    ],
+)
 def test_cpu_ins_tya_imm(value: int, flag_n: bool, flag_z: bool) -> None:
     """
     Transfer Accumulator, Implied.
