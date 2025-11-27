@@ -31,7 +31,7 @@ Sets the decimal mode flag to one.
 
 See also: CLD
 """
-import m6502
+from m6502 import Memory, Processor
 
 
 def test_cpu_ins_sed_imp() -> None:
@@ -40,8 +40,8 @@ def test_cpu_ins_sed_imp() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.flag_d = False
     memory[0xFCE2] = 0xF8

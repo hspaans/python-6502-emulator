@@ -4,7 +4,7 @@
 class Memory:
     """Memory bank for MOT-6502 systems."""
 
-    def __init__(self: object, size: int = None) -> None:
+    def __init__(self, size: int = 0xFFFF) -> None:
         """
         Initialize the memory.
 
@@ -20,7 +20,7 @@ class Memory:
         self.size = size
         self.memory = [0] * self.size
 
-    def __getitem__(self: object, address: int) -> int:
+    def __getitem__(self, address: int) -> int:
         """
         Get the value at the specified address.
 
@@ -31,7 +31,7 @@ class Memory:
             raise ValueError("Memory address is not valid")
         return self.memory[address]
 
-    def __setitem__(self: object, address: int, value: int) -> int:
+    def __setitem__(self, address: int, value: int) -> int:
         """
         Set the value at the specified address.
 

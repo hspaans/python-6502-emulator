@@ -37,7 +37,7 @@ or subtraction.
 
 See also: SED
 """
-import m6502
+from m6502 import Memory, Processor
 
 
 def test_cpu_ins_cld_imp() -> None:
@@ -46,8 +46,8 @@ def test_cpu_ins_cld_imp() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.flag_d = True
     memory[0xFCE2] = 0xD8

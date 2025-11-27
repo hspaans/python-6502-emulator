@@ -1,5 +1,5 @@
 """Verifies that the processor class works as expected."""
-import m6502
+from m6502 import Memory, Processor
 
 
 def test_cpu_reset() -> None:
@@ -8,8 +8,8 @@ def test_cpu_reset() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     assert (
         cpu.program_counter,
@@ -30,8 +30,8 @@ def test_cpu_read_byte() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     memory[0x0001] = 0xA5
     value = cpu.read_byte(0x0001)
@@ -55,8 +55,8 @@ def test_cpu_read_word() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     memory[0x0001] = 0xA5
     memory[0x0002] = 0x5A
@@ -81,8 +81,8 @@ def test_cpu_write_byte() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.write_byte(0x0001, 0xA5)
     assert (
@@ -105,8 +105,8 @@ def test_cpu_write_word() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.write_word(0x0001, 0x5AA5)
     assert (
@@ -130,8 +130,8 @@ def test_cpu_read_write_byte() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.write_byte(0x0001, 0xA5)
     value = cpu.read_byte(0x0001)
@@ -155,8 +155,8 @@ def test_cpu_read_write_word() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.write_word(0x0001, 0x5AA5)
     value = cpu.read_word(0x0001)
@@ -180,8 +180,8 @@ def test_cpu_fetch_byte() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     memory[0xFCE2] = 0xA5
     value = cpu.fetch_byte()
@@ -205,8 +205,8 @@ def test_cpu_fetch_word() -> None:
 
     :return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     memory[0xFCE2] = 0xA5
     memory[0xFCE3] = 0x5A

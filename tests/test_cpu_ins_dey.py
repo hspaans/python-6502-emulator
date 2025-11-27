@@ -26,7 +26,7 @@ Subtracts one from the Y register setting the zero and negative flags as appropr
 +-----------------+--------+-------+--------+
 | Addressing Mode | Opcode | Bytes | Cycles |
 +=================+========+=======+========+
-| Implied         |  0xC8  |   1   |   2    |
+| Implied         |  0x88  |   1   |   2    |
 +-----------------+--------+-------+--------+
 
 See also: DEC, DEX
@@ -34,7 +34,7 @@ See also: DEC, DEX
 """
 import pytest
 
-import m6502
+from m6502 import Memory, Processor
 
 
 @pytest.mark.parametrize(
@@ -50,8 +50,8 @@ def test_cpu_ins_dey_imp(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_y = value
     memory[0xFCE2] = 0x88

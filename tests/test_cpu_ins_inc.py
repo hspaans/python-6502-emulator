@@ -41,7 +41,7 @@ See also: INX, INY
 """
 import pytest
 
-import m6502
+from m6502 import Memory, Processor
 
 
 @pytest.mark.parametrize(
@@ -57,8 +57,8 @@ def test_cpu_ins_inc_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     memory[0xFCE2] = 0xE6
     memory[0xFCE3] = 0xFC
@@ -96,8 +96,8 @@ def test_cpu_ins_inc_zpx(value: int, expected: int, flag_z: bool, flag_n: bool, 
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = reg_x
     memory[0xFCE2] = 0xF6
@@ -127,8 +127,8 @@ def test_cpu_ins_inc_abs(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     memory[0xFCE2] = 0xEE
     memory[0xFCE3] = 0xFC
@@ -158,8 +158,8 @@ def test_cpu_ins_inc_abx(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_x = 1
     memory[0xFCE2] = 0xFE

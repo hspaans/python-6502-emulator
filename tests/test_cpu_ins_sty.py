@@ -37,7 +37,7 @@ See also: STY, STX
 """
 import pytest
 
-import m6502
+from m6502 import Memory, Processor
 
 
 def test_cpu_ins_sty_zp() -> None:
@@ -46,8 +46,8 @@ def test_cpu_ins_sty_zp() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_y = 0xF0
     memory[0xFCE2] = 0x84
@@ -73,8 +73,8 @@ def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_y = 0xF0
     cpu.reg_x = reg_x
@@ -96,8 +96,8 @@ def test_cpu_ins_sty_abs() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_y = 0xF0
     memory[0xFCE2] = 0x8C

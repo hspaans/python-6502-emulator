@@ -31,7 +31,7 @@ Processor Status after use:
 
 See also: PLA
 """
-import m6502
+from m6502 import Memory, Processor
 
 
 def test_cpu_ins_pha_imp() -> None:
@@ -42,8 +42,8 @@ def test_cpu_ins_pha_imp() -> None:
 
     return: None
     """
-    memory = m6502.Memory()
-    cpu = m6502.Processor(memory)
+    memory = Memory()
+    cpu = Processor(memory)
     cpu.reset()
     cpu.reg_a = 0xF0
     memory[0xFCE2] = 0x48
