@@ -1,0 +1,12 @@
+[flake8]
+max-line-length = 127
+ignore =
+    E221,
+    E241,
+    F401,
+    E501,
+    PLC301,
+    PLC302,
+    PLR913,
+    PLR917,
+    PLW511,

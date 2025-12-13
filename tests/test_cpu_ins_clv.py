@@ -29,6 +29,7 @@ Clears the overflow flag.
 | Implied         |  0xB8  |   1   |   2    |
 +-----------------+--------+-------+--------+
 """
+
 import m6502
 
 

@@ -30,6 +30,7 @@ Processor Status after use:
 | Implied         |  0xEA  |   1   |    2   |
 +-----------------+--------+-------+--------+
 """
+
 import m6502
 
 
