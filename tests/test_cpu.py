@@ -320,7 +320,7 @@ def test_cpu_ins_lda_imm(
     Load the value stored after the opcode directly into accumulator
     and then evaluate accumulator for flags Zero and Negative.
 
-    Code example:
+    Assembly example:
     ```
     LDA #nn
     ```
@@ -376,7 +376,7 @@ def test_cpu_ins_lda_zp(
     and Negative. The memory location is a single byte and within the Zero
     Page memory range of 0-255.
 
-    Code example:
+    Assembly example:
     ```
     LDA nn
     ```
@@ -466,7 +466,7 @@ def test_cpu_ins_lda_zpx(
     - 0x80 + 0x0F => 0x8F
     - 0x80 + 0xFF => 0x7F (0x017F)
 
-    Code example:
+    Assembly example:
     ```
     LDA nn, X
     ```
@@ -531,7 +531,7 @@ def test_cpu_ins_lda_abs(
     and Negative. The memory location is a two-byte address that can range
     from 0x0000 to 0xFFFF.
 
-    Code example:
+    Assembly example:
     ```
     LDA nnnn
     ```
@@ -612,7 +612,7 @@ def test_cpu_ins_lda_abx(
     - 0xFF04 + 0x04 => 0xFF08
     - 0xFF04 + 0xFF => 0x0004 (0x010004)
 
-    Code example:
+    Assembly example:
     ```
     LDA nnnn, X
     ```
@@ -693,7 +693,7 @@ def test_cpu_ins_lda_aby(
     - 0xFF04 + 0x04 => 0xFF08
     - 0xFF04 + 0xFF => 0x0004 (0x010004)
 
-    Code example:
+    Assembly example:
     ```
     LDA nnnn, Y
     ```
@@ -789,7 +789,7 @@ def test_cpu_ins_lda_inx(
     A = [$8000]
     ```
 
-    Code example:
+    Assembly example:
     ```
     LDA ($nn, X)
     ```
@@ -888,7 +888,7 @@ def test_cpu_ins_lda_iny(
     A = [$8000 + Y]
     ```
 
-    Code example:
+    Assembly example:
     ```
     LDA ($nn), Y
     ```
@@ -1008,7 +1008,7 @@ def test_cpu_ins_ldx_zp(
     and Negative. The memory location is a single byte and within the Zero
     Page memory range of 0-255.
 
-    Code example:
+    Assembly example:
     ```
     LDX nn
     ```
@@ -1086,7 +1086,7 @@ def test_cpu_ins_ldx_zpy(
     - 0x80 + 0x0F => 0x8F
     - 0x80 + 0xFF => 0x7F (0x017F)
 
-    Code example:
+    Assembly example:
     ```
     LDX nn, Y
     ```
@@ -1151,7 +1151,7 @@ def test_cpu_ins_ldx_abs(
     directly into X register and then evaluate X register for flags Zero
     and Negative. The memory location is a two-byte address.
 
-    Code example:
+    Assembly example:
     ```
     LDX nnnn
     ```
@@ -1227,10 +1227,11 @@ def test_cpu_ins_ldx_aby(
     - 0xFF04 + 0x04 => 0xFF08
     - 0xFF04 + 0xFF => 0x0004 (0x010004)
 
-    Code example:
+    Assembly example:
     ```
     LDX nnnn, Y
     ```
+
     Affected flags:
     - Zero Flag: Set if X = 0
     - Negative Flag: Set if bit 7 of X is set

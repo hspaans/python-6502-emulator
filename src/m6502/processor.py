@@ -505,7 +505,6 @@ class Processor:  # noqa: PLR904
         Page memory range of 0-255.
 
         Assembly example:
-
         ```
         LDA nn
         ```
@@ -530,7 +529,6 @@ class Processor:  # noqa: PLR904
         Page memory range of 0-255.
 
         Assembly example:
-
         ```
         LDX #nn
         LDA nn,X
@@ -558,7 +556,6 @@ class Processor:  # noqa: PLR904
         bytes and can address any memory location.
 
         Assembly example:
-
         ```
         LDA nnnn
         ```
@@ -583,7 +580,6 @@ class Processor:  # noqa: PLR904
         memory location.
 
         Assembly example:
-
         ```
         LDA nnnn,X
         ```
@@ -667,8 +663,17 @@ class Processor:  # noqa: PLR904
         """
         LDA (0xB1) - Load Accumulator, Indirect Indexed.
 
-        Assembly example:
+        Load the value stored at the memory location that is after the opcode
+        directly into accumulator and then evaluate accumulator for flags Zero
+        and Negative. The memory location is a two-byte address that is
+        calculated by adding the value of the Y register to the memory location
+        specified by the instruction. The result is wrapped around to fit within
+        the memory range (0-65535). For example:
 
+        - 0x02 + 0x04 => 0x06
+        - 0x02 + 0xFF => 0x01 (0x0101)
+
+        Assembly example:
         ```
         LDY #nn
         LDA (nn),Y
@@ -695,7 +700,6 @@ class Processor:  # noqa: PLR904
         and then evaluate register X for flags Zero and Negative.
 
         Assembly example:
-
         ```
         LDX #$04
         ```
