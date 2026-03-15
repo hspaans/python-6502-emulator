@@ -31,7 +31,7 @@ jobs:
           python-version: ${{ matrix.py }}
 
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install tox-gh
         run: |
@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
