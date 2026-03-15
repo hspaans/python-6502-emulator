@@ -32,18 +32,21 @@ Adds one to the Y register setting the zero and negative flags as appropriate.
 See also: INC, INX
 
 """
+
 import pytest
 
 import m6502
 
 
 @pytest.mark.parametrize(
-    ("value", "expected", "flag_z", "flag_n"), [
+    ("value", "expected", "flag_z", "flag_n"),
+    [
         (-2, -1, False, True),
         (-1, 0, True, False),
         (0, 1, False, False),
-        (1, 2, False, False)
-    ])
+        (1, 2, False, False),
+    ],
+)
 def test_cpu_ins_iny_imp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Increment Y Register.

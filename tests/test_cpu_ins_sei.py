@@ -31,6 +31,7 @@ Sets the interrupt disable flag to zero.
 
 See also: CLI
 """
+
 import m6502
 
 

@@ -31,6 +31,7 @@ Sets the decimal mode flag to one.
 
 See also: CLD
 """
+
 import m6502
 
 

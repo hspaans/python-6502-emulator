@@ -39,18 +39,21 @@ zero and negative flags as appropriate.
 See also: DEX, DEY
 
 """
+
 import pytest
 
 import m6502
 
 
 @pytest.mark.parametrize(
-    ("value", "expected", "flag_z", "flag_n"), [
+    ("value", "expected", "flag_z", "flag_n"),
+    [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),
-        (2, 1, False, False)
-    ])
+        (2, 1, False, False),
+    ],
+)
 def test_cpu_ins_dec_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement Memory, Zero Page.
@@ -75,17 +78,26 @@ def test_cpu_ins_dec_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -
 
 
 @pytest.mark.parametrize(
-    ("value", "expected", "flag_z", "flag_n", "reg_x", "memory_location"), [
-        (-1, -2, False, True,  0x0F, 0x8F),
-        (0, -1, False, True,  0x0F, 0x8F),
-        (1,  0, True,  False, 0x0F, 0x8F),
-        (2,  1, False, False, 0x0F, 0x8F),
-        (-1, -2, False, True,  0xFF, 0x7F),
-        (0, -1, False, True,  0xFF, 0x7F),
-        (1,  0, True,  False, 0xFF, 0x7F),
-        (2,  1, False, False, 0xFF, 0x7F)
-    ])
-def test_cpu_ins_dec_zpx(value: int, expected: int, flag_z: bool, flag_n: bool, reg_x: int, memory_location: int) -> None:
+    ("value", "expected", "flag_z", "flag_n", "reg_x", "memory_location"),
+    [
+        (-1, -2, False, True, 0x0F, 0x8F),
+        (0, -1, False, True, 0x0F, 0x8F),
+        (1, 0, True, False, 0x0F, 0x8F),
+        (2, 1, False, False, 0x0F, 0x8F),
+        (-1, -2, False, True, 0xFF, 0x7F),
+        (0, -1, False, True, 0xFF, 0x7F),
+        (1, 0, True, False, 0xFF, 0x7F),
+        (2, 1, False, False, 0xFF, 0x7F),
+    ],
+)
+def test_cpu_ins_dec_zpx(
+    value: int,
+    expected: int,
+    flag_z: bool,
+    flag_n: bool,
+    reg_x: int,
+    memory_location: int,
+) -> None:
     """
     Decrement Memory, Zero Page, X.
 
@@ -115,12 +127,14 @@ def test_cpu_ins_dec_zpx(value: int, expected: int, flag_z: bool, flag_n: bool, 
 
 
 @pytest.mark.parametrize(
-    ("value", "expected", "flag_z", "flag_n"), [
+    ("value", "expected", "flag_z", "flag_n"),
+    [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),
-        (2, 1, False, False)
-    ])
+        (2, 1, False, False),
+    ],
+)
 def test_cpu_ins_dec_abs(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement Memory, Absolute.
@@ -146,12 +160,14 @@ def test_cpu_ins_dec_abs(value: int, expected: int, flag_z: bool, flag_n: bool) 
 
 
 @pytest.mark.parametrize(
-    ("value", "expected", "flag_z", "flag_n"), [
+    ("value", "expected", "flag_z", "flag_n"),
+    [
         (-1, -2, False, True),
         (0, -1, False, True),
         (1, 0, True, False),
-        (2, 1, False, False)
-    ])
+        (2, 1, False, False),
+    ],
+)
 def test_cpu_ins_dec_abx(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
     Decrement Memory, Absolute, X.
