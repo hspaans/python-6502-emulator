@@ -49,7 +49,7 @@ Instructions exist to test the values of the various bits, to set or clear some 
 
 * Overflow Flag
 
-  The overflow flag is set during arithmetic operations if the result has yielded an ivalid 2's complement result (e.g. adding to positive numbers an dending up with a negative result: 64 + 64 => -128) It is determined by looking at the carry between bits 6 and 7 and between bit 7 and the carry flag.
+  The overflow flag is set during arithmetic operations if the result has yielded an invalid 2's complement result (e.g. adding two positive numbers and ending up with a negative result: 64 + 64 => -128). It is determined by looking at the carry between bits 6 and 7 and between bit 7 and the carry flag.
 
 * Negative Flag
 
@@ -58,6 +58,324 @@ Instructions exist to test the values of the various bits, to set or clear some 
 ### The Instruction Set
 
 #### Load/Store Operations
+
+##### Loading the Accumulator
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if A = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of A is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles                   |
+| --------------- | :----: | :---: | ------------------------ |
+| Immediate       |  0xA9  |   2   |   2                      |
+| Zero Page       |  0xA5  |   2   |   3                      |
+| Zero Page, X    |  0xB5  |   2   |   5                      |
+| Absolute        |  0xAD  |   3   |   4                      |
+| Absolute, X     |  0xBD  |   3   |   4 (+1 if page crossed) |
+| Absolute, Y     |  0xB9  |   3   |   4 (+1 if page crossed) |
+| (Indirect, X)   |  0xA1  |   2   |   6                      |
+| (Indirect), Y   |  0xB1  |   2   |   5 (+1 if page crossed) |
+
+```assembly
+LDA #nn
+```
+
+```python
+    def _ins_lda_imm(self) -> None:
+        """
+        LDA (0xA9) - Load Accumulator, Immediate.
+
+        Load the value stored after the opcode directly into accumulator
+        and then evaluate accumulator for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        LDA #nn
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if A = 0
+        - Negative Flag: Set if bit 7 of A is set
+
+        The instruction costs 2 bytes and 2 cycles to complete.
+        """
+        self.reg_a = self._fetch_byte()
+        self._evaluate_flags_nz(self.reg_a)
+```
+
+##### Loading the X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if X = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of X is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles                   |
+| --------------- | :----: | :---: | ------------------------ |
+| Immediate       |  0xA2  |   2   |   2                      |
+| Zero Page       |  0xA6  |   2   |   3                      |
+| Zero Page, Y    |  0xB6  |   2   |   5                      |
+| Absolute        |  0xAE  |   3   |   4                      |
+| Absolute, Y     |  0xBE  |   3   |   4 (+1 if page crossed) |
+
+```assembly
+LDX #$nn
+```
+
+```python
+    def _ins_ldx_zp(self) -> None:
+        """
+        LDX (0xA6) - Load X Register, Zero Page.
+
+        Load the value stored at the memory location that is after the opcode
+        directly into register X and then evaluate register X for flags Zero
+        and Negative. The memory location is a single byte and within the Zero
+        Page memory range of 0-255.
+
+        Assembly example:
+        ```
+        LDX #$nn
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
+        The instruction costs 2 bytes and 3 cycles to complete.
+        """
+        self.reg_x = self._read_byte(self._fetch_byte())
+        self._evaluate_flags_nz(self.reg_x)
+```
+
+##### Loading the Y Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if Y = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of Y is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles                   |
+| --------------- | :----: | :---: | ------------------------ |
+| Immediate       |  0xA0  |   2   |   2                      |
+| Zero Page       |  0xA4  |   2   |   3                      |
+| Zero Page, X    |  0xB4  |   2   |   5                      |
+| Absolute        |  0xAC  |   3   |   4                      |
+| Absolute, X     |  0xBC  |   3   |   4 (+1 if page crossed) |
+
+```assembly
+LDY #$nn
+```
+
+```python
+    def _ins_ldy_zpx(self) -> None:
+        """
+        LDY (0xB4) - Load Y Register, Zero Page, X.
+
+        Load the value stored at the memory location that is stored after the
+        opcode and increased with the value in register X before copied
+        directly into register Y and then evaluate register Y for flags Zero
+        and Negative. The memory location is a single byte and within the Zero
+        Page memory range of 0-255. The value in register X is added to the
+        memory location before the value is read. The value in register X is
+        used to point to the memory location of the value to be read. The
+        memory location is a single byte and within the Zero Page memory range
+        of 0-255. The value in register X is added to the memory location
+        before the value is read. The value in register X is used to point to
+        the memory location of the value to be read. The value in register X is
+
+        Assembly example:
+        ```
+        LDY nn,X
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if Y = 0
+        - Negative Flag: Set if bit 7 of Y is set
+
+        The instruction costs 2 bytes and 5 cycles to complete.
+        """
+        self.reg_y = self._read_byte(
+            (self._fetch_byte() + self._read_register_x()) & 0xFF
+        )
+        self._evaluate_flags_nz(self.reg_y)
+        self.cycles += 1  # TODO: Why is the extra cycle required?
+```
+
+##### Storing the Accumulator
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | ------ |
+| Zero Page       |  0x85  |   2   |  3     |
+| Zero Page, X    |  0x95  |   2   |  4     |
+| Absolute        |  0x8D  |   3   |  4     |
+| Absolute, X     |  0x9D  |   3   |  5     |
+| Absolute, Y     |  0x99  |   3   |  5     |
+| (Indirect, X)   |  0x81  |   2   |  6     |
+| (Indirect), Y   |  0x91  |   2   |  6     |
+
+```assembly
+STA #$nn
+```
+
+```python
+    def _ins_sta_zpx(self) -> None:
+        """
+        STA (0x95) - Store Accumulator, Zero Page, X.
+
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode and increased with the value in register X. The
+        memory location is a single byte and within the Zero Page memory range
+        of 0-255. The value in the accumulator is written to the memory
+        location without any modification.
+
+        Assembly example:
+        ```
+        STA nn,X
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 4 cycles to complete.
+        """
+        self._write_byte((self._fetch_byte() + self.reg_x) & 0xFF, self.reg_a)
+```
+
+##### Storing the X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | ------ |
+| Zero Page       |  0x86  |   2   |   3    |
+| Zero Page, Y    |  0x96  |   2   |   4    |
+| Absolute        |  0x8E  |   3   |   4    |
+
+```assembly
+STX #$nn
+```
+
+```python
+    def _ins_stx_zpy(self) -> None:
+        """
+        STX (0x96) - Store X Register, Zero Page, Y.
+
+        Store the value in register X at the memory location that is stored
+        after the opcode and increased with the value in register Y. The memory
+        location is a single byte and within the Zero Page memory range of
+        0-255. The value in register Y is added to the memory location before
+        the value is read. The value in register Y is used to point to the
+        memory location of the value to be read. The memory location is a
+        single byte and within the Zero Page memory range of 0-255. The value
+        in register Y is added to the memory location before the value is read.
+        The value in register Y is used to point to the memory location of the
+        value to be read. The value in register Y is added to the memory
+        location before the value is read. The value in register Y is used to
+        point to the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        STX (nn),Y
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 5 cycles to complete.
+        """
+        self._write_byte(
+            (self._fetch_byte() + self._read_register_y()) & 0xFF, self.reg_x
+        )
+```
+
+##### Storing the Y Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Zero Page       |  0x84  |   2   |   3    |
+| Zero Page, X    |  0x94  |   2   |   4    |
+| Absolute        |  0x8C  |   3   |   4    |
+
+```assembly
+STY #$nn
+```
+
+```python
+    def _ins_sty_zpx(self) -> None:
+        """
+        STY (0x94) - Store Y Register, Zero Page, X.
+
+        Store the value in register Y at the memory location that is stored
+        after the opcode and increased with the value in register X. The memory
+        location is a single byte and within the Zero Page memory range of
+        0-255. The value in register X is added to the memory location before
+        the value is read. The value in register X is used to point to the
+        memory location of the value to be read. The memory location is a single
+        byte and within the Zero Page memory range of 0-255. The value in
+        register X is added to the memory location before the value is read. The
+        value in register X is used to point to the memory location of the value
+        to be read. The value in register X is added to the memory location
+        before the value is read. The value in register X is used to point to
+        the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        STY (nn),X
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 5 cycles to complete.
+        """
+        self._write_byte(
+            (self._fetch_byte() + self._read_register_x()) & 0xFF, self.reg_y
+        )
+```
 
 #### Register Transfer Operations
 

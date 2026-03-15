@@ -704,6 +704,10 @@ class Processor:  # noqa: PLR904
         LDX #$04
         ```
 
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
         The instruction costs 2 bytes and 2 cycles to complete.
         """
         self.reg_x = self._fetch_byte()
@@ -713,7 +717,21 @@ class Processor:  # noqa: PLR904
         """
         LDX (0xA6) - Load X Register, Zero Page.
 
-        :return: None
+        Load the value stored at the memory location that is after the opcode
+        directly into register X and then evaluate register X for flags Zero
+        and Negative. The memory location is a single byte and within the Zero
+        Page memory range of 0-255.
+
+        Assembly example:
+        ```
+        LDX nn
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
+        The instruction costs 2 bytes and 3 cycles to complete.
         """
         self.reg_x = self._read_byte(self._fetch_byte())
         self._evaluate_flags_nz(self.reg_x)
@@ -721,6 +739,24 @@ class Processor:  # noqa: PLR904
     def _ins_ldx_zpy(self) -> None:
         """
         LDX (0xB6) - Load X Register, Zero Page, Y.
+
+        Load the value stored at the memory location that is stored after the
+        opcode and increased with the value in register Y before copied
+        directly into register X and then evaluate register X for flags Zero
+        and Negative. The memory location is a single byte and within the Zero
+        Page memory range of 0-255. The value in register Y is added to the
+        memory location before the value is read. The value in register Y is
+        used to point to the memory location of the value to be read. The memory location is a single byte and within the Zero Page memory range of 0-255. The value in register Y is added to the memory location before the value is read. The value in register Y is used to point to the memory location of the value to be read. The value in register Y is added to the memory location before the value is read. The value in register Y is used to point to the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        LDX #nn
+        LDX nn,Y
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
 
         The instruction costs 2 bytes and 5 cycles to complete.
         """
@@ -732,16 +768,44 @@ class Processor:  # noqa: PLR904
 
     def _ins_ldx_abs(self) -> None:
         """
-        LDX - Load X Register, Absolute.
+        LDX (0xAE) - Load X Register, Absolute.
 
-        :return: None
+        Load the value stored at the memory location that is stored after the
+        opcode before copied directly into register X and then evaluate register X for flags Zero and Negative. The memory location are two
+        bytes and can address any memory location.
+
+        Assembly example:
+        ```
+        LDX nnnn
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
+        The instruction costs 3 bytes and 4 cycles to complete.
         """
         self.reg_x = self._read_byte(self._fetch_word())
         self._evaluate_flags_nz(self.reg_x)
 
     def _ins_ldx_aby(self) -> None:
         """
-        LDX - Load X Register, Absolute, Y.
+        LDX (0xBE) - Load X Register, Absolute, Y.
+
+        Load the value stored at the memory location that is stored after the
+        opcode and increased with the value in register Y before copied
+        directly into register X and then evaluate register X for flags Zero
+        and Negative. The memory location are two bytes and can address any
+        memory location.
+
+        Assembly example:
+        ```
+        LDX nnnn,Y
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
 
         The instruction costs 3 bytes and 4 (+1 if page crossed) cycles to complete.
         """
@@ -761,7 +825,7 @@ class Processor:  # noqa: PLR904
 
         Assembly example:
         ```
-        LDY #$04
+        LDY #nn
         ```
 
         Affected flags:
@@ -840,7 +904,6 @@ class Processor:  # noqa: PLR904
         bytes and can address any memory location.
 
         Assembly example:
-
         ```
         LDY nnnn
         ```
@@ -865,7 +928,6 @@ class Processor:  # noqa: PLR904
         memory location.
 
         Assembly example:
-
         ```
         LDY nnnn,X
         ```
@@ -935,7 +997,21 @@ class Processor:  # noqa: PLR904
         """
         STA (0x95) - Store Accumulator, Zero Page, X.
 
-        :return: None
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode and increased with the value in register X. The
+        memory location is a single byte and within the Zero Page memory range
+        of 0-255. The value in the accumulator is written to the memory
+        location without any modification.
+
+        Assembly example:
+        ```
+        STA nn,X
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 4 cycles to complete.
         """
         self._write_byte((self._fetch_byte() + self.reg_x) & 0xFF, self.reg_a)
 
@@ -943,7 +1019,20 @@ class Processor:  # noqa: PLR904
         """
         STA (0x8D) - Store Accumulator, Absolute.
 
-        :return: None
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode. The memory location are two bytes and can
+        address any memory location. The value in the accumulator is written to
+        the memory location without any modification.
+
+        Assembly example:
+        ```
+        STA nnnn
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 3 bytes and 4 cycles to complete.
         """
         self._write_byte(self._fetch_word(), self.reg_a)
 
@@ -951,7 +1040,21 @@ class Processor:  # noqa: PLR904
         """
         STA (0x9D) - Store Accumulator, Absolute, X.
 
-        :return: None
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode and increased with the value in register X. The
+        memory location are two bytes and can address any memory location. The
+        value in the accumulator is written to the memory location without any
+        modification.
+
+        Assembly example:
+        ```
+        STA nnnn,X
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 3 bytes and 5 cycles to complete.
         """
         self._write_byte(self._fetch_word() + self._read_register_x(), self.reg_a)
 
@@ -959,7 +1062,21 @@ class Processor:  # noqa: PLR904
         """
         STA (0x99) - Store Accumulator, Absolute, Y.
 
-        :return: None
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode and increased with the value in register Y. The
+        memory location are two bytes and can address any memory location. The
+        value in the accumulator is written to the memory location without any
+        modification.
+
+        Assembly example:
+        ```
+        STA nnnn,Y
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 3 bytes and 5 cycles to complete.
         """
         self._write_byte(self._fetch_word() + self._read_register_y(), self.reg_a)
 
@@ -967,7 +1084,28 @@ class Processor:  # noqa: PLR904
         """
         STA (0x81) - Store Accumulator, Indexed Indirect.
 
-        :return: None
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode and increased with the value in register X. The
+        memory location is a single byte and within the Zero Page memory range
+        of 0-255. The value in register X is added to the memory location before
+        the value is read. The value in register X is used to point to the
+        memory location of the value to be read. The memory location is a single
+        byte and within the Zero Page memory range of 0-255. The value in
+        register X is added to the memory location before the value is read. The
+        value in register X is used to point to the memory location of the value
+        to be read. The value in register X is added to the memory location
+        before the value is read. The value in register X is used to point to
+        the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        STA (nn,X)
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 6 cycles to complete.
         """
         self._write_byte(
             self._read_byte(
@@ -980,7 +1118,28 @@ class Processor:  # noqa: PLR904
         """
         STA (0x91) - Store Accumulator, Indirect Indexed.
 
-        :return: None
+        Store the value in the accumulator at the memory location that is
+        stored after the opcode and increased with the value in register Y. The
+        memory location is a single byte and within the Zero Page memory range
+        of 0-255. The value in register Y is added to the memory location before
+        the value is read. The value in register Y is used to point to the
+        memory location of the value to be read. The memory location is a single
+        byte and within the Zero Page memory range of 0-255. The value in
+        register Y is added to the memory location before the value is read. The
+        value in register Y is used to point to the memory location of the value
+        to be read. The value in register Y is added to the memory location
+        before the value is read. The value in register Y is used to point to
+        the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        STA (nn),Y
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 5 cycles to complete.
         """
         self._write_byte(
             self._read_byte(self._read_word(self._fetch_byte()) + self.reg_y),
@@ -989,17 +1148,51 @@ class Processor:  # noqa: PLR904
 
     def _ins_stx_zp(self) -> None:
         """
-        STA - Store X Register, Zero Page.
+        STX (0x86) - Store X Register, Zero Page.
 
-        :return: None
+        Store the value in register X at the memory location that is stored
+        after the opcode. The memory location is a single byte and within the
+        Zero Page memory range of 0-255. The value in register X is written to
+        the memory location without any modification.
+
+        Assembly example:
+        ```
+        STX nn
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 3 cycles to complete.
         """
         self._write_byte(self._fetch_byte(), self.reg_x)
 
     def _ins_stx_zpy(self) -> None:
         """
-        STA - Store Y Register, Zero Page, X.
+        STX (0x96) - Store X Register, Zero Page, Y.
 
-        :return: None
+        Store the value in register X at the memory location that is stored
+        after the opcode and increased with the value in register Y. The memory
+        location is a single byte and within the Zero Page memory range of
+        0-255. The value in register Y is added to the memory location before
+        the value is read. The value in register Y is used to point to the
+        memory location of the value to be read. The memory location is a single
+        byte and within the Zero Page memory range of 0-255. The value in
+        register Y is added to the memory location before the value is read. The
+        value in register Y is used to point to the memory location of the value
+        to be read. The value in register Y is added to the memory location
+        before the value is read. The value in register Y is used to point to
+        the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        STX (nn),Y
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 5 cycles to complete.
         """
         self._write_byte(
             (self._fetch_byte() + self._read_register_y()) & 0xFF, self.reg_x
@@ -1007,25 +1200,72 @@ class Processor:  # noqa: PLR904
 
     def _ins_stx_abs(self) -> None:
         """
-        STA - Store X Register, Absolute.
+        STX (0x8E) - Store X Register, Absolute.
 
-        :return: None
+        Store the value in register X at the memory location that is stored
+        after the opcode. The memory location are two bytes and can address any
+        memory location. The value in register X is written to the memory
+        location without any modification.
+
+        Assembly example:
+        ```
+        STX nnnn
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 3 bytes and 4 cycles to complete.
         """
         self._write_byte(self._fetch_word(), self.reg_x)
 
     def _ins_sty_zp(self) -> None:
         """
-        STA - Store Y Register, Zero Page.
+        STY (0x84) - Store Y Register, Zero Page.
 
-        :return: None
+        Store the value in register Y at the memory location that is stored
+        after the opcode. The memory location is a single byte and within the
+        Zero Page memory range of 0-255. The value in register Y is written to
+        the memory location without any modification.
+
+        Assembly example:
+        ```
+        STY nn
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 3 cycles to complete.
         """
         self._write_byte(self._fetch_byte(), self.reg_y)
 
     def _ins_sty_zpx(self) -> None:
         """
-        STA - Store Y Register, Zero Page, X.
+        STY (0x94) - Store Y Register, Zero Page, X.
 
-        :return: None
+        Store the value in register Y at the memory location that is stored
+        after the opcode and increased with the value in register X. The memory
+        location is a single byte and within the Zero Page memory range of
+        0-255. The value in register X is added to the memory location before
+        the value is read. The value in register X is used to point to the
+        memory location of the value to be read. The memory location is a single
+        byte and within the Zero Page memory range of 0-255. The value in
+        register X is added to the memory location before the value is read. The
+        value in register X is used to point to the memory location of the value
+        to be read. The value in register X is added to the memory location
+        before the value is read. The value in register X is used to point to
+        the memory location of the value to be read.
+
+        Assembly example:
+        ```
+        STY (nn),X
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 2 bytes and 5 cycles to complete.
         """
         self._write_byte(
             (self._fetch_byte() + self._read_register_x()) & 0xFF, self.reg_y
@@ -1033,9 +1273,22 @@ class Processor:  # noqa: PLR904
 
     def _ins_sty_abs(self) -> None:
         """
-        STA - Store Y Register, Absolute.
+        STY (0x8C) - Store Y Register, Absolute.
 
-        :return: None
+        Store the value in register Y at the memory location that is stored
+        after the opcode. The memory location are two bytes and can address any
+        memory location. The value in register Y is written to the memory
+        location without any modification.
+
+        Assembly example:
+        ```
+        STY nnnn
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 3 bytes and 4 cycles to complete.
         """
         self._write_byte(self._fetch_word(), self.reg_y)
 

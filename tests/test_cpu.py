@@ -1342,7 +1342,7 @@ def test_cpu_ins_ldy_zp(
     - 0x80 + 0x0F => 0x8F
     - 0x80 + 0xFF => 0x7F (0x017F)
 
-    Code example:
+    Assembly example:
     ```
     LDY nn
     ```
@@ -1422,7 +1422,7 @@ def test_cpu_ins_ldy_zpx(
     - 0x80 + 0x0F => 0x8F
     - 0x80 + 0xFF => 0x7F (0x017F)
 
-    Code example:
+    Assembly example:
     ```
     LDY nn, X
     ```
@@ -1488,7 +1488,7 @@ def test_cpu_ins_ldy_abs(
     and Negative. The memory location is a two-byte address that can range
     from 0x0000 to 0xFFFF. The address is specified by the instruction.
 
-    Code example:
+    Assembly example:
     ```
     LDY nnnn
     ```
@@ -1563,7 +1563,7 @@ def test_cpu_ins_ldy_abx(
     - 0xFF04 + 0x04 => 0xFF08
     - 0xFF04 + 0xFF => 0x0004 (0x010004)
 
-    Code example:
+    Assembly example:
     ```
     LDY nnnn, X
     ```
@@ -1626,7 +1626,7 @@ def test_cpu_ins_sta_zp(
     - 0x80 + 0x0F => 0x8F
     - 0x80 + 0xFF => 0x7F (0x017F)
 
-    Code example:
+    Assembly example:
     ```
     STA nn
     ```
@@ -1753,7 +1753,7 @@ def test_cpu_ins_sta_abs(
     range from 0x0000 to 0xFFFF. The address is specified by the
     instruction.
 
-    Code example:
+    Assembly example:
     ```
     STA nnnn
     ```
@@ -1810,7 +1810,7 @@ def test_cpu_ins_sta_abx(
     Store the value of the Accumulator into the memory location that is
     after the opcode. The memory location is a two-byte address that can
 
-    Code example:
+    Assembly example:
     ```
     STA nnnn, X
     ```
@@ -1871,7 +1871,7 @@ def test_cpu_ins_sta_aby(
     - 0xFF04 + 0x04 => 0xFF08
     - 0xFF04 + 0xFF => 0x0004 (0x010004)
 
-    Code example:
+    Assembly example:
     ```
     STA nnnn, Y
     ```
@@ -2011,7 +2011,7 @@ def test_cpu_ins_stx_zp(size: int, cycles: int, value: int, memory_zp: int) -> N
     after the opcode. The memory location is a single byte and within the
     Zero Page memory range of 0-255.
 
-    Code example:
+    Assembly example:
     ```
     STX nn
     ```
@@ -2058,7 +2058,18 @@ def test_cpu_ins_stx_zpy(reg_y: int, memory_location: int) -> None:
     - 0x80 + 0x0F => 0x8F
     - 0x80 + 0xFF => 0x7F (0x017F)
 
-    return: None
+    Assembly example:
+    ```
+    STX nn, Y
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 2 bytes and 4 cycles to complete.
+
+    :param int reg_y: Value of the Y register
+    :param int memory_location: Memory location to store the value in
     """
     memory = Memory()
     cpu = Processor(memory)
@@ -2130,7 +2141,27 @@ def test_cpu_ins_stx_abs(
 def test_cpu_ins_sty_zp(
     size: int, cycles: int, value: int, memory_location: int
 ) -> None:
-    """Store Y Register, Zero Page."""
+    """
+    STY (0x84) - Store Y Register, Zero Page.
+
+    Store the value of the Y register into the memory location that is after the opcode. The memory location is a single byte and within the
+    Zero Page memory range of 0-255.
+
+    Assembly example:
+    ```
+    STY nn
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 2 bytes and 3 cycles to complete.
+
+    :param int size: Number of bytes consumed by the stack pointer
+    :param int cycles: Number of CPU cycles used
+    :param int value: Value used for the test
+    :param int memory_location: Memory location to store the value in
+    """
     memory = Memory()
     cpu = Processor(memory)
     cpu.reset()
@@ -2155,7 +2186,28 @@ def test_cpu_ins_sty_zp(
     ],
 )
 def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
-    """Store Y Register, Zero Page, X."""
+    """
+    STY (0x94) - Store Y Register, Zero Page, X.
+
+    Store the value of the Y register into the memory location that is after the opcode. The memory location is a single byte and within the
+    Zero Page memory range of 0-255. The address is calculated by adding the value of the X register to the memory location specified by the instruction. The Zero Page address may not exceed beyond 0xFF:
+
+    - 0x80 + 0x0F => 0x8F
+    - 0x80 + 0xFF => 0x7F (0x017F)
+
+    Assembly example:
+    ```
+    STY nn, X
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 2 bytes and 4 cycles to complete.
+
+    :param int reg_x: Value of the X register
+    :param int memory_location: Memory location to store the value in
+    """
     memory = Memory()
     cpu = Processor(memory)
     cpu.reset()
@@ -2193,7 +2245,26 @@ def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
 def test_cpu_ins_sty_abs(
     size: int, cycles: int, value: int, memory_location: int
 ) -> None:
-    """STY (0x8C) - Store Y Register, Absolute."""
+    """
+    STY (0x8C) - Store Y Register, Absolute.
+
+    Store the value of the Y register into the memory location that is after the opcode. The memory location is a two-byte address that can range from 0x0000 to 0xFFFF. The address is specified by the instruction.
+
+    Assembly example:
+    ```
+    STY nnnn
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 3 bytes and 4 cycles to complete.
+
+    :param int size: Number of bytes consumed by the stack pointer
+    :param int cycles: Number of CPU cycles used
+    :param int value: Value used for the test
+    :param int memory_location: Memory location to store the value in
+    """
     memory = Memory()
     cpu = Processor(memory)
     cpu.reset()
