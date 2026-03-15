@@ -15,7 +15,7 @@
     {
       "label": "Run Sphinx",
       "type": "shell",
-      "command": "sphinx-build -b html docs/source docs/build/html",
+      "command": "sphinx-build -b html docs _build/html",
       "group": {
         "kind": "build",
         "isDefault": true
