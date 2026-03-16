@@ -435,7 +435,7 @@ def test_cpu_ins_dec_zpx(
 )
 def test_cpu_ins_dec_abs(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
     """
-    DEC (0x) - Decrement Memory, Absolute.
+    DEC (0xCE) - Decrement Memory, Absolute.
 
     Subtract 1 from the value stored at the memory location that is after the opcode
     and then evaluate the result for flags Zero and Negative. The memory
