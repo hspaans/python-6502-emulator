@@ -414,9 +414,23 @@ class Processor:  # noqa: PLR904
 
     def _ins_inc_zp(self) -> None:
         """
-        INC - Increment Memory, Zero Page.
+        INC (0xE6) - Increment Memory, Zero Page.
 
-        :return: None
+        Add one (1) to the value stored at the memory location that is after
+        the opcode and then evaluate the result for flags Zero and Negative.
+        The memory location is a single byte and within the Zero Page memory
+        range of 0-255.
+
+        Assembly example:
+        ```
+        INC nn
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if the result of the increment operation is 0
+        - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+        The instruction costs 2 bytes and 5 cycles to complete.
         """
         address = self._fetch_byte()
         self._write_byte(address, self._read_byte(address) + 1)
@@ -425,9 +439,24 @@ class Processor:  # noqa: PLR904
 
     def _ins_inc_zpx(self) -> None:
         """
-        INC - Increment Memory, Zero Page, X.
+        INC (0xF6) - Increment Memory, Zero Page, X.
 
-        :return: None
+        Add one (1) to the value stored at the memory location that is after
+        the opcode and then evaluate the result for flags Zero and Negative.
+        The memory location is a single byte and within the Zero Page memory
+        range of 0-255.
+
+        Assembly example:
+        ```
+        LDX #nn
+        INC nn,X
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if the result of the increment operation is 0
+        - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+        The instruction costs 2 bytes and 6 cycles to complete.
         """
         address = (self._fetch_byte() + self._read_register_x()) & 0xFF
         self._write_byte(address, self._read_byte(address) + 1)
@@ -436,9 +465,22 @@ class Processor:  # noqa: PLR904
 
     def _ins_inc_abs(self) -> None:
         """
-        INC - Increment Memory, Absolute.
+        INC (0xEE) - Increment Memory, Absolute.
 
-        :return: None
+        Add one (1) to the value stored at the memory location that is after
+        the opcode and then evaluate the result for flags Zero and Negative. The
+        memory location are two bytes and can address any memory location.
+
+        Assembly example:
+        ```
+        INC nnnn
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if the result of the increment operation is 0
+        - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+        The instruction costs 3 bytes and 6 cycles to complete.
         """
         address = self._fetch_word()
         self._write_byte(address, self._read_byte(address) + 1)
@@ -447,9 +489,26 @@ class Processor:  # noqa: PLR904
 
     def _ins_inc_abx(self) -> None:
         """
-        INC - Increment Memory, Absolute, X.
+        INC (0xFE) - Increment Memory, Absolute, X.
 
-        :return: None
+        Add one (1) to the value stored at the memory location that is after
+        the opcode and then evaluate the result for flags Zero and Negative. The
+        memory location are two bytes and can address any memory location. The
+        value in register X is added to the memory location before the value is
+        read and incremented. The value in register X is used to point to the
+        memory location of the value to be read and incremented.
+
+        Assembly example:
+        ```
+        LDX #nn
+        INC nnnn,X
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if the result of the increment operation is 0
+        - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+        The instruction costs 3 bytes and 7 cycles to complete.
         """
         address = self._fetch_word() + self._read_register_x()
         self._write_byte(address, self._read_byte(address) + 1)
@@ -458,18 +517,42 @@ class Processor:  # noqa: PLR904
 
     def _ins_inx_imp(self) -> None:
         """
-        INX - Increment X Register.
+        INX (0xE8) - Increment X Register.
 
-        :return: None
+        Add one (1) to the value stored in the X register and then evaluate
+        the result for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        INX
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if the result of the increment operation is 0
+        - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_x = self._read_register_x() + 1
         self._evaluate_flags_nz(self.reg_x)
 
     def _ins_iny_imp(self) -> None:
         """
-        INY - Increment Y Register.
+        INY (0xC8) - Increment Y Register.
 
-        :return: None
+        Add one (1) to the value stored in the Y register and then evaluate
+        the result for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        INY
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if the result of the increment operation is 0
+        - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_y = self._read_register_y() + 1
         self._evaluate_flags_nz(self.reg_y)

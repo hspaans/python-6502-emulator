@@ -8,6 +8,24 @@ import pytest
 from m6502 import Memory, Processor
 
 # Opcodes for the 6502 processor.
+INS_DEC_ZP = 0xC6  # Decrement Memory, Zero Page.
+INS_DEC_ZPX = 0xD6  # Decrement Memory, Zero Page, X.
+INS_DEC_ABS = 0xCE  # Decrement Memory, Absolute.
+INS_DEC_ABX = 0xDE  # Decrement Memory, Absolute, X.
+
+INS_DEX_IMP = 0xCA  # Decrement X Register.
+
+INS_DEY_IMP = 0x88  # Decrement Y Register.
+
+INS_INC_ZP = 0xE6  # Increment Memory, Zero Page.
+INS_INC_ZPX = 0xF6  # Increment Memory, Zero Page, X.
+INS_INC_ABS = 0xEE  # Increment Memory, Absolute.
+INS_INC_ABX = 0xFE  # Increment Memory, Absolute, X.
+
+INS_INX_IMP = 0xE8  # Increment X Register.
+
+INS_INY_IMP = 0xC8  # Increment Y Register.
+
 INS_LDA_IMM = 0xA9  # Load Accumulator, Immediate.
 INS_LDA_ZP = 0xA5  # Load Accumulator, Zero Page.
 INS_LDA_ZPX = 0xB5  # Load Accumulator, Zero Page, X.
@@ -261,7 +279,7 @@ def test_cpu_fetch_byte() -> None:
     memory = Memory()
     cpu = Processor(memory)
     cpu.reset()
-    memory[0xFCE2] = 0xA5
+    memory[Processor.PC_INIT] = 0xA5
     value = cpu._fetch_byte()  # noqa: PLW212
     assert (
         cpu.program_counter,
@@ -286,8 +304,8 @@ def test_cpu_fetch_word() -> None:
     memory = Memory()
     cpu = Processor(memory)
     cpu.reset()
-    memory[0xFCE2] = 0xA5
-    memory[0xFCE3] = 0x5A
+    memory[Processor.PC_INIT] = 0xA5
+    memory[Processor.PC_INIT + 1] = 0x5A
     value = cpu._fetch_word()  # noqa: PLW212
     assert (
         cpu.program_counter,
@@ -298,6 +316,616 @@ def test_cpu_fetch_word() -> None:
         cpu.flag_i,
         value,
     ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 2, True, False, True, 0x5AA5)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-1, -2, False, True),
+        (0, -1, False, True),
+        (1, 0, True, False),
+        (2, 1, False, False),
+    ],
+)
+def test_cpu_ins_dec_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    DEC (0xC6) - Decrement Memory, Zero Page.
+
+    Subtract 1 from the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory
+    location is a single byte and within the Zero Page memory range of 0-255.
+
+    Assembly example:
+    ```
+    DEC nn
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the decrement operation is 0
+    - Negative Flag: Set if bit 7 of the result of the decrement operation is set
+
+    The instruction costs 2 bytes and 5 cycles to complete.
+
+    :param int value: The value to be decremented.
+    :param int expected: The expected result after decrementing the value.
+    :param bool flag_z: The expected state of the zero flag after decrementing the value.
+    :param bool flag_n: The expected state of the negative flag after decrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    memory[Processor.PC_INIT] = INS_DEC_ZP
+    memory[Processor.PC_INIT + 1] = 0xFC
+    memory[0xFC] = value
+    cpu.execute(5)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[0xFC],
+    ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 5, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n", "reg_x", "memory_location"),
+    [
+        (-1, -2, False, True, 0x0F, 0x8F),
+        (0, -1, False, True, 0x0F, 0x8F),
+        (1, 0, True, False, 0x0F, 0x8F),
+        (2, 1, False, False, 0x0F, 0x8F),
+        (-1, -2, False, True, 0xFF, 0x7F),
+        (0, -1, False, True, 0xFF, 0x7F),
+        (1, 0, True, False, 0xFF, 0x7F),
+        (2, 1, False, False, 0xFF, 0x7F),
+    ],
+)
+def test_cpu_ins_dec_zpx(
+    value: int,
+    expected: int,
+    flag_z: bool,
+    flag_n: bool,
+    reg_x: int,
+    memory_location: int,
+) -> None:
+    """
+    DEC (0xD6) - Decrement Memory, Zero Page, X.
+
+    The Zero Page address may not exceed beyond 0xFF:
+
+    - 0x80 + 0x0F => 0x8F
+    - 0x80 + 0xFF => 0x7F (0x017F)
+
+    The instruction costs 2 bytes and 6 cycles to complete.
+
+    :param int value: The value to be decremented.
+    :param int expected: The expected result after decrementing the value.
+    :param bool flag_z: The expected state of the zero flag after decrementing the value.
+    :param bool flag_n: The expected state of the negative flag after decrementing the value.
+    :param int reg_x: The value of the X register.
+    :param int memory_location: The memory location to be decremented.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = reg_x
+    memory[Processor.PC_INIT] = INS_DEC_ZPX
+    memory[Processor.PC_INIT + 1] = 0x80
+    memory[memory_location] = value
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[memory_location],
+    ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 6, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-1, -2, False, True),
+        (0, -1, False, True),
+        (1, 0, True, False),
+        (2, 1, False, False),
+    ],
+)
+def test_cpu_ins_dec_abs(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    DEC (0xCE) - Decrement Memory, Absolute.
+
+    Subtract 1 from the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory
+    location is a two-byte address.
+
+    The instruction costs 3 bytes and 6 cycles to complete.
+
+    :param int value: The value to be decremented.
+    :param int expected: The expected result after decrementing the value.
+    :param bool flag_z: The expected state of the zero flag after decrementing the value.
+    :param bool flag_n: The expected state of the negative flag after decrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    memory[Processor.PC_INIT] = INS_DEC_ABS
+    memory[Processor.PC_INIT + 1] = 0xFC
+    memory[Processor.PC_INIT + 2] = 0xFA
+    memory[0xFAFC] = value
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[0xFAFC],
+    ) == (0xFCE5, Processor.SP_INIT, 6, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-1, -2, False, True),
+        (0, -1, False, True),
+        (1, 0, True, False),
+        (2, 1, False, False),
+    ],
+)
+def test_cpu_ins_dec_abx(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    DEC (0xDE) - Decrement Memory, Absolute, X.
+
+    Subtract 1 from the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory
+    location is a two-byte address.
+
+    Assembly example:
+    ```
+    DEC nnnn,X
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the decrement operation is 0
+    - Negative Flag: Set if bit 7 of the result of the decrement operation is set
+
+    The instruction costs 3 bytes and 7 cycles to complete.
+
+    :param int value: The value to be decremented.
+    :param int expected: The expected result after decrementing the value.
+    :param bool flag_z: The expected state of the zero flag after decrementing the value.
+    :param bool flag_n: The expected state of the negative flag after decrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = 1
+    memory[Processor.PC_INIT] = INS_DEC_ABX
+    memory[Processor.PC_INIT + 1] = 0xFC
+    memory[Processor.PC_INIT + 2] = 0xFA
+    memory[0xFAFC + cpu.reg_x] = value
+    cpu.execute(7)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[0xFAFC + cpu.reg_x],
+    ) == (0xFCE5, Processor.SP_INIT, 7, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-1, -2, False, True),
+        (0, -1, False, True),
+        (1, 0, True, False),
+        (2, 1, False, False),
+    ],
+)
+def test_cpu_ins_dex_imp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    DEX (0xCA) - Decrement X Register.
+
+    Subtract 1 from the value stored in the X register and then evaluate the result for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    DEX
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the decrement operation is 0
+    - Negative Flag: Set if bit 7 of the result of the decrement operation is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: The value to be decremented.
+    :param int expected: The expected result after decrementing the value.
+    :param bool flag_z: The expected state of the zero flag after decrementing the value.
+    :param bool flag_n: The expected state of the negative flag after decrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = value
+    memory[Processor.PC_INIT] = INS_DEX_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        cpu.reg_x,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-1, -2, False, True),
+        (0, -1, False, True),
+        (1, 0, True, False),
+        (2, 1, False, False),
+    ],
+)
+def test_cpu_ins_dey_imp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    DEY (0x88) - Decrement Y Register.
+
+    Subtract 1 from the value stored in the Y register and then evaluate the result for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    DEY
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the decrement operation is 0
+    - Negative Flag: Set if bit 7 of the result of the decrement operation is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: The value to be decremented.
+    :param int expected: The expected result after decrementing the value.
+    :param bool flag_z: The expected state of the zero flag after decrementing the value.
+    :param bool flag_n: The expected state of the negative flag after decrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_y = value
+    memory[Processor.PC_INIT] = INS_DEY_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        cpu.reg_y,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-2, -1, False, True),
+        (-1, 0, True, False),
+        (0, 1, False, False),
+        (1, 2, False, False),
+    ],
+)
+def test_cpu_ins_inc_zp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    INC (0xE6) - Increment Memory, Zero Page.
+
+    Add 1 to the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory
+    location is a single byte and within the Zero Page memory range of 0-255.
+
+    Assembly example:
+    ```
+    INC nn
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the increment operation is 0
+    - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+    The instruction costs 2 bytes and 5 cycles to complete.
+
+    :param int value: The value to be incremented.
+    :param int expected: The expected result after incrementing the value.
+    :param bool flag_z: The expected state of the zero flag after incrementing the value.
+    :param bool flag_n: The expected state of the negative flag after incrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    memory[Processor.PC_INIT] = INS_INC_ZP
+    memory[Processor.PC_INIT + 1] = 0xFC
+    memory[0xFC] = value
+    cpu.execute(5)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[0xFC],
+    ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 5, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n", "reg_x", "memory_location"),
+    [
+        (-2, -1, False, True, 0x0F, 0x8F),
+        (-1, 0, True, False, 0x0F, 0x8F),
+        (0, 1, False, False, 0x0F, 0x8F),
+        (1, 2, False, False, 0x0F, 0x8F),
+        (-2, -1, False, True, 0xFF, 0x7F),
+        (-1, 0, True, False, 0xFF, 0x7F),
+        (0, 1, False, False, 0xFF, 0x7F),
+        (1, 2, False, False, 0xFF, 0x7F),
+    ],
+)
+def test_cpu_ins_inc_zpx(
+    value: int,
+    expected: int,
+    flag_z: bool,
+    flag_n: bool,
+    reg_x: int,
+    memory_location: int,
+) -> None:
+    """
+    Increment Memory, Zero Page, X.
+
+    Add 1 to the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory
+    location is a single byte and within the Zero Page memory range of 0-255.
+
+    The Zero Page address may not exceed beyond 0xFF:
+
+    - 0x80 + 0x0F => 0x8F
+    - 0x80 + 0xFF => 0x7F (0x017F)
+
+    Assembly example:
+    ```
+    INC nn,X
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the increment operation is 0
+    - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+    The instruction costs 2 bytes and 6 cycles to complete.
+
+    :param int value: The value to be incremented.
+    :param int expected: The expected result after incrementing the value.
+    :param bool flag_z: The expected state of the zero flag after incrementing the value.
+    :param bool flag_n: The expected state of the negative flag after incrementing the value.
+    :param int reg_x: The value to be set in the X register.
+    :param int memory_location: The memory location to be incremented.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = reg_x
+    memory[Processor.PC_INIT] = INS_INC_ZPX
+    memory[Processor.PC_INIT + 1] = 0x80
+    memory[memory_location] = value
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[memory_location],
+    ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 6, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-2, -1, False, True),
+        (-1, 0, True, False),
+        (0, 1, False, False),
+        (1, 2, False, False),
+    ],
+)
+def test_cpu_ins_inc_abs(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    Increment Memory, Absolute.
+
+    Add 1 to the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory location
+    is a two-byte address and can be anywhere in the memory range.
+
+    Assembly example:
+    ```
+    INC nnnn
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the increment operation is 0
+    - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+    The instruction costs 3 bytes and 6 cycles to complete.
+
+    :param int value: The value to be incremented.
+    :param int expected: The expected result after incrementing the value.
+    :param bool flag_z: The expected state of the zero flag after incrementing the value.
+    :param bool flag_n: The expected state of the negative flag after incrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    memory[Processor.PC_INIT] = INS_INC_ABS
+    memory[Processor.PC_INIT + 1] = 0xFC
+    memory[Processor.PC_INIT + 2] = 0xFA
+    memory[0xFAFC] = value
+    cpu.execute(6)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[0xFAFC],
+    ) == (0xFCE5, Processor.SP_INIT, 6, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-2, -1, False, True),
+        (-1, 0, True, False),
+        (0, 1, False, False),
+        (1, 2, False, False),
+    ],
+)
+def test_cpu_ins_inc_abx(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    Increment Memory, Absolute, X.
+
+    Add 1 to the value stored at the memory location that is after the opcode
+    and then evaluate the result for flags Zero and Negative. The memory location
+    is a two-byte address and can be anywhere in the memory range.
+
+    Assembly example:
+    ```
+    INC nnnn,X
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the increment operation is 0
+    - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+    The instruction costs 3 bytes and 7 cycles to complete.
+
+    :param int value: The value to be incremented.
+    :param int expected: The expected result after incrementing the value.
+    :param bool flag_z: The expected state of the zero flag after incrementing the value.
+    :param bool flag_n: The expected state of the negative flag after incrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = 1
+    memory[Processor.PC_INIT] = INS_INC_ABX
+    memory[Processor.PC_INIT + 1] = 0xFC
+    memory[Processor.PC_INIT + 2] = 0xFA
+    memory[0xFAFC + cpu.reg_x] = value
+    cpu.execute(7)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        memory[0xFAFC + cpu.reg_x],
+    ) == (0xFCE5, Processor.SP_INIT, 7, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-2, -1, False, True),
+        (-1, 0, True, False),
+        (0, 1, False, False),
+        (1, 2, False, False),
+    ],
+)
+def test_cpu_ins_inx_imp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    Increment X Register.
+
+    Add 1 to the value stored in the X register and then evaluate the result for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    INX
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the increment operation is 0
+    - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: The value to be incremented.
+    :param int expected: The expected result after incrementing the value.
+    :param bool flag_z: The expected state of the zero flag after incrementing the value.
+    :param bool flag_n: The expected state of the negative flag after incrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = value
+    memory[Processor.PC_INIT] = INS_INX_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        cpu.reg_x,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_z, flag_n, expected)
+
+
+@pytest.mark.parametrize(
+    ("value", "expected", "flag_z", "flag_n"),
+    [
+        (-2, -1, False, True),
+        (-1, 0, True, False),
+        (0, 1, False, False),
+        (1, 2, False, False),
+    ],
+)
+def test_cpu_ins_iny_imp(value: int, expected: int, flag_z: bool, flag_n: bool) -> None:
+    """
+    Increment Y Register.
+
+    Add 1 to the value stored in the Y register and then evaluate the result for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    INY
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if the result of the increment operation is 0
+    - Negative Flag: Set if bit 7 of the result of the increment operation is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: The value to be incremented.
+    :param int expected: The expected result after incrementing the value.
+    :param bool flag_z: The expected state of the zero flag after incrementing the value.
+    :param bool flag_n: The expected state of the negative flag after incrementing the value.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_y = value
+    memory[Processor.PC_INIT] = INS_INY_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_z,
+        cpu.flag_n,
+        cpu.reg_y,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_z, flag_n, expected)
 
 
 @pytest.mark.parametrize(
@@ -2085,7 +2713,7 @@ def test_cpu_ins_stx_zpy(reg_y: int, memory_location: int) -> None:
         cpu.stack_pointer,
         cpu.cycles,
         memory[memory_location],
-    ) == (0xFCE4, Processor.SP_INIT, 4, 0xF0)
+    ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 4, 0xF0)
 
 
 @pytest.mark.parametrize(
@@ -2222,7 +2850,7 @@ def test_cpu_ins_sty_zpx(reg_x: int, memory_location: int) -> None:
         cpu.stack_pointer,
         cpu.cycles,
         memory[memory_location],
-    ) == (0xFCE4, Processor.SP_INIT, 4, 0xF0)
+    ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 4, 0xF0)
 
 
 @pytest.mark.parametrize(

@@ -387,6 +387,112 @@ STY #$nn
 
 #### Increment/Decrement Operations
 
+##### INC - Increment Memory
+
+| Flag | Description       | State                         |
+| :--: | ----------------- | ----------------------------- |
+|  C   | Carry Flag        | Not affected                  |
+|  Z   | Zero Flag         | Set if result is zero         |
+|  I   | Interrupt Disable | Not affected                  |
+|  D   | Decimal Mode Flag | Not affected                  |
+|  B   | Break Command     | Not affected                  |
+|  V   | Overflow Flag     | Not affected                  |
+|  N   | Negative Flag     | Set if bit 7 of result is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | ------ |
+| Zero Page       |  0xE6  |   2   |   5    |
+| Zero Page, X    |  0xF6  |   2   |   6    |
+| Absolute        |  0xEE  |   3   |   6    |
+| Absolute, X     |  0xFE  |   3   |   7    |
+
+```assembly
+INC #$nn
+```
+
+##### INX - Increment X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ----------------------- |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if X is zero         |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of X is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | ------ |
+| Implied         |  0xE8  |   1   |   2    |
+
+##### INY - Increment Y Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if Y is zero         |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of Y is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xC8  |   1   |   2    |
+
+##### DEC - Decrement Memory
+
+| Flag | Description       | State                         |
+| :--: | ----------------- | ----------------------------- |
+|  C   | Carry Flag        | Not affected                  |
+|  Z   | Zero Flag         | Set if result is zero         |
+|  I   | Interrupt Disable | Not affected                  |
+|  D   | Decimal Mode Flag | Not affected                  |
+|  B   | Break Command     | Not affected                  |
+|  V   | Overflow Flag     | Not affected                  |
+|  N   | Negative Flag     | Set if bit 7 of result is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Zero Page       |  0xC6  |   2   |   5    |
+| Zero Page, X    |  0xD6  |   2   |   6    |
+| Absolute        |  0xCE  |   3   |   6    |
+| Absolute, X     |  0xDE  |   3   |   7    |
+
+##### DEX - Decrement X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if X is zero         |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of X is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xCA  |   1   |   2    |
+
+##### DEY - Decrement Y Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if Y is zero         |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of Y is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xC8  |   1   |   2    |
+
 #### Bitwise Operations
 
 #### Jump/Call Operations
