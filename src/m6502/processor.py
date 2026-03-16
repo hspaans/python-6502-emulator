@@ -493,7 +493,10 @@ class Processor:  # noqa: PLR904
 
         Add one (1) to the value stored at the memory location that is after
         the opcode and then evaluate the result for flags Zero and Negative. The
-        memory location are two bytes and can address any memory location. The value in register X is added to the memory location before the value is read and incremented. The value in register X is used to point to the memory location of the value to be read and incremented.
+        memory location are two bytes and can address any memory location. The
+        value in register X is added to the memory location before the value is
+        read and incremented. The value in register X is used to point to the
+        memory location of the value to be read and incremented.
 
         Assembly example:
         ```
