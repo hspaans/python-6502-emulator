@@ -63,13 +63,13 @@ INS_STY_ZP = 0x84  # Store Y Register, Zero Page.
 INS_STY_ZPX = 0x94  # Store Y Register, Zero Page, X.
 INS_STY_ABS = 0x8C  # Store Y Register, Absolute.
 
-INS_TAX_IMP = 0xAA  # Transfer Accumulator, Implied.
+INS_TAX_IMP = 0xAA  # Transfer Accumulator to X Register, Implied.
 
-INS_TAY_IMP = 0xA8  # Transfer Accumulator, Y.
+INS_TAY_IMP = 0xA8  # Transfer Accumulator to Y Register, Implied.
 
-INS_TXA_IMP = 0x8A  # Transfer X Register, Accumulator.
+INS_TXA_IMP = 0x8A  # Transfer X Register to Accumulator, Implied.
 
-INS_TYA_IMP = 0x98  # Transfer Y Register, Accumulator.
+INS_TYA_IMP = 0x98  # Transfer Y Register to Accumulator, Implied.
 
 # Values for the 6502 processor with different flags set.
 VALUE8_EMPTY = 0x00
