@@ -2920,9 +2920,9 @@ def test_cpu_ins_sty_abs(
 @pytest.mark.parametrize(
     ("value", "flag_n", "flag_z"),
     [
-        (0x0F, False, False),
-        (0x00, False, True),
-        (0xF0, True, False),
+        (VALUE8_0000_1111, False, False),
+        (VALUE8_0000_0000, False, True),
+        (VALUE8_1111_0000, True, False),
     ],
 )
 def test_cpu_ins_tax_imp(value: int, flag_n: bool, flag_z: bool) -> None:
