@@ -1377,18 +1377,42 @@ class Processor:  # noqa: PLR904
 
     def _ins_tax_imp(self) -> None:
         """
-        TAX - Transfer Accumulator to X.
+        TAX (0xAA) - Transfer Accumulator to X, Implied.
 
-        :return: None
+        Transfer the value stored in the accumulator directly into register X and
+        then evaluate register X for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        TAX
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_x = self._read_register_a()
         self._evaluate_flags_nz(self.reg_x)
 
     def _ins_tay_imp(self) -> None:
         """
-        TAY - Transfer Accumulator to Y.
+        TAY (0xA8) - Transfer Accumulator to Y, Implied.
 
-        :return: None
+        Transfer the value stored in the accumulator directly into register Y and
+        then evaluate register Y for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        TAY
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if Y = 0
+        - Negative Flag: Set if bit 7 of Y is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_y = self._read_register_a()
         self._evaluate_flags_nz(self.reg_y)
@@ -1404,9 +1428,21 @@ class Processor:  # noqa: PLR904
 
     def _ins_txa_imp(self) -> None:
         """
-        TXA - Transfer Register X to Accumulator.
+        TXA (0x8A) - Transfer X Register to Accumulator, Implied.
 
-        :return: None
+        Transfer the value stored in register X directly into the accumulator and
+        then evaluate the accumulator for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        TXA
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if A = 0
+        - Negative Flag: Set if bit 7 of A is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_a = self._read_register_x()
         self._evaluate_flags_nz(self.reg_a)
@@ -1421,9 +1457,21 @@ class Processor:  # noqa: PLR904
 
     def _ins_tya_imp(self) -> None:
         """
-        TYA - Transfer Register Y to Accumulator.
+        TYA (0x98) - Transfer Y Register to Accumulator, Implied.
 
-        :return: None
+        Transfer the value stored in register Y directly into the accumulator and
+        then evaluate the accumulator for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        TYA
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if A = 0
+        - Negative Flag: Set if bit 7 of A is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_a = self._read_register_y()
         self._evaluate_flags_nz(self.reg_a)
