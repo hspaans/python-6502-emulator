@@ -63,6 +63,14 @@ INS_STY_ZP = 0x84  # Store Y Register, Zero Page.
 INS_STY_ZPX = 0x94  # Store Y Register, Zero Page, X.
 INS_STY_ABS = 0x8C  # Store Y Register, Absolute.
 
+INS_TAX_IMP = 0xAA  # Transfer Accumulator, Implied.
+
+INS_TAY_IMP = 0xA8  # Transfer Accumulator, Y.
+
+INS_TXA_IMP = 0x8A  # Transfer X Register, Accumulator.
+
+INS_TYA_IMP = 0x98  # Transfer Y Register, Accumulator.
+
 # Values for the 6502 processor with different flags set.
 VALUE8_EMPTY = 0x00
 VALUE8_0000_0000 = 0x00  # Z=T, N=F
@@ -2907,3 +2915,191 @@ def test_cpu_ins_sty_abs(
         cpu.cycles,
         cpu.reg_y,
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0x0F, False, False),
+        (0x00, False, True),
+        (0xF0, True, False),
+    ],
+)
+def test_cpu_ins_tax_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    TAX (0xAA) - Transfer Accumulator to X, Implied.
+
+    Transfer the value stored in the accumulator directly into register X and
+    then evaluate register X for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    TAX
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if X = 0
+    - Negative Flag: Set if bit 7 of X is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: Value used for the test
+    :param bool flag_n: Expected value of the Negative flag after execution
+    :param bool flag_z: Expected value of the Zero flag after execution
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_a = value
+    cpu.reg_x = VALUE8_EMPTY
+    memory[Processor.PC_INIT] = INS_TAX_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+        cpu.reg_x,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_n, flag_z, value)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0x0F, False, False),
+        (0x00, False, True),
+        (0xF0, True, False),
+    ],
+)
+def test_cpu_ins_tay_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    TAY (0xA8) - Transfer Accumulator to Y, Implied.
+
+    Transfer the value stored in the accumulator directly into register Y and
+    then evaluate register Y for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    TAY
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if Y = 0
+    - Negative Flag: Set if bit 7 of Y is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: Value used for the test
+    :param bool flag_n: Expected value of the Negative flag after execution
+    :param bool flag_z: Expected value of the Zero flag after execution
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_a = value
+    cpu.reg_y = VALUE8_EMPTY
+    memory[Processor.PC_INIT] = INS_TAY_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+        cpu.reg_y,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_n, flag_z, value)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0x0F, False, False),
+        (0x00, False, True),
+        (0xF0, True, False),
+    ],
+)
+def test_cpu_ins_txa_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    TXA (0x8A) - Transfer X Register to Accumulator, Implied.
+
+    Transfer the value stored in register X directly into the accumulator and
+    then evaluate the accumulator for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    TXA
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if A = 0
+    - Negative Flag: Set if bit 7 of A is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: Value used for the test
+    :param bool flag_n: Expected value of the Negative flag after execution
+    :param bool flag_z: Expected value of the Zero flag after execution
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_a = VALUE8_EMPTY
+    cpu.reg_x = value
+    memory[Processor.PC_INIT] = INS_TXA_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+        cpu.reg_a,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_n, flag_z, value)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0x0F, False, False),
+        (0x00, False, True),
+        (0xF0, True, False),
+    ],
+)
+def test_cpu_ins_tya_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    TYA (0x98) - Transfer Y Register to Accumulator, Implied.
+
+    Transfer the value stored in register Y directly into the accumulator and
+    then evaluate the accumulator for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    TYA
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if A = 0
+    - Negative Flag: Set if bit 7 of A is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: Value used for the test
+    :param bool flag_n: Expected value of the Negative flag after execution
+    :param bool flag_z: Expected value of the Zero flag after execution
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_a = VALUE8_EMPTY
+    cpu.reg_y = value
+    memory[Processor.PC_INIT] = INS_TYA_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+        cpu.reg_a,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_n, flag_z, value)

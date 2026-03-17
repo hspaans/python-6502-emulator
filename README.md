@@ -379,6 +379,70 @@ STY #$nn
 
 #### Register Transfer Operations
 
+##### Transfer Accumulator to X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if X = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of X is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xAA  |   1   |   2    |
+
+##### Transfer Accumulator to Y Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if Y = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of Y is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xA8  |   1   |   2    |
+
+##### Transfer X Register to Accumulator
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if A = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of A is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x8A  |   1   |   2    |
+
+##### Transfer Y Register to Accumulator
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if A = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of A is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x98  |   1   |   2    |
+
 #### Stack Operations
 
 #### Logical Operations
