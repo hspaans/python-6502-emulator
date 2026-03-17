@@ -379,7 +379,7 @@ STY #$nn
 
 #### Register Transfer Operations
 
-##### Transfer Accumulator to X Register
+##### TAX — Transfer Accumulator to X Register
 
 | Flag | Description       | State                    |
 | :--: | ----------------- | ------------------------ |
@@ -395,7 +395,15 @@ STY #$nn
 | --------------- | :----: | :---: | :----: |
 | Implied         |  0xAA  |   1   |   2    |
 
-##### Transfer Accumulator to Y Register
+Example:
+
+```asm
+    ; Copy the accumulator into X
+    LDA #$42   ; A = $42
+    TAX        ; X = $42, Z and N set from X
+```
+
+##### TAY — Transfer Accumulator to Y Register
 
 | Flag | Description       | State                    |
 | :--: | ----------------- | ------------------------ |
