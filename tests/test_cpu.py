@@ -55,6 +55,12 @@ INS_LDY_ZPX = 0xB4  # Load Y Register, Zero Page, X.
 INS_LDY_ABS = 0xAC  # Load Y Register, Absolute.
 INS_LDY_ABX = 0xBC  # Load Y Register, Absolute, X.
 
+INS_SEC_IMP = 0x38  # Set Carry Flag.
+
+INS_SED_IMP = 0xF8  # Set Decimal Flag.
+
+INS_SEI_IMP = 0x78  # Set Interrupt Disable.
+
 INS_STA_ZP = 0x85  # Store Accumlator, Zero Page.
 INS_STA_ZPX = 0x95  # Store Accumlator, Zero Page, X.
 INS_STA_ABS = 0x8D  # Store Accumlator, Absolute.
@@ -2369,6 +2375,96 @@ def test_cpu_ins_ldy_abx(
         cpu.flag_z,
         cpu.flag_n,
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
+
+
+def test_cpu_ins_sec_imp() -> None:
+    """
+    SEC (0x38) - Set Carry Flag.
+
+    Set the Carry Flag to 1.
+
+    Assembly example:
+    ```
+    SEC
+    ```
+
+    Affected flags:
+    - Carry Flag: Set to 1
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_c = False
+    memory[Processor.PC_INIT] = INS_SEC_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_c,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, True)
+
+
+def test_cpu_ins_sed_imp() -> None:
+    """
+    SED (0xF8) - Set Decimal Mode.
+
+    Set the Decimal Flag to 1.
+
+    Assembly example:
+    ```
+    SED
+    ```
+
+    Affected flags:
+    - Decimal Flag: Set to 1
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_d = False
+    memory[Processor.PC_INIT] = INS_SED_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_d,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, True)
+
+
+def test_cpu_ins_sei_imp() -> None:
+    """
+    SEI (0x78) - Set Interrupt Disable.
+
+    Set the Interrupt Disable Flag to 1.
+
+    Assembly example:
+    ```
+    SEI
+    ```
+
+    Affected flags:
+    - Interrupt Disable Flag: Set to 1
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_i = False
+    memory[Processor.PC_INIT] = INS_SEI_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_i,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, True)
 
 
 @pytest.mark.parametrize(

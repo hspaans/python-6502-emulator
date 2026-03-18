@@ -1070,27 +1070,57 @@ class Processor:  # noqa: PLR904
 
     def _ins_sec_imp(self) -> None:
         """
-        SEC - Set Carry Flag.
+        SEC (0x38) - Set Carry Flag.
 
-        :return: None
+        Sets the carry flag to 1.
+
+        Assembly example:
+        ```
+        SEC
+        ```
+
+        Affected flags:
+        - Carry Flag: Set to 1
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_c = True
         self.cycles += 1
 
     def _ins_sed_imp(self) -> None:
         """
-        SED - Set Decimal Mode.
+        SED (0xF8) - Set Decimal Mode.
 
-        :return: None
+        Sets the decimal flag to 1.
+
+        Assembly example:
+        ```
+        SED
+        ```
+
+        Affected flags:
+        - Decimal Flag: Set to 1
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_d = True
         self.cycles += 1
 
     def _ins_sei_imp(self) -> None:
         """
-        SEI - Set Interrupt Disable.
+        SEI (0x78) - Set Interrupt Disable.
 
-        :return: None
+        Sets the interrupt disable flag to 1.
+
+        Assembly example:
+        ```
+        SEI
+        ```
+
+        Affected flags:
+        - Interrupt Disable Flag: Set to 1
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_i = True
         self.cycles += 1
