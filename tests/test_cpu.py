@@ -8,6 +8,14 @@ import pytest
 from m6502 import Memory, Processor
 
 # Opcodes for the 6502 processor.
+INS_CLC_IMP = 0x18  # Clear Carry Flag.
+
+INS_CLD_IMP = 0xD8  # Clear Decimal Mode.
+
+INS_CLI_IMP = 0x58  # Clear Interrupt Disable.
+
+INS_CLV_IMP = 0xB8  # Clear Overflow Flag.
+
 INS_DEC_ZP = 0xC6  # Decrement Memory, Zero Page.
 INS_DEC_ZPX = 0xD6  # Decrement Memory, Zero Page, X.
 INS_DEC_ABS = 0xCE  # Decrement Memory, Absolute.
@@ -46,6 +54,12 @@ INS_LDY_ZP = 0xA4  # Load Y Register, Zero Page.
 INS_LDY_ZPX = 0xB4  # Load Y Register, Zero Page, X.
 INS_LDY_ABS = 0xAC  # Load Y Register, Absolute.
 INS_LDY_ABX = 0xBC  # Load Y Register, Absolute, X.
+
+INS_SEC_IMP = 0x38  # Set Carry Flag.
+
+INS_SED_IMP = 0xF8  # Set Decimal Flag.
+
+INS_SEI_IMP = 0x78  # Set Interrupt Disable.
 
 INS_STA_ZP = 0x85  # Store Accumlator, Zero Page.
 INS_STA_ZPX = 0x95  # Store Accumlator, Zero Page, X.
@@ -324,6 +338,132 @@ def test_cpu_fetch_word() -> None:
         cpu.flag_i,
         value,
     ) == (Processor.PC_INIT + 2, Processor.SP_INIT, 2, True, False, True, 0x5AA5)
+
+
+def test_cpu_ins_clc_imp() -> None:
+    """
+    CLC (0x18) - Clear Carry Flag.
+
+    Sets the carry flag to 0.
+
+    Assembly example:
+    ```
+    CLC
+    ```
+
+    Affected flags:
+    - Carry Flag: Set to 0
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_c = True
+    memory[Processor.PC_INIT] = INS_CLC_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_c,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, False)
+
+
+def test_cpu_ins_cld_imp() -> None:
+    """
+    CLD (0xD8) - Clear Decimal Mode.
+
+    Sets the decimal mode flag to 0.
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    Assembly example:
+    ```
+    CLD
+    ```
+
+    Affected flags:
+    - Decimal Flag: Set to 0
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_d = True
+    memory[Processor.PC_INIT] = INS_CLD_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_d,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, False)
+
+
+def test_cpu_ins_cli_imp() -> None:
+    """
+    CLI (0x58) - Clear Interrupt Disable.
+
+    Sets the interrupt disable flag to 0.
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    Assembly example:
+    ```
+    CLI
+    ```
+
+    Affected flags:
+    - Interrupt Disable Flag: Set to 0
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_i = True
+    memory[Processor.PC_INIT] = INS_CLI_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_i,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, False)
+
+
+def test_cpu_ins_clv_imp() -> None:
+    """
+    CLV (0xB8) - Clear Overflow Flag.
+
+    Sets the overflow flag to 0.
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    Assembly example:
+    ```
+    CLV
+    ```
+
+    Affected flags:
+    - Overflow Flag: Set to 0
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_v = True
+    memory[Processor.PC_INIT] = INS_CLV_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_v,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, False)
 
 
 @pytest.mark.parametrize(
@@ -2235,6 +2375,96 @@ def test_cpu_ins_ldy_abx(
         cpu.flag_z,
         cpu.flag_n,
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
+
+
+def test_cpu_ins_sec_imp() -> None:
+    """
+    SEC (0x38) - Set Carry Flag.
+
+    Set the Carry Flag to 1.
+
+    Assembly example:
+    ```
+    SEC
+    ```
+
+    Affected flags:
+    - Carry Flag: Set to 1
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_c = False
+    memory[Processor.PC_INIT] = INS_SEC_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_c,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, True)
+
+
+def test_cpu_ins_sed_imp() -> None:
+    """
+    SED (0xF8) - Set Decimal Mode.
+
+    Set the Decimal Flag to 1.
+
+    Assembly example:
+    ```
+    SED
+    ```
+
+    Affected flags:
+    - Decimal Flag: Set to 1
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_d = False
+    memory[Processor.PC_INIT] = INS_SED_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_d,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, True)
+
+
+def test_cpu_ins_sei_imp() -> None:
+    """
+    SEI (0x78) - Set Interrupt Disable.
+
+    Set the Interrupt Disable Flag to 1.
+
+    Assembly example:
+    ```
+    SEI
+    ```
+
+    Affected flags:
+    - Interrupt Disable Flag: Set to 1
+
+    The instruction costs 1 byte and 2 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.flag_i = False
+    memory[Processor.PC_INIT] = INS_SEI_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_i,
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, True)
 
 
 @pytest.mark.parametrize(

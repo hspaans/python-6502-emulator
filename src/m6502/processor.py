@@ -316,36 +316,76 @@ class Processor:  # noqa: PLR904
 
     def _ins_clc_imp(self) -> None:
         """
-        CLC - Clear Carry Flag.
+        CLC (0x18) - Clear Carry Flag.
 
-        :return: None
+        Sets the carry flag to 0.
+
+        Assembly example:
+        ```
+        CLC
+        ```
+
+        Affected flags:
+        - Carry Flag: Set to 0
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_c = False
         self.cycles += 1
 
     def _ins_cld_imp(self) -> None:
         """
-        CLD - Clear Decimal Mode.
+        CLD (0xD8) - Clear Decimal Mode.
 
-        :return: None
+        Sets the decimal mode flag to 0.
+
+        Assembly example:
+        ```
+        CLD
+        ```
+
+        Affected flags:
+        - Decimal Flag: Set to 0
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_d = False
         self.cycles += 1
 
     def _ins_cli_imp(self) -> None:
         """
-        CLI - Clear Interrupt Disable.
+        CLI (0x58) - Clear Interrupt Disable.
 
-        :return: None
+        Sets the interrupt disable flag to 0.
+
+        Assembly example:
+        ```
+        CLI
+        ```
+
+        Affected flags:
+        - Interrupt Disable Flag: Set to 0
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_i = False
         self.cycles += 1
 
     def _ins_clv_imp(self) -> None:
         """
-        CLV - Clear Overflow Flag.
+        CLV (0xB8) - Clear Overflow Flag.
 
-        :return: None
+        Sets the overflow flag to 0.
+
+        Assembly example:
+        ```
+        CLV
+        ```
+
+        Affected flags:
+        - Overflow Flag: Set to 0
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_v = False
         self.cycles += 1
@@ -1030,27 +1070,57 @@ class Processor:  # noqa: PLR904
 
     def _ins_sec_imp(self) -> None:
         """
-        SEC - Set Carry Flag.
+        SEC (0x38) - Set Carry Flag.
 
-        :return: None
+        Sets the carry flag to 1.
+
+        Assembly example:
+        ```
+        SEC
+        ```
+
+        Affected flags:
+        - Carry Flag: Set to 1
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_c = True
         self.cycles += 1
 
     def _ins_sed_imp(self) -> None:
         """
-        SED - Set Decimal Mode.
+        SED (0xF8) - Set Decimal Mode.
 
-        :return: None
+        Sets the decimal flag to 1.
+
+        Assembly example:
+        ```
+        SED
+        ```
+
+        Affected flags:
+        - Decimal Flag: Set to 1
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_d = True
         self.cycles += 1
 
     def _ins_sei_imp(self) -> None:
         """
-        SEI - Set Interrupt Disable.
+        SEI (0x78) - Set Interrupt Disable.
 
-        :return: None
+        Sets the interrupt disable flag to 1.
+
+        Assembly example:
+        ```
+        SEI
+        ```
+
+        Affected flags:
+        - Interrupt Disable Flag: Set to 1
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.flag_i = True
         self.cycles += 1
