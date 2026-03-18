@@ -453,6 +453,102 @@ Example:
 
 #### Stack Operations
 
+##### Transfer Stack Pointer to X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if X = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of X is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xBA  |   1   |   2    |
+
+##### Transfer X Register to Stack Pointer
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x9A  |   1   |   2    |
+
+##### Push Accumulator to Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x48  |   1   |   3    |
+
+##### Push processor status to Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x08  |   1   |   3    |
+
+##### Pull Accumulator from Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if A = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of A is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x68  |   1   |   4    |
+
+##### Pull processor status from Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Set to value from stack  |
+|  Z   | Zero Flag         | Set to value from stack  |
+|  I   | Interrupt Disable | Set to value from stack  |
+|  D   | Decimal Mode Flag | Set to value from stack  |
+|  B   | Break Command     | Set to value from stack  |
+|  V   | Overflow Flag     | Set to value from stack  |
+|  N   | Negative Flag     | Set to value from stack  |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x28  |   1   |   4    |
+
 #### Logical Operations
 
 #### Arithmetic Operations

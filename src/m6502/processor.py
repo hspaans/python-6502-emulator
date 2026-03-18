@@ -1489,9 +1489,21 @@ class Processor:  # noqa: PLR904
 
     def _ins_tsx_imp(self) -> None:
         """
-        TSX - Transfer Stack Pointer to X.
+        TSX (0xBA) - Transfer Stack Pointer to X, Implied.
 
-        :return: None
+        Transfer the value stored in the stack pointer directly into register X and
+        then evaluate register X for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        TSX
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.reg_x = self.pop()
         self._evaluate_flags_nz(self.reg_x)
@@ -1519,9 +1531,19 @@ class Processor:  # noqa: PLR904
 
     def _ins_txs_imp(self) -> None:
         """
-        TXS - Transfer Register X to Stack Pointer.
+        TXS (0x9A) - Transfer Register X to Stack Pointer, Implied.
 
-        :return: None
+        Transfer the value stored in register X directly into the stack pointer.
+
+        Assembly example:
+        ```
+        TXS
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 2 cycles to complete.
         """
         self.push(self.reg_x)
 
@@ -1548,34 +1570,45 @@ class Processor:  # noqa: PLR904
 
     def _ins_pha_imp(self) -> None:
         """
-        PHA - Push Accumulator.
+        PHA (0x48) - Push Accumulator.
+
+        Push the value of the Accumulator onto the stack. The value is stored at the memory location that is one byte higher than the current stack pointer. The stack pointer is then decremented by 1 to point to the next available slot on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+        - 0xFF - 0x01 => 0xFE
+        - 0x00 - 0x01 => 0xFF
+
+        Assembly example:
+        ```
+        PHA
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 3 cycles to complete.
 
         TODO: Add check to not cross page
-
-        :return: None
         """
         self.memory[self.stack_pointer] = self._read_register_a()
         self.stack_pointer -= 1
         self.cycles += 1
 
-    def _ins_pla_imp(self) -> None:
-        """
-        PLA - Pull Accumulator.
-
-        TODO: Add check to not cross page
-
-        :return: None
-        """
-        self.reg_a = self.memory[self.stack_pointer]
-        self.stack_pointer += 1
-        self.cycles += 1
-        self._evaluate_flags_nz(self.reg_a)
-
     def _ins_php_imp(self) -> None:
         """
-        Push Processor Status, Implied.
+        PHP (0x08) - Push Processor Status, Implied.
 
-        return: None
+        Push the current state of the processor status register onto the stack. The value is stored at the memory location that is one byte higher than the current stack pointer. The stack pointer is then decremented by 1 to point to the next available slot on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+        - 0xFF - 0x01 => 0xFE
+        - 0x00 - 0x01 => 0xFF
+
+        Assembly example:
+        ```
+        PHP
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 3 cycles to complete.
         """
         flags = 0x00
         if self.flag_n:
@@ -1595,14 +1628,52 @@ class Processor:  # noqa: PLR904
         self.push(flags)
         self.cycles += 1
 
+    def _ins_pla_imp(self) -> None:
+        """
+        PLA (0x68) - Pull Accumulator, Implied.
+
+        Pull the value from the top of the stack directly into the accumulator and then evaluate the accumulator for flags Zero and Negative. The value is read from the memory location that is one byte higher than the current stack pointer. The stack pointer is then incremented by 1 to point to the next value on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+        - 0xFF + 0x01 => 0x00
+        - 0x00 + 0x01 => 0x01
+
+        Assembly example:
+        ```
+        PLA
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if A = 0
+        - Negative Flag: Set if bit 7 of A is set
+
+        The instruction costs 1 byte and 4 cycles to complete.
+
+        TODO: Add check to not cross page
+        """
+        self.reg_a = self.memory[self.stack_pointer]
+        self.stack_pointer += 1
+        self.cycles += 1
+        self._evaluate_flags_nz(self.reg_a)
+
     def _ins_plp_imp(self) -> None:
         """
-        Pull Processor Status.
+        PLP (0x) - Pull Processor Status.
+
+        Pull the value from the top of the stack directly into the processor status register. The value is read from the memory location that is one byte higher than the current stack pointer. The stack pointer is then incremented by 1 to point to the next value on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+        - 0xFF + 0x01 => 0x00
+        - 0x00 + 0x01 => 0x01
+
+        Assembly example:
+        ```
+        PLP
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 4 cycles to complete.
 
         TODO: Implement instruction and test
         TODO: Add check to not cross page
-
-        :return: None
         """
         flags = self.pop()
         # print(flags)
