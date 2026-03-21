@@ -40,7 +40,7 @@ dev = [
     {include-group = "docs"},
 ]
 test = [
-    "pytest>=8.0.0,<10.0.0",
+    "pytest>=9.0.0,<10.0.0",
     "pytest-cov",
     "pytest-fixtures",
     "pytest-github-actions-annotate-failures",
@@ -86,7 +86,8 @@ testpaths = ["tests"]
 [tools.check-manifest]
 ignore = [
   ".devcontainer/*",
-  ".github/*"
+  ".github/*",
+  ".vscode/*"
 ]
 
 [tool.pylint.design]
