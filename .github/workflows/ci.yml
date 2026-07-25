@@ -16,6 +16,9 @@ jobs:
   tox:
     name: Test on Python ${{ matrix.py }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      code-quality: write
     strategy:
       fail-fast: false
       matrix:
@@ -44,7 +47,17 @@ jobs:
       - name: Run test suite
         run: tox r --skip-pkg-install
         env:
-          PYTEST_ADDOPTS: "-vv --durations=10"
+          PYTEST_ADDOPTS: >-
+            -vv --durations=10
+            ${{ matrix.py == '3.14' && '--cov-report=xml:coverage.xml' || '' }}
+
+      - name: Upload code coverage report
+        if: matrix.py == '3.14'
+        uses: actions/upload-code-coverage@v1
+        with:
+          file: coverage.xml
+          language: Python
+          label: code-coverage/pytest
 
   lint:
     name: Linting Code Base
