@@ -13,7 +13,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -62,6 +61,7 @@ lint = [
     "flake8-rst-docstrings",
     "flake8-isort",
     "pymarkdownlnt",
+    "pyupgrade",
     "rstcheck",
     "yamllint",
 ]
@@ -111,7 +111,7 @@ skips = ["B101", "B601", "S101"]
 
 [tool.tox]
 requires = ["tox>=4.52.1,<5.0.0"]
-env_list = ["lint", "fix", "3.14", "3.13", "3.12", "3.11", "cov", "type", "pkg_meta"]
+env_list = ["lint", "fix", "3.14", "3.13", "3.12", "cov", "type", "pkg_meta"]
 skip_missing_interpreters = true
 
 [tool.tox.env_run_base]
@@ -154,4 +154,16 @@ commands = [
     ["python", "-m", "flake8", "--doctests", "src/", "tests/"],
     ["pymarkdownlnt", "scan", "."],
     ["python", "-c", 'print(r"{env_python}")'],
+]
+
+[tool.tox.env.fix]
+description = "running pyupgrade at {envdir}"
+package = "editable"
+dependency_groups = ["lint", "test"]
+allowlist_externals = ["git", "sh"]
+commands = [
+    # Finds all tracked .py files and updates them to Python 3.12+ syntax
+    ["sh", "-c", "git ls-files '*.py' | xargs pyupgrade --py312-plus"],
+    # Fails the build if pyupgrade modified any files (perfect for CI)
+    ["git", "diff", "--exit-code"]
 ]
