@@ -32,7 +32,7 @@ jobs:
         run: tox r -vv --notest
 
       - name: Run test suite
-        run: tox r --env lint --skip-pkg-install
+        run: tox r -e lint --skip-pkg-install
         env:
           PYTEST_ADDOPTS: "-vv --durations=10"
 
@@ -55,7 +55,7 @@ jobs:
         run: tox r -vv --notest
 
       - name: Run test suite
-        run: tox r --env fix --skip-pkg-install
+        run: tox r -e fix --skip-pkg-install
         env:
           PYTEST_ADDOPTS: "-vv --durations=10"
 
@@ -90,7 +90,7 @@ jobs:
         run: tox r -vv --notest
 
       - name: Run test suite
-        run: tox r --env ${{ matrix.py }} --skip-pkg-install
+        run: tox r -e ${{ matrix.py }} --skip-pkg-install
         env:
           PYTEST_ADDOPTS: "-vv --durations=10"
 
