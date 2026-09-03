@@ -777,7 +777,7 @@ class Processor:  # noqa: PLR904
         The instruction costs 2 bytes and 6 cycles to complete.
         """
         self.reg_a = self._read_byte(
-            self._read_word(((self._fetch_byte() + self.reg_x) & 0xFF))
+            self._read_word((self._fetch_byte() + self.reg_x) & 0xFF)
         )
         self._evaluate_flags_nz(self.reg_a)
         self.cycles += 1  # TODO: Why is the extra cycle required?
@@ -1261,9 +1261,7 @@ class Processor:  # noqa: PLR904
         The instruction costs 2 bytes and 6 cycles to complete.
         """
         self._write_byte(
-            self._read_byte(
-                self._read_word(((self._fetch_byte() + self.reg_x) & 0xFF))
-            ),
+            self._read_byte(self._read_word((self._fetch_byte() + self.reg_x) & 0xFF)),
             self.reg_a,
         )
 
