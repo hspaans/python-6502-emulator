@@ -1,6 +1,5 @@
 """Verifies that the processor class works as expected."""
 
-from multiprocessing.dummy import Process
 import sys
 from random import choice
 
@@ -2482,7 +2481,7 @@ def test_cpu_ins_pla_imp() -> None:
     Affected flags:
     - None
 
-    The instruction costs 1 byte and 2 cycles to complete.
+    The instruction costs 1 byte and 4 cycles to complete.
 
     TODO: Add check to not cross page
     """
@@ -2492,14 +2491,14 @@ def test_cpu_ins_pla_imp() -> None:
     cpu.reg_a = 0x00
     cpu.stack_pointer = 0x01FB
     memory[Processor.PC_INIT] = 0x68
-    memory[0x01FB] = 0xF0
-    cpu.execute(2)
+    memory[0x01FC] = 0xF0
+    cpu.execute(4)
     assert (
         cpu.program_counter,
         cpu.stack_pointer,
         cpu.cycles,
         cpu.reg_a,
-    ) == (0xFCE3, 0x01FC, 2, 0xF0)
+    ) == (0xFCE3, 0x01FC, 4, 0xF0)
 
 
 @pytest.mark.parametrize(
@@ -2532,7 +2531,7 @@ def test_cpu_ins_plp_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     cpu = Processor(memory)
     cpu.reset()
     cpu.memory[Processor.PC_INIT] = 0x28
-    cpu.memory[cpu.stack_pointer] = value
+    cpu.memory[cpu.stack_pointer + 1] = value  # Place value at SP+1 (will be read after increment)
     cpu.execute(4)
     assert (
         cpu.program_counter,
@@ -3440,10 +3439,12 @@ def test_cpu_ins_tsx_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     memory = Memory()
     cpu = Processor(memory)
     cpu.reset()
-    cpu.reg_x = VALUE8_EMPTY
+    # Set up SP to a specific value
+    cpu.stack_pointer = 0x0100 + value
+    cpu.reg_x = 0x00  # Clear X
     memory[Processor.PC_INIT] = INS_TSX_IMP
-    memory[cpu.stack_pointer] = value
     cpu.execute(2)
+
     assert (
         cpu.program_counter,
         cpu.stack_pointer,
@@ -3451,7 +3452,7 @@ def test_cpu_ins_tsx_imp(value: int, flag_n: bool, flag_z: bool) -> None:
         cpu.flag_n,
         cpu.flag_z,
         cpu.reg_x,
-    ) == (Processor.PC_INIT + 1, Processor.SP_INIT + 1, 2, flag_n, flag_z, value)
+    ) == (Processor.PC_INIT + 1, 0x0100 + value, 2, flag_n, flag_z, value)
 
 
 @pytest.mark.parametrize(
@@ -3537,8 +3538,7 @@ def test_cpu_ins_txs_ip(value: int) -> None:
         cpu.program_counter,
         cpu.stack_pointer,
         cpu.cycles,
-        cpu.memory[cpu.stack_pointer + 1],
-    ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, value)
+    ) == (Processor.PC_INIT + 1, 0x0100 + value, 2)
 
 
 @pytest.mark.parametrize(
