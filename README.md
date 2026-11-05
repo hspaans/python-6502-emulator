@@ -789,7 +789,7 @@ INC #$nn
 ##### INX - Increment X Register
 
 | Flag | Description       | State                    |
-| :--: | ----------------- | ----------------------- |
+| :--: | ----------------- | ------------------------ |
 |  C   | Carry Flag        | Not affected             |
 |  Z   | Zero Flag         | Set if X is zero         |
 |  I   | Interrupt Disable | Not affected             |
@@ -1083,38 +1083,38 @@ The stack operation instructions (PHA, PHP, PLA, PLP, TSX, TXS) have dedicated c
 Three reusable test data generators are provided for systematic testing:
 
 1. **`generate_boundary_byte_values()`**: Tests edge cases
-   - 0x00: Zero value (tests Z flag)
-   - 0x01: Minimum positive
-   - 0x7F: Maximum positive (N flag boundary)
-   - 0x80: Minimum negative (N flag boundary)
-   - 0xFE: Maximum negative (-2 in two's complement)
-   - 0xFF: Maximum (-1 in two's complement)
+   * 0x00: Zero value (tests Z flag)
+   * 0x01: Minimum positive
+   * 0x7F: Maximum positive (N flag boundary)
+   * 0x80: Minimum negative (N flag boundary)
+   * 0xFE: Maximum negative (-2 in two's complement)
+   * 0xFF: Maximum (-1 in two's complement)
 
 2. **`generate_single_flag_combinations()`**: Tests individual flags
-   - All flags clear
-   - Each flag individually set
-   - All flags set
-   - Total: 9 distinct combinations
+   * All flags clear
+   * Each flag individually set
+   * All flags set
+   * Total: 9 distinct combinations
 
 3. **`generate_all_flag_combinations()`**: Exhaustive flag testing
-   - All 128 possible flag combinations (7 flags × 2 states)
-   - Useful for verifying no unintended side effects
+   * All 128 possible flag combinations (7 flags × 2 states)
+   * Useful for verifying no unintended side effects
 
 #### Test Organization
 
-- **TestPHA**: 11 tests for Push Accumulator (PHA - 0x48)
-- **TestPHP**: 11 tests for Push Processor Status (PHP - 0x08)
-- **TestPLA**: 10 tests for Pull Accumulator (PLA - 0x68)
-- **TestPLP**: 12 tests for Pull Processor Status (PLP - 0x28)
-- **TestStackSequences**: 3 integration tests for round-trip operations
+* **TestPHA**: 11 tests for Push Accumulator (PHA - 0x48)
+* **TestPHP**: 11 tests for Push Processor Status (PHP - 0x08)
+* **TestPLA**: 10 tests for Pull Accumulator (PLA - 0x68)
+* **TestPLP**: 12 tests for Pull Processor Status (PLP - 0x28)
+* **TestStackSequences**: 3 integration tests for round-trip operations
 
 #### Key Test Scenarios
 
-- **Boundary value testing**: Zero, sign bit boundaries, max/min values
-- **Flag interactions**: Individual flag preservation and modification
-- **Stack pointer management**: Correct increment/decrement behavior
-- **Round-trip verification**: Push followed by pull preserves values
-- **Stack depth**: Multiple sequential operations create proper stack frames
+* **Boundary value testing**: Zero, sign bit boundaries, max/min values
+* **Flag interactions**: Individual flag preservation and modification
+* **Stack pointer management**: Correct increment/decrement behavior
+* **Round-trip verification**: Push followed by pull preserves values
+* **Stack depth**: Multiple sequential operations create proper stack frames
 
 #### Running the Tests
 
@@ -1133,11 +1133,11 @@ python -m pytest tests/test_cpu.py tests/test_cpu_ins_stack.py -v
 
 The test generators in `test_cpu_ins_stack.py` are designed to scale to other 6502 instructions:
 
-- **For value-based instructions (ADC, SBC, LDA, ORA, AND, EOR, CMP)**: Use `generate_boundary_byte_values()` to systematically test how different operands affect flags and results.
+* **For value-based instructions (ADC, SBC, LDA, ORA, AND, EOR, CMP)**: Use `generate_boundary_byte_values()` to systematically test how different operands affect flags and results.
 
-- **For flag-modifying instructions (SEC, CLC, BIT, CMP, BRK)**: Use `generate_single_flag_combinations()` to verify that only intended flags change.
+* **For flag-modifying instructions (SEC, CLC, BIT, CMP, BRK)**: Use `generate_single_flag_combinations()` to verify that only intended flags change.
 
-- **For exhaustive coverage**: Use `generate_all_flag_combinations()` to test all possible processor states before and after execution.
+* **For exhaustive coverage**: Use `generate_all_flag_combinations()` to test all possible processor states before and after execution.
 
 ## The basic structure of a 6502 processor
 
