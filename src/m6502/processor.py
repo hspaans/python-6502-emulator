@@ -1546,7 +1546,7 @@ class Processor:  # noqa: PLR904
 
         The instruction costs 1 byte and 2 cycles to complete.
         """
-        self.stack_pointer = 0x0100 + self.reg_x
+        self.stack_pointer = 0x0100 + (self.reg_x & 0xFF)
         self.cycles += 1
 
     def _ins_tya_imp(self) -> None:

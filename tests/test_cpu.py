@@ -2479,7 +2479,8 @@ def test_cpu_ins_pla_imp() -> None:
     ```
 
     Affected flags:
-    - None
+    - Z: Set if the pulled value is 0x00, otherwise cleared.
+    - N: Set if bit 7 of the pulled value is set, otherwise cleared.
 
     The instruction costs 1 byte and 4 cycles to complete.
 
@@ -2523,7 +2524,7 @@ def test_cpu_ins_plp_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     ```
 
     Affected flags:
-    - None
+    - Restores processor status flags from the pulled value (including Zero and Negative).
 
     The instruction costs 1 byte and 4 cycles to complete.
     """
@@ -3511,7 +3512,7 @@ def test_cpu_ins_txa_imp(value: int, flag_n: bool, flag_z: bool) -> None:
         (0xF0),
     ],
 )
-def test_cpu_ins_txs_ip(value: int) -> None:
+def test_cpu_ins_txs_imp(value: int) -> None:
     """
     TXS (0x9A) - Transfer X Register to Stack Pointer, Implied.
 

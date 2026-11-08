@@ -1076,7 +1076,7 @@ The project includes a comprehensive test suite that verifies the correctness of
 
 ### Stack Operations Test Suite
 
-The stack operation instructions (PHA, PHP, PLA, PLP, TSX, TXS) have dedicated comprehensive tests in [`tests/test_cpu_ins_stack.py`](tests/test_cpu_ins_stack.py) with **45 parametrized tests** covering:
+The stack operation instructions (PHA, PHP, PLA, PLP) have dedicated comprehensive tests in [`tests/test_cpu_ins_stack.py`](tests/test_cpu_ins_stack.py) with **45 parametrized tests** covering. Tests for TSX/TXS are located in [`tests/test_cpu.py`](tests/test_cpu.py).
 
 #### Test Data Generators
 
@@ -1107,6 +1107,7 @@ Three reusable test data generators are provided for systematic testing:
 * **TestPLA**: 10 tests for Pull Accumulator (PLA - 0x68)
 * **TestPLP**: 12 tests for Pull Processor Status (PLP - 0x28)
 * **TestStackSequences**: 3 integration tests for round-trip operations
+* **TSX/TXS**: Stack-pointer transfer instructions are tested in `tests/test_cpu.py` (not in `tests/test_cpu_ins_stack.py`)
 
 #### Key Test Scenarios
 
