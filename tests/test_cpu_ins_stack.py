@@ -27,7 +27,6 @@ import pytest
 
 from src.m6502 import Memory, Processor
 
-
 # ============================================================================
 # Test Data Generators
 # ============================================================================
@@ -75,7 +74,9 @@ def generate_boundary_byte_values() -> list[int]:
     ]
 
 
-def generate_single_flag_combinations() -> list[tuple[int, bool, bool, bool, bool, bool, bool, bool]]:
+def generate_single_flag_combinations() -> (
+    list[tuple[int, bool, bool, bool, bool, bool, bool, bool]]
+):
     """Generate flag combinations with one flag set at a time.
 
     Returns list of tuples:
@@ -125,7 +126,9 @@ def generate_single_flag_combinations() -> list[tuple[int, bool, bool, bool, boo
         flag_v = bool(flags_byte & (1 << 2))
         flag_n = bool(flags_byte & (1 << 1))
 
-        combinations.append((flags_byte, flag_c, flag_z, flag_i, flag_d, flag_b, flag_v, flag_n))
+        combinations.append(
+            (flags_byte, flag_c, flag_z, flag_i, flag_d, flag_b, flag_v, flag_n)
+        )
 
     # All flags set case
     combinations.append((0xFE, True, True, True, True, True, True, True))
@@ -133,7 +136,9 @@ def generate_single_flag_combinations() -> list[tuple[int, bool, bool, bool, boo
     return combinations
 
 
-def generate_all_flag_combinations() -> list[tuple[int, bool, bool, bool, bool, bool, bool, bool]]:
+def generate_all_flag_combinations() -> (
+    list[tuple[int, bool, bool, bool, bool, bool, bool, bool]]
+):
     """Generate ALL valid flag byte combinations (128 total).
 
     Returns list of tuples:
@@ -164,7 +169,9 @@ def generate_all_flag_combinations() -> list[tuple[int, bool, bool, bool, bool, 
         flag_v = bool(flags_byte & (1 << 2))
         flag_n = bool(flags_byte & (1 << 1))
 
-        combinations.append((flags_byte, flag_c, flag_z, flag_i, flag_d, flag_b, flag_v, flag_n))
+        combinations.append(
+            (flags_byte, flag_c, flag_z, flag_i, flag_d, flag_b, flag_v, flag_n)
+        )
 
     return combinations
 
@@ -333,7 +340,11 @@ class TestPHP:
 
         cpu.execute(3)
 
-        assert (cpu.program_counter, cpu.stack_pointer, cpu.cycles) == (0xFCE3, 0x01FC, 3)
+        assert (cpu.program_counter, cpu.stack_pointer, cpu.cycles) == (
+            0xFCE3,
+            0x01FC,
+            3,
+        )
         assert memory[0x01FD] == 0xFE  # All bits set except bit 0
 
     def test_php_no_flags_set(self) -> None:
@@ -355,7 +366,16 @@ class TestPHP:
         assert memory[0x01FD] == 0x00
 
     @pytest.mark.parametrize(
-        ("flags_byte", "flag_c", "flag_z", "flag_i", "flag_d", "flag_b", "flag_v", "flag_n"),
+        (
+            "flags_byte",
+            "flag_c",
+            "flag_z",
+            "flag_i",
+            "flag_d",
+            "flag_b",
+            "flag_v",
+            "flag_n",
+        ),
         generate_single_flag_combinations(),
     )
     def test_php_flag_combinations(
@@ -525,7 +545,11 @@ class TestPLP:
 
         cpu.execute(4)
 
-        assert (cpu.program_counter, cpu.stack_pointer, cpu.cycles) == (0xFCE3, 0x01FE, 4)
+        assert (cpu.program_counter, cpu.stack_pointer, cpu.cycles) == (
+            0xFCE3,
+            0x01FE,
+            4,
+        )
         assert (
             cpu.flag_c,
             cpu.flag_z,
@@ -557,7 +581,16 @@ class TestPLP:
         ) == (False, False, False, False, False, False, False)
 
     @pytest.mark.parametrize(
-        ("flags_byte", "flag_c", "flag_z", "flag_i", "flag_d", "flag_b", "flag_v", "flag_n"),
+        (
+            "flags_byte",
+            "flag_c",
+            "flag_z",
+            "flag_i",
+            "flag_d",
+            "flag_b",
+            "flag_v",
+            "flag_n",
+        ),
         generate_single_flag_combinations(),
     )
     def test_plp_flag_combinations(

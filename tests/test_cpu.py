@@ -2531,7 +2531,8 @@ def test_cpu_ins_plp_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     cpu = Processor(memory)
     cpu.reset()
     cpu.memory[Processor.PC_INIT] = 0x28
-    cpu.memory[cpu.stack_pointer + 1] = value  # Place value at SP+1 (will be read after increment)
+    # Place value at SP+1 (will be read after increment)
+    cpu.memory[cpu.stack_pointer + 1] = value
     cpu.execute(4)
     assert (
         cpu.program_counter,
