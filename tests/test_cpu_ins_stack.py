@@ -177,29 +177,6 @@ def generate_all_flag_combinations() -> (
 
 
 # ============================================================================
-# Test Fixtures
-# ============================================================================
-
-
-@pytest.fixture
-def memory_and_cpu() -> tuple[Memory, Processor]:
-    """Create a fresh memory and CPU for each test.
-
-    Provides both a Memory instance and a reset Processor for convenient use.
-
-    Example usage:
-        def test_instruction(self, memory_and_cpu):
-            memory, cpu = memory_and_cpu
-            memory[cpu.PC_INIT] = 0x48  # PHA
-            cpu.execute(3)
-    """
-    memory = Memory()
-    cpu = Processor(memory)
-    cpu.reset()
-    return memory, cpu
-
-
-# ============================================================================
 # Push Accumulator (PHA) Tests
 # ============================================================================
 
@@ -638,11 +615,14 @@ class TestPLP:
         cpu.reset()
         initial_sp = cpu.stack_pointer
         memory[Processor.PC_INIT] = 0x28
-        memory[initial_sp] = 0x00  # Value at current SP
+        memory[initial_sp + 1] = 0x5A  # PLP reads from SP+1 after pop()
 
         cpu.execute(4)
 
         assert cpu.stack_pointer == initial_sp + 1
+        assert cpu.flag_z is True
+        assert cpu.flag_n is True
+        assert cpu.flag_c is False
 
 
 # ============================================================================

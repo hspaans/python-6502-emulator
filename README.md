@@ -537,7 +537,7 @@ TXS
 
         The instruction costs 1 byte and 2 cycles to complete.
         """
-        self.stack_pointer = 0x0100 + self.reg_x
+        self.stack_pointer = 0x0100 + (self.reg_x & 0xFF)
         self.cycles += 1
 ```
 
@@ -1076,7 +1076,7 @@ The project includes a comprehensive test suite that verifies the correctness of
 
 ### Stack Operations Test Suite
 
-The stack operation instructions (PHA, PHP, PLA, PLP) have dedicated comprehensive tests in [`tests/test_cpu_ins_stack.py`](tests/test_cpu_ins_stack.py) with **45 parametrized tests** covering. Tests for TSX/TXS are located in [`tests/test_cpu.py`](tests/test_cpu.py).
+The stack operation instructions (PHA, PHP, PLA, PLP) have dedicated comprehensive tests in [`tests/test_cpu_ins_stack.py`](tests/test_cpu_ins_stack.py) with **45 total tests** covering stack push/pull behavior and stack sequencing (including 42 parameterized cases and 3 integration tests). Tests for TSX/TXS are located in [`tests/test_cpu.py`](tests/test_cpu.py).
 
 #### Test Data Generators
 
@@ -1102,10 +1102,10 @@ Three reusable test data generators are provided for systematic testing:
 
 #### Test Organization
 
-* **TestPHA**: 11 tests for Push Accumulator (PHA - 0x48)
-* **TestPHP**: 11 tests for Push Processor Status (PHP - 0x08)
-* **TestPLA**: 10 tests for Pull Accumulator (PLA - 0x68)
-* **TestPLP**: 12 tests for Pull Processor Status (PLP - 0x28)
+* **TestPHA**: 4 tests for Push Accumulator (PHA - 0x48)
+* **TestPHP**: 3 tests for Push Processor Status (PHP - 0x08)
+* **TestPLA**: 5 tests for Pull Accumulator (PLA - 0x68)
+* **TestPLP**: 5 tests for Pull Processor Status (PLP - 0x28)
 * **TestStackSequences**: 3 integration tests for round-trip operations
 * **TSX/TXS**: Stack-pointer transfer instructions are tested in `tests/test_cpu.py` (not in `tests/test_cpu_ins_stack.py`)
 
