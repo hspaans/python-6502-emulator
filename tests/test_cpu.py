@@ -55,6 +55,14 @@ INS_LDY_ZPX = 0xB4  # Load Y Register, Zero Page, X.
 INS_LDY_ABS = 0xAC  # Load Y Register, Absolute.
 INS_LDY_ABX = 0xBC  # Load Y Register, Absolute, X.
 
+INS_PHA_IMP = 0x48  # Push Accumulator, Implied.
+
+INS_PHP_IMP = 0x08  # Push Processor Status, Implied.
+
+INS_PLA_IMP = 0x68  # Pull Accumulator, Implied.
+
+INS_PLP_IMP = 0x28  # Pull Processor Status, Implied.
+
 INS_SEC_IMP = 0x38  # Set Carry Flag.
 
 INS_SED_IMP = 0xF8  # Set Decimal Flag.
@@ -81,7 +89,11 @@ INS_TAX_IMP = 0xAA  # Transfer Accumulator to X Register, Implied.
 
 INS_TAY_IMP = 0xA8  # Transfer Accumulator to Y Register, Implied.
 
+INS_TSX_IMP = 0xBA  # Transfer Stack Pointer to X Register, Implied.
+
 INS_TXA_IMP = 0x8A  # Transfer X Register to Accumulator, Implied.
+
+INS_TXS_IMP = 0x9A  # Transfer X Register to Stack Pointer, Implied.
 
 INS_TYA_IMP = 0x98  # Transfer Y Register to Accumulator, Implied.
 
@@ -2377,6 +2389,161 @@ def test_cpu_ins_ldy_abx(
     ) == (Processor.PC_INIT + size, Processor.SP_INIT, cycles, value, flag_z, flag_n)
 
 
+def test_cpu_ins_pha_imp() -> None:
+    """
+    PHA (0x48) - Push Accumulator, Implied.
+
+    Push the value of the Accumulator onto the stack. The value is stored at the memory location that is one byte higher than the current stack pointer. The stack pointer is then decremented by 1 to point to the next available slot on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+    - 0xFF - 0x01 => 0xFE
+    - 0x00 - 0x01 => 0xFF
+
+    Assembly example:
+    ```
+    PHA
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 1 byte and 3 cycles to complete.
+
+    TODO: Add check to not cross page
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0xF0
+    memory[Processor.PC_INIT] = INS_PHA_IMP
+    memory[cpu.stack_pointer] = 0x00
+    cpu.execute(3)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        memory[cpu.stack_pointer + 1],
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT - 1, 3, 0xF0)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0xAC, False, False),
+        (0xEC, False, True),
+        (0xAE, True, False),
+    ],
+)
+def test_cpu_ins_php_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    PHP (0x08) - Push Processor Status, Implied.
+
+    Push the current state of the processor status register onto the stack. The value is stored at the memory location that is one byte higher than the current stack pointer. The stack pointer is then decremented by 1 to point to the next available slot on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+    - 0xFF - 0x01 => 0xFE
+    - 0x00 - 0x01 => 0xFF
+
+    Assembly example:
+    ```
+    PHP
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 1 byte and 3 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    memory[Processor.PC_INIT] = 0x08
+    cpu.flag_z = flag_z
+    cpu.flag_n = flag_n
+    cpu.execute(3)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.memory[cpu.stack_pointer + 1],
+    ) == (Processor.PC_INIT + 1, Processor.SP_INIT - 1, 3, value)
+
+
+def test_cpu_ins_pla_imp() -> None:
+    """
+    PLA (0x68) - Pull Accumulator, Implied.
+
+    Pull the value from the memory location that is one byte higher than the current stack pointer and load it into the Accumulator. The stack pointer is then incremented by 1 to point to the next value on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+    - 0xFF + 0x01 => 0x00
+    - 0x00 + 0x01 => 0x01
+
+    Assembly example:
+    ```
+    PLA
+    ```
+
+    Affected flags:
+    - Z: Set if the pulled value is 0x00, otherwise cleared.
+    - N: Set if bit 7 of the pulled value is set, otherwise cleared.
+
+    The instruction costs 1 byte and 4 cycles to complete.
+
+    TODO: Add check to not cross page
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_a = 0x00
+    cpu.stack_pointer = 0x01FB
+    memory[Processor.PC_INIT] = 0x68
+    memory[0x01FC] = 0xF0
+    cpu.execute(4)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.reg_a,
+    ) == (0xFCE3, 0x01FC, 4, 0xF0)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0xAC, False, False),
+        (0xEC, False, True),
+        (0xAE, True, False),
+    ],
+)
+def test_cpu_ins_plp_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    PLP (0x28) - Pull Processor Status, Implied.
+
+    Pull the value from the memory location that is one byte higher than the current stack pointer and load it into the Processor Status register. The stack pointer is then incremented by 1 to point to the next value on the stack. The value of the stack pointer is wrapped around to fit within the memory range (0-255). For example:
+    - 0xFF + 0x01 => 0x00
+    - 0x00 + 0x01 => 0x01
+
+    Assembly example:
+    ```
+    PLP
+    ```
+
+    Affected flags:
+    - Restores processor status flags from the pulled value (including Zero and Negative).
+
+    The instruction costs 1 byte and 4 cycles to complete.
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.memory[Processor.PC_INIT] = 0x28
+    # Place value at SP+1 (will be read after increment)
+    cpu.memory[cpu.stack_pointer + 1] = value
+    cpu.execute(4)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+    ) == (0xFCE3, 0x01FE, 4, flag_n, flag_z)
+
+
 def test_cpu_ins_sec_imp() -> None:
     """
     SEC (0x38) - Set Carry Flag.
@@ -3249,6 +3416,55 @@ def test_cpu_ins_tay_imp(value: int, flag_n: bool, flag_z: bool) -> None:
         (0xF0, True, False),
     ],
 )
+def test_cpu_ins_tsx_imp(value: int, flag_n: bool, flag_z: bool) -> None:
+    """
+    TSX (0xBA) - Transfer Stack Pointer to X, Implied.
+
+    Transfer the value stored in the stack pointer directly into register X and
+    then evaluate register X for flags Zero and Negative.
+
+    Assembly example:
+    ```
+    TSX
+    ```
+
+    Affected flags:
+    - Zero Flag: Set if X = 0
+    - Negative Flag: Set if bit 7 of X is set
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: Value used for the test
+    :param bool flag_n: Expected value of the Negative flag after execution
+    :param bool flag_z: Expected value of the Zero flag after execution
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    # Set up SP to a specific value
+    cpu.stack_pointer = 0x0100 + value
+    cpu.reg_x = 0x00  # Clear X
+    memory[Processor.PC_INIT] = INS_TSX_IMP
+    cpu.execute(2)
+
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+        cpu.flag_n,
+        cpu.flag_z,
+        cpu.reg_x,
+    ) == (Processor.PC_INIT + 1, 0x0100 + value, 2, flag_n, flag_z, value)
+
+
+@pytest.mark.parametrize(
+    ("value", "flag_n", "flag_z"),
+    [
+        (0x0F, False, False),
+        (0x00, False, True),
+        (0xF0, True, False),
+    ],
+)
 def test_cpu_ins_txa_imp(value: int, flag_n: bool, flag_z: bool) -> None:
     """
     TXA (0x8A) - Transfer X Register to Accumulator, Implied.
@@ -3286,6 +3502,45 @@ def test_cpu_ins_txa_imp(value: int, flag_n: bool, flag_z: bool) -> None:
         cpu.flag_z,
         cpu.reg_a,
     ) == (Processor.PC_INIT + 1, Processor.SP_INIT, 2, flag_n, flag_z, value)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        (0x0F),
+        (0x00),
+        (0xF0),
+    ],
+)
+def test_cpu_ins_txs_imp(value: int) -> None:
+    """
+    TXS (0x9A) - Transfer X Register to Stack Pointer, Implied.
+
+    Transfer the value stored in register X directly into the stack pointer.
+
+    Assembly example:
+    ```
+    TXS
+    ```
+
+    Affected flags:
+    - None
+
+    The instruction costs 1 byte and 2 cycles to complete.
+
+    :param int value: Value used for the test
+    """
+    memory = Memory()
+    cpu = Processor(memory)
+    cpu.reset()
+    cpu.reg_x = value
+    memory[Processor.PC_INIT] = INS_TXS_IMP
+    cpu.execute(2)
+    assert (
+        cpu.program_counter,
+        cpu.stack_pointer,
+        cpu.cycles,
+    ) == (Processor.PC_INIT + 1, 0x0100 + value, 2)
 
 
 @pytest.mark.parametrize(

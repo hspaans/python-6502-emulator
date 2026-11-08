@@ -453,6 +453,310 @@ Example:
 
 #### Stack Operations
 
+##### Transfer Stack Pointer to X Register
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if X = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of X is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0xBA  |   1   |   2    |
+
+```assembly
+TSX
+```
+
+```python
+    def _ins_tsx_imp(self) -> None:
+        """
+        TSX (0xBA) - Transfer Stack Pointer to X, Implied.
+
+        Transfer the value stored in the stack pointer directly into register X and
+        then evaluate register X for flags Zero and Negative. The stack pointer is
+        not modified.
+
+        Assembly example:
+        ```
+        TSX
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if X = 0
+        - Negative Flag: Set if bit 7 of X is set
+
+        The instruction costs 1 byte and 2 cycles to complete.
+        """
+        self.reg_x = self.stack_pointer & 0xFF
+        self._evaluate_flags_nz(self.reg_x)
+        self.cycles += 1
+```
+
+##### Transfer X Register to Stack Pointer
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x9A  |   1   |   2    |
+
+```assembly
+TXS
+```
+
+```python
+    def _ins_txs_imp(self) -> None:
+        """
+        TXS (0x9A) - Transfer Register X to Stack Pointer, Implied.
+
+        Transfer the value stored in register X directly into the stack pointer.
+        The stack pointer is set to 0x01XX where XX is the value of register X,
+        keeping the stack in page 1 (0x0100-0x01FF).
+
+        Assembly example:
+        ```
+        TXS
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 2 cycles to complete.
+        """
+        self.stack_pointer = 0x0100 + (self.reg_x & 0xFF)
+        self.cycles += 1
+```
+
+##### Push Accumulator to Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x48  |   1   |   3    |
+
+```assembly
+PHA
+```
+
+```python
+    def _ins_pha_imp(self) -> None:
+        """
+        PHA (0x48) - Push Accumulator, Implied.
+
+        Push the value stored in the accumulator onto the stack. The value is
+        written to the memory location pointed to by the stack pointer, then the
+        stack pointer is decremented. The stack grows downward in memory.
+
+        Assembly example:
+        ```
+        PHA
+        ```
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 3 cycles to complete.
+        """
+        self.push(self.reg_a)
+        self.cycles += 1
+```
+
+##### Push processor status to Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Not affected             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Not affected             |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x08  |   1   |   3    |
+
+```assembly
+PHP
+```
+
+```python
+    def _ins_php_imp(self) -> None:
+        """
+        PHP (0x08) - Push Processor Status, Implied.
+
+        Push the processor status register (all flags) onto the stack as a single
+        byte. The flags are packed as: [C, Z, I, D, B, V, N, 0] where each flag
+        occupies one bit position.
+
+        Assembly example:
+        ```
+        PHP
+        ```
+
+        Flag byte layout:
+        - Bit 7: Carry Flag (C)
+        - Bit 6: Zero Flag (Z)
+        - Bit 5: Interrupt Disable Flag (I)
+        - Bit 4: Decimal Mode Flag (D)
+        - Bit 3: Break Command (B)
+        - Bit 2: Overflow Flag (V)
+        - Bit 1: Negative Flag (N)
+        - Bit 0: (unused)
+
+        Affected flags:
+        - None
+
+        The instruction costs 1 byte and 3 cycles to complete.
+        """
+        flags = 0x00
+        if self.flag_n:
+            flags = flags | (1 << 1)
+        if self.flag_v:
+            flags = flags | (1 << 2)
+        if self.flag_b:
+            flags = flags | (1 << 3)
+        if self.flag_d:
+            flags = flags | (1 << 4)
+        if self.flag_i:
+            flags = flags | (1 << 5)
+        if self.flag_z:
+            flags = flags | (1 << 6)
+        if self.flag_c:
+            flags = flags | (1 << 7)
+        self.push(flags)
+        self.cycles += 1
+```
+
+##### Pull Accumulator from Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Not affected             |
+|  Z   | Zero Flag         | Set if A = 0             |
+|  I   | Interrupt Disable | Not affected             |
+|  D   | Decimal Mode Flag | Not affected             |
+|  B   | Break Command     | Not affected             |
+|  V   | Overflow Flag     | Not affected             |
+|  N   | Negative Flag     | Set if bit 7 of A is set |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x68  |   1   |   4    |
+
+```assembly
+PLA
+```
+
+```python
+    def _ins_pla_imp(self) -> None:
+        """
+        PLA (0x68) - Pull Accumulator, Implied.
+
+        Pull the value from the top of the stack into the accumulator. The stack
+        pointer is incremented before the value is read, as the stack grows
+        downward. The accumulator is then evaluated for flags Zero and Negative.
+
+        Assembly example:
+        ```
+        PLA
+        ```
+
+        Affected flags:
+        - Zero Flag: Set if A = 0
+        - Negative Flag: Set if bit 7 of A is set
+
+        The instruction costs 1 byte and 4 cycles to complete.
+        """
+        self.reg_a = self.pop()
+        self._evaluate_flags_nz(self.reg_a)
+        self.cycles += 2
+```
+
+##### Pull processor status from Stack
+
+| Flag | Description       | State                    |
+| :--: | ----------------- | ------------------------ |
+|  C   | Carry Flag        | Set to value from stack  |
+|  Z   | Zero Flag         | Set to value from stack  |
+|  I   | Interrupt Disable | Set to value from stack  |
+|  D   | Decimal Mode Flag | Set to value from stack  |
+|  B   | Break Command     | Set to value from stack  |
+|  V   | Overflow Flag     | Set to value from stack  |
+|  N   | Negative Flag     | Set to value from stack  |
+
+| Addressing Mode | Opcode | Bytes | Cycles |
+| --------------- | :----: | :---: | :----: |
+| Implied         |  0x28  |   1   |   4    |
+
+```assembly
+PLP
+```
+
+```python
+    def _ins_plp_imp(self) -> None:
+        """
+        PLP (0x28) - Pull Processor Status, Implied.
+
+        Pull the processor status register (all flags) from the top of the stack.
+        The stack pointer is incremented before the value is read. All processor
+        flags are restored from the byte pulled from the stack.
+
+        Assembly example:
+        ```
+        PLP
+        ```
+
+        Flag byte layout (same as PHP):
+        - Bit 7: Carry Flag (C)
+        - Bit 6: Zero Flag (Z)
+        - Bit 5: Interrupt Disable Flag (I)
+        - Bit 4: Decimal Mode Flag (D)
+        - Bit 3: Break Command (B)
+        - Bit 2: Overflow Flag (V)
+        - Bit 1: Negative Flag (N)
+        - Bit 0: (unused - ignored)
+
+        Affected flags:
+        - All flags restored from stack
+
+        The instruction costs 1 byte and 4 cycles to complete.
+        """
+        flags = self.pop()
+        self.flag_n = bool(flags & (1 << 1))
+        self.flag_v = bool(flags & (1 << 2))
+        self.flag_b = bool(flags & (1 << 3))
+        self.flag_d = bool(flags & (1 << 4))
+        self.flag_i = bool(flags & (1 << 5))
+        self.flag_z = bool(flags & (1 << 6))
+        self.flag_c = bool(flags & (1 << 7))
+        self.cycles += 2
+```
+
 #### Logical Operations
 
 #### Arithmetic Operations
@@ -485,7 +789,7 @@ INC #$nn
 ##### INX - Increment X Register
 
 | Flag | Description       | State                    |
-| :--: | ----------------- | ----------------------- |
+| :--: | ----------------- | ------------------------ |
 |  C   | Carry Flag        | Not affected             |
 |  Z   | Zero Flag         | Set if X is zero         |
 |  I   | Interrupt Disable | Not affected             |
@@ -763,6 +1067,78 @@ Processor Status after use:
 #### Indirect Indexed Addressing Mode
 
 ### The memory model
+
+## Testing
+
+### Test Suite Overview
+
+The project includes a comprehensive test suite that verifies the correctness of 6502 CPU instruction implementations. Tests are organized by instruction type and use parametrized test generation patterns to ensure systematic coverage.
+
+### Stack Operations Test Suite
+
+The stack operation instructions (PHA, PHP, PLA, PLP) have dedicated comprehensive tests in [`tests/test_cpu_ins_stack.py`](tests/test_cpu_ins_stack.py) with **45 total tests** covering stack push/pull behavior and stack sequencing (including 42 parameterized cases and 3 integration tests). Tests for TSX/TXS are located in [`tests/test_cpu.py`](tests/test_cpu.py).
+
+#### Test Data Generators
+
+Three reusable test data generators are provided for systematic testing:
+
+1. **`generate_boundary_byte_values()`**: Tests edge cases
+   * 0x00: Zero value (tests Z flag)
+   * 0x01: Minimum positive
+   * 0x7F: Maximum positive (N flag boundary)
+   * 0x80: Minimum negative (N flag boundary)
+   * 0xFE: Maximum negative (-2 in two's complement)
+   * 0xFF: Maximum (-1 in two's complement)
+
+2. **`generate_single_flag_combinations()`**: Tests individual flags
+   * All flags clear
+   * Each flag individually set
+   * All flags set
+   * Total: 9 distinct combinations
+
+3. **`generate_all_flag_combinations()`**: Exhaustive flag testing
+   * All 128 possible flag combinations (7 flags × 2 states)
+   * Useful for verifying no unintended side effects
+
+#### Test Organization
+
+* **TestPHA**: 4 tests for Push Accumulator (PHA - 0x48)
+* **TestPHP**: 3 tests for Push Processor Status (PHP - 0x08)
+* **TestPLA**: 5 tests for Pull Accumulator (PLA - 0x68)
+* **TestPLP**: 5 tests for Pull Processor Status (PLP - 0x28)
+* **TestStackSequences**: 3 integration tests for round-trip operations
+* **TSX/TXS**: Stack-pointer transfer instructions are tested in `tests/test_cpu.py` (not in `tests/test_cpu_ins_stack.py`)
+
+#### Key Test Scenarios
+
+* **Boundary value testing**: Zero, sign bit boundaries, max/min values
+* **Flag interactions**: Individual flag preservation and modification
+* **Stack pointer management**: Correct increment/decrement behavior
+* **Round-trip verification**: Push followed by pull preserves values
+* **Stack depth**: Multiple sequential operations create proper stack frames
+
+#### Running the Tests
+
+```bash
+# Run all stack operation tests
+python -m pytest tests/test_cpu_ins_stack.py -v
+
+# Run specific test class
+python -m pytest tests/test_cpu_ins_stack.py::TestPHA -v
+
+# Run all CPU tests
+python -m pytest tests/test_cpu.py tests/test_cpu_ins_stack.py -v
+```
+
+### Reusable Testing Patterns
+
+The test generators in `test_cpu_ins_stack.py` are designed to scale to other 6502 instructions:
+
+* **For value-based instructions (ADC, SBC, LDA, ORA, AND, EOR, CMP)**: Use `generate_boundary_byte_values()` to systematically test how different operands affect flags and results.
+
+* **For flag-modifying instructions (SEC, CLC, BIT, CMP, BRK)**: Use `generate_single_flag_combinations()` to verify that only intended flags change.
+
+* **For exhaustive coverage**: Use `generate_all_flag_combinations()` to test all possible processor states before and after execution.
 
 ## The basic structure of a 6502 processor
 
